@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-284ee8d6fe83">
+<meta name="lsgh-build" content="0.35.0-next.0-68c3d5348319">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72434,7 +72434,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       const deep = v.surface === "water" || Number.isFinite(v.y) && v.y < -0.5;
       const fromSoft = !deep && (v.surface === "grass" || v.surface === "gravel");
       const pavedStuck = !deep && !fromSoft && (v.surface === "asphalt" || v.surface === "concrete") && (v.speed || 0) < 1.2;
-      const rings = deep ? [0, 6, 12, 20, 30, 45, 70, 100, 140, 180, 230, 280, 340, 420] : fromSoft ? [0, 6, 12, 20, 30, 45, 70, 100, 140, 180, 230, 280, 340] : [0, 6, 12, 20, 30, 45, 70, 100, 140, 180, 230];
+      const rings = deep ? [0, 6, 12, 20, 30, 45, 70, 100, 140, 180, 230, 280, 340, 420] : [0, 4, 8, 12, 18, 24, 32, 45, 70, 100, 140];
+      const softMin = fromSoft ? 12 : pavedStuck ? 10 : 0;
       const yHint = deep ? null : v.y;
       const usable = (rd2) => {
         if (!rd2 || !rd2.inside || !isFinite(rd2.y)) return false;
@@ -72462,65 +72463,59 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         if (!cur) return true;
         if (cand.surfaceRank !== cur.surfaceRank) return cand.surfaceRank < cur.surfaceRank;
         if (cand.clutter !== cur.clutter) return cand.clutter < cur.clutter;
-        if (pavedStuck && cand.dist !== cur.dist) return cand.dist > cur.dist;
-        if (fromSoft && cand.dist !== cur.dist) {
-          const softMin = 45;
+        if (softMin > 0 && cand.dist !== cur.dist) {
           const curNear = cur.dist < softMin, candNear = cand.dist < softMin;
           if (curNear !== candNear) return !candNear;
-          if (candNear && curNear) return cand.dist > cur.dist;
           return cand.dist < cur.dist;
         }
-        if (cand.dist < cur.dist) return true;
-        return false;
+        return cand.dist < cur.dist;
       };
       let best = null;
       for (const r of rings) {
-        for (let a2 = 0; a2 < 12; a2++) {
-          const x = v.x + Math.cos(a2 * Math.PI / 6) * r, z = v.z + Math.sin(a2 * Math.PI / 6) * r;
+        for (let a2 = 0; a2 < 16; a2++) {
+          const x = v.x + Math.cos(a2 * Math.PI / 8) * r, z = v.z + Math.sin(a2 * Math.PI / 8) * r;
           const rd2 = roadAt(x, z, yHint, 0);
           if (!usable(rd2)) continue;
           const dist = Math.hypot(x - v.x, z - v.z);
           const cand = { rd: rd2, x, z, dist, clutter: clutterAt(x, z), surfaceRank: surfaceRank(rd2.surface) };
           if (better(cand, best)) best = cand;
         }
-        const earlyDist = fromSoft ? 90 : 45;
-        if (pavedStuck) {
-          if (best && best.surfaceRank === 0 && best.clutter <= 2 && best.dist >= 55) break;
-        } else if (fromSoft) {
-          if (best && best.surfaceRank === 0 && best.clutter <= 2 && best.dist >= 45) break;
-        } else if (best && best.surfaceRank === 0 && best.clutter <= 2 && best.dist <= earlyDist) {
-          break;
-        }
+        if (best && best.surfaceRank === 0 && best.clutter <= 2 && best.dist >= softMin && best.dist <= 32) break;
       }
       const openSpawn = () => {
         const pads = [
           { x: -560, z: -280, h: 0.15, y: null },
-          // access corridor open
           { x: -538, z: -263, h: 1.57, y: null },
-          // toronto strip
           { x: -500, z: -300, h: 0.4, y: null },
-          // lot approach
           { x: -336, z: -210, h: 0, y: null }
-          // beckley open
         ];
-        let best2 = null;
-        for (let n = 0; n < pads.length; n++) {
-          const i = (v._openSpawnIdx = (v._openSpawnIdx || 0) + 1) % pads.length;
-          const pad2 = pads[i];
+        let bestPad = null;
+        for (const pad2 of pads) {
           const clutter = clutterAt(pad2.x, pad2.z);
-          const cand = { ...pad2, clutter };
-          if (!best2 || clutter < best2.clutter) best2 = cand;
-          if (clutter <= 2) return pad2;
+          const dist = Math.hypot(pad2.x - v.x, pad2.z - v.z);
+          const cand = { ...pad2, clutter, dist };
+          if (!bestPad) {
+            bestPad = cand;
+            continue;
+          }
+          if (clutter !== bestPad.clutter) {
+            if (clutter < bestPad.clutter) bestPad = cand;
+            continue;
+          }
+          if (dist < bestPad.dist) bestPad = cand;
         }
-        return best2 || pads[0];
+        return bestPad || pads[0];
       };
-      if (!best || best.clutter > 2 || pavedStuck && best.dist < 55 || fromSoft && best.dist < 45) {
+      if (!best || best.clutter > 2 || softMin > 0 && best.dist < softMin) {
         let clearer = null;
         const prefer = (cand, cur) => {
           if (!cur) return true;
           if (cand.clutter !== cur.clutter) return cand.clutter < cur.clutter;
           if (cand.surfaceRank !== cur.surfaceRank) return cand.surfaceRank < cur.surfaceRank;
-          if (best && best.clutter > 2 || pavedStuck || fromSoft) return cand.dist > cur.dist;
+          if (softMin > 0 && cand.dist !== cur.dist) {
+            const curNear = cur.dist < softMin, candNear = cand.dist < softMin;
+            if (curNear !== candNear) return !candNear;
+          }
           return cand.dist < cur.dist;
         };
         for (const data of roadData) {
@@ -72530,24 +72525,24 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
           const half = Math.max(1.2, data.road.width * 0.35);
           const rd0 = roadAt(p.px, p.pz, p.y, half);
           if (!rd0 || !usable(rd0)) continue;
-          for (const along of [0, 28, -28, 56, -56, 90, -90, 130, -130, 180, -180]) {
+          for (const along of [0, 12, -12, 24, -24, 40, -40, 60, -60, 90, -90]) {
             const x = p.px + rd0.tx * along, z = p.pz + rd0.tz * along;
             const rd2 = along === 0 ? rd0 : roadAt(x, z, p.y, half);
             if (!usable(rd2)) continue;
             const dist = Math.hypot(x - v.x, z - v.z);
-            if (dist > 480) continue;
-            if ((best && best.clutter > 2 || pavedStuck || fromSoft) && dist < 50) continue;
+            if (dist > 160) continue;
+            if (softMin > 0 && dist < softMin) continue;
             const cand = { rd: rd2, x, z, dist, clutter: clutterAt(x, z), surfaceRank: surfaceRank(rd2.surface) };
             if (prefer(cand, clearer)) clearer = cand;
           }
         }
-        if (clearer && (!best || clearer.clutter < best.clutter || best.clutter > 2 && clearer.clutter <= 2 && clearer.dist >= 50 || pavedStuck && clearer.clutter <= 2 && clearer.dist >= 50 && clearer.dist > best.dist || fromSoft && clearer.clutter <= 2 && clearer.dist >= 45 && (best.dist < 45 || clearer.dist > best.dist))) {
+        if (clearer && (!best || clearer.clutter < best.clutter || best.clutter > 2 && clearer.clutter <= 2 || softMin > 0 && clearer.clutter <= 2 && clearer.dist >= softMin && (best.dist < softMin || clearer.dist < best.dist))) {
           best = clearer;
         } else if (!best && clearer) {
           best = clearer;
         }
       }
-      if (!best || best.clutter > 4) {
+      if (!best || best.clutter > 4 || deep && (!best || best.dist > 200)) {
         const fb = openSpawn();
         v.place(fb.x, fb.z, fb.h ?? v.heading, fb.y ?? null);
         events.emit("vehicleReset", v);
@@ -72570,11 +72565,17 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
           placeClutter = altClutter;
         }
       }
-      if (placeClutter > 2 || best.clutter > 2 && Math.hypot(px2 - v.x, pz2 - v.z) < 50 || pavedStuck && Math.hypot(px2 - v.x, pz2 - v.z) < 50 || fromSoft && Math.hypot(px2 - v.x, pz2 - v.z) < 45) {
-        const fb = openSpawn();
-        v.place(fb.x, fb.z, fb.h ?? v.heading, fb.y ?? null);
-        events.emit("vehicleReset", v);
-        return;
+      const placeDist = Math.hypot(px2 - v.x, pz2 - v.z);
+      if (placeClutter > 2 || softMin > 0 && placeDist < softMin) {
+        if (!deep && best && best.clutter <= 4) {
+          px2 = best.x;
+          pz2 = best.z;
+        } else {
+          const fb = openSpawn();
+          v.place(fb.x, fb.z, fb.h ?? v.heading, fb.y ?? null);
+          events.emit("vehicleReset", v);
+          return;
+        }
       }
       const heading2 = Math.atan2(-tx, -tz);
       if (!isFinite(px2) || !isFinite(pz2) || !isFinite(heading2)) {
@@ -78521,7 +78522,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-284ee8d6fe83", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-68c3d5348319", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
