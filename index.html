@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-1b6cda02fefa">
+<meta name="lsgh-build" content="0.35.0-next.0-fbdc344d6e79">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72474,7 +72474,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     v.resetToRoad = () => {
       const deep = v.surface === "water" || Number.isFinite(v.y) && v.y < -0.5;
       const fromSoft = !deep && (v.surface === "grass" || v.surface === "gravel");
-      const pavedStuck = !deep && !fromSoft && (v.surface === "asphalt" || v.surface === "concrete") && (v.speed || 0) < 1.2;
+      const pavedStuck = !deep && !fromSoft && (v.surface === "asphalt" || v.surface === "concrete") && (v.speed || 0) < 1.2 && (v.stuckT || 0) > 0.8;
+      const parkedClearPaved = !deep && !fromSoft && (v.surface === "asphalt" || v.surface === "concrete") && !!v.onRoad && (v.stuckT || 0) <= 0.8;
       const rings = deep ? [0, 6, 12, 20, 30, 45, 70, 100, 140, 180, 230, 280, 340, 420] : [0, 4, 8, 12, 18, 24, 32, 45, 70, 100, 140];
       const softMin = fromSoft ? 4 : pavedStuck ? 10 : 0;
       const yHint = deep ? null : v.y;
@@ -72548,7 +72549,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         return bestPad || pads[0];
       };
       const localClearPaved = !!(best && best.surfaceRank === 0 && best.clutter <= 2 && best.dist <= 32);
-      if (!best || best.clutter > 2 || softMin > 0 && best.dist < softMin && !localClearPaved) {
+      if (parkedClearPaved && best && best.surfaceRank === 0 && best.dist <= 25) {
+      } else if (!best || best.clutter > 2 || softMin > 0 && best.dist < softMin && !localClearPaved) {
         let clearer = null;
         const prefer = (cand, cur) => {
           if (!cur) return true;
@@ -72584,7 +72586,32 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
           best = clearer;
         }
       }
+      if (parkedClearPaved && (!best || best.dist > 25 || best.surfaceRank > 0)) {
+        const rdHere = roadAt(v.x, v.z, yHint, 0);
+        if (rdHere && usable(rdHere)) {
+          best = {
+            rd: rdHere,
+            x: v.x,
+            z: v.z,
+            dist: 0,
+            clutter: clutterAt(v.x, v.z),
+            surfaceRank: surfaceRank(rdHere.surface)
+          };
+        }
+      }
       if (!best || best.clutter > 4 || deep && (!best || best.dist > 200)) {
+        if (parkedClearPaved) {
+          const rdHere = roadAt(v.x, v.z, yHint, 0);
+          if (rdHere && usable(rdHere)) {
+            const fwdX2 = -Math.sin(v.heading), fwdZ2 = -Math.cos(v.heading);
+            const dir2 = fwdX2 * rdHere.tx + fwdZ2 * rdHere.tz >= 0 ? 1 : -1;
+            const tx2 = rdHere.tx * dir2, tz2 = rdHere.tz * dir2;
+            const heading3 = Math.atan2(-tx2, -tz2);
+            v.place(v.x, v.z, isFinite(heading3) ? heading3 : v.heading, rdHere.y);
+            events.emit("vehicleReset", v);
+            return;
+          }
+        }
         const fb = openSpawn();
         v.place(fb.x, fb.z, fb.h ?? v.heading, fb.y ?? null);
         events.emit("vehicleReset", v);
@@ -72609,7 +72636,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       }
       const placeDist = Math.hypot(px2 - v.x, pz2 - v.z);
       if (placeClutter > 2 || softMin > 0 && placeDist < softMin) {
-        if (!deep && best && best.clutter <= 4) {
+        if (!deep && best && (best.clutter <= 4 || parkedClearPaved)) {
           px2 = best.x;
           pz2 = best.z;
         } else {
@@ -72621,10 +72648,19 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       }
       const heading2 = Math.atan2(-tx, -tz);
       if (!isFinite(px2) || !isFinite(pz2) || !isFinite(heading2)) {
+        if (parkedClearPaved) {
+          v.place(v.x, v.z, v.heading, (roadAt(v.x, v.z, yHint, 0) || {}).y ?? null);
+          events.emit("vehicleReset", v);
+          return;
+        }
         const fb = openSpawn();
         v.place(fb.x, fb.z, fb.h ?? v.heading, fb.y ?? null);
         events.emit("vehicleReset", v);
         return;
+      }
+      if (parkedClearPaved && Math.hypot(px2 - v.x, pz2 - v.z) > 25) {
+        px2 = v.x;
+        pz2 = v.z;
       }
       v.place(px2, pz2, heading2, rd.y);
       events.emit("vehicleReset", v);
@@ -78564,7 +78600,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-1b6cda02fefa", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-fbdc344d6e79", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
