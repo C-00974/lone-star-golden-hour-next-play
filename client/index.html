@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-68c3d5348319">
+<meta name="lsgh-build" content="0.35.0-next.0-073d18199d85">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -71992,8 +71992,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         if (v.reverse) {
           fDrive *= 1 + 0.55 * crawl;
         } else {
-          const dump = clamp3((vfAbs - 8) / 12, 0, 1);
-          fDrive *= (1 + 0.22 * crawl) * (1 - 0.72 * dump);
+          const dump = clamp3((vfAbs - 8) / 14, 0, 1);
+          fDrive *= (1 + 0.42 * crawl) * (1 - 0.55 * dump);
         }
       }
       const fzTotal = Math.max(0, suspension ? v.support.totalLoad : mass * G);
@@ -72003,7 +72003,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       if (v.surface === "gravel") turfRoll = 2.2;
       else if (v.surface === "grass") {
         const crawl = 1 - clamp3((vfAbs - 3) / 9, 0, 1);
-        turfRoll = lerp2(7.2, 1.35, crawl);
+        turfRoll = lerp2(5.4, 1.28, crawl);
       }
       const fDrag = -S4.cdA * 0.6 * v.vf * vfAbs - (supported ? S4.roll : 0) * signV * turfRoll - (inWater ? 900 * v.vf : 0);
       const serviceBrake = -signV * fBrake;
@@ -72179,13 +72179,23 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
             v.z += nz * pen;
             const vn = v.vx * nx + v.vz * nz;
             if (vn < 0) {
-              const j = -vn * 1.04;
+              const grassCrawlHit = v.surface === "grass" && v.throttle > 0.45 && Math.hypot(v.vx, v.vz) < 12;
+              const j = -vn * (grassCrawlHit ? 0.86 : 1.04);
               v.vx += nx * j;
               v.vz += nz * j;
               const tx = -nz, tz = nx, vt = v.vx * tx + v.vz * tz;
-              const frictionDeltaV = Math.min(Math.abs(vt), 0.22 * j);
+              const frictionDeltaV = Math.min(Math.abs(vt), (grassCrawlHit ? 0.07 : 0.22) * j);
               v.vx -= tx * Math.sign(vt) * frictionDeltaV;
               v.vz -= tz * Math.sign(vt) * frictionDeltaV;
+              if (grassCrawlHit) {
+                const along = v.vx * fx2 + v.vz * fz2;
+                const want = 1.6 * v.throttle;
+                if (along < want) {
+                  const add = want - Math.max(0, along);
+                  v.vx += fx2 * add;
+                  v.vz += fz2 * add;
+                }
+              }
               hitStrength = Math.max(hitStrength, -vn);
               const tau = off * (fx2 * nz - fz2 * nx) * j * mass;
               v.yawRate -= tau / inertia * 0.34;
@@ -78522,7 +78532,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-68c3d5348319", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-073d18199d85", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
