@@ -71983,7 +71983,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
           fDrive *= 1 + 0.55 * crawl;
         } else {
           const dump = clamp3((vfAbs - 8) / 14, 0, 1);
-          fDrive *= (1 + 0.42 * crawl) * (1 - 0.55 * dump);
+          const steered = Math.abs(v.steer) > 0.08 ? 1 : 0;
+          fDrive *= (1 + (0.42 + 0.28 * steered) * crawl) * (1 - (0.55 - 0.22 * steered) * dump);
         }
       }
       const fzTotal = Math.max(0, suspension ? v.support.totalLoad : mass * G);
@@ -71993,7 +71994,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       if (v.surface === "gravel") turfRoll = 2.2;
       else if (v.surface === "grass") {
         const crawl = 1 - clamp3((vfAbs - 3) / 9, 0, 1);
-        turfRoll = lerp2(5.4, 1.28, crawl);
+        const steered = Math.abs(v.steer) > 0.08 ? 1 : 0;
+        turfRoll = lerp2(5.4 - 1.1 * steered, 1.28 - 0.12 * steered, crawl);
       }
       const fDrag = -S4.cdA * 0.6 * v.vf * vfAbs - (supported ? S4.roll : 0) * signV * turfRoll - (inWater ? 900 * v.vf : 0);
       const serviceBrake = -signV * fBrake;
@@ -72020,7 +72022,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       let requestFxR = fDrive * S4.driveSplitR + serviceBrake * 0.32 + rearHandbrake;
       if ((S4.plantPower || 0) > 0 && !v.handbrake && vfAbs > 6 && Math.abs(v.steer) > 0.1 && fDrive > 0) {
         const corner = clamp3((Math.abs(v.steer) - 0.1) / 0.4, 0, 1) * clamp3((vfAbs - 6) / 16, 0, 1);
-        const cut = S4.plantPower * corner;
+        const cityTaper = clamp3((vfAbs - 10) / 18, 0, 1);
+        const cut = S4.plantPower * corner * (0.35 + 0.65 * cityTaper);
         requestFxF *= 1 - cut * (1 - S4.driveSplitR) * 0.35;
         requestFxR *= 1 - cut * S4.driveSplitR;
       }
@@ -72382,14 +72385,18 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         v._stuckZ = v.z;
         v._stuckClock = 0;
       }
-      if (ctl && v.stuckT > 0.55 && v.throttle > 0.5 && !v.reverse && (v.surface === "grass" || v.surface === "gravel" || !v.onRoad)) {
-        const side2 = Math.abs(v.yawRate) > 0.05 ? Math.sign(v.yawRate) : 1;
-        v.heading += side2 * 0.85;
-        v.yawRate = side2 * 3.2;
-        const [sfx, sfz] = fwd();
-        v.vx = sfx * 11;
-        v.vz = sfz * 11;
-        v.stuckT = 0.1;
+      {
+        const steeredSnag = Math.abs(v.steer) > 0.1;
+        const needStuck = steeredSnag ? 0.32 : 0.55;
+        if (ctl && v.stuckT > needStuck && v.throttle > 0.5 && !v.reverse && (v.surface === "grass" || v.surface === "gravel" || !v.onRoad)) {
+          const side2 = steeredSnag ? Math.sign(v.steer) || 1 : Math.abs(v.yawRate) > 0.05 ? Math.sign(v.yawRate) : 1;
+          v.heading += side2 * 0.85;
+          v.yawRate = side2 * 3.2;
+          const [sfx, sfz] = fwd();
+          v.vx = sfx * 11;
+          v.vz = sfz * 11;
+          v.stuckT = 0.1;
+        }
       }
       const braking = ctl && (v.brake > 0.05 && !v.reverse || v.reverse && v.throttle > 0.05);
       model.setLights({ head: v.headlights || phaseNight > 0.3, brake: braking, reverse: v.reverse && v.engineOn && v.controlled });
@@ -78532,7 +78539,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-ea64f578530a", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-d08a60d5c489", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
