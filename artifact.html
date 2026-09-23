@@ -78532,7 +78532,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-a2964b4c251d", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-ea64f578530a", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
@@ -78681,7 +78681,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       const car = createVehicle(model, key2);
       car.key = key2;
       car.name = name;
-      car.stableSpawn = { x, z: -227, heading: Math.PI };
+      car.stableSpawn = { x, z: -212, heading: 0 };
       g.cars.push(car);
     }
     g.heroHeadlights = createHeroHeadlights(scene, g.cars);
