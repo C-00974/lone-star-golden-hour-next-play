@@ -43007,7 +43007,7 @@ void main() {
 
   // src/game/guidance.js
   var GUIDE_PLACES = [
-    { id: "base", name: "Crew stable \xB7 Production base", kind: "Five cars \xB7 Toronto Street gate", detail: "The wagon, GTS, white Evora 400, Cummins Sprinter, Defender, and white Keith Black 1991 Camaro 1LE are here. Walk beside a front door and press E / A. Ease into the centre aisle; the painted arrows lead to the open north gate and Toronto Street. V / Y changes your view; C recenters." },
+    { id: "base", name: "Crew stable \xB7 Production base", kind: "Six cars \xB7 Toronto Street gate", detail: "The wagon, GTS, white Evora 400, Cummins Sprinter, Defender, and white Keith Black 1991 Camaro 1LE are here. Walk beside a front door and press E / A. Ease into the centre aisle; the painted arrows lead to the open north gate and Toronto Street. V / Y changes your view; C recenters." },
     { id: "singleton-stop", name: "353 Singleton \xB7 Shell", kind: "Dallas stop \xB7 forecourt and market", detail: "Turn off Gulden south of the church and follow the access lane to the market\u2019s west parking bay. Walk through the glass doors under COME ON IN. Luz sells $8 snacks and has a tip for the Sylvan overlook. Pumps dress the scene; refuelling is not yet a game mechanic." },
     { id: "crow-overlook", name: "Trammell Crow \xB7 Sylvan overlook", kind: "Dallas trail \xB7 take in the skyline", detail: "Follow the existing west levee to the named trail overlook. Park clear of the bench, read the sign, then turn toward the city. F / Y raises the scout camera." },
     { id: "studio-gallery", name: "Your studio exhibition", kind: "The Crew Cut \xB7 your work on the wall", detail: "Park at Second Unit Studio. Walk inside and turn left toward the three frames beside the entrance. Press E / A to choose Scrapbook photographs or named Director cut cards, then Hang exhibition." },
@@ -43214,7 +43214,7 @@ void main() {
     }
     if (g2.lot42?.canStart()) return make("Lot 42", "Ready in the blue bay", "Start Lot 42 driving practice.", shutter, "Six turquoise gates, one clockwise lap. There is no time limit.");
     if (g2.downtown?.canStart()) return make("Afterglow on Main", "Ready in the starting bay", "Start the downtown filming take.", shutter, "Four right turns, a steady tracking pass and a careful stop.");
-    if (!selected && near(actor, PLACES.base, 32)) return make("Crew stable", "Choose your next drive", g2.inCar ? "Follow the yard arrows to the north gate and Toronto Street." : entry ? `Get into ${entry.car?.name || "your chosen car"}, or walk around the stable.` : "Walk beside a front door to choose one of the five cars.", g2.inCar ? drive : entry ? use : walk, "G / View opens activities and destinations. The Motor Club is at the south end of this yard; the street exit is at the north end.");
+    if (!selected && near(actor, PLACES.base, 32)) return make("Crew stable", "Choose your next drive", g2.inCar ? "Follow the yard arrows to the north gate and Toronto Street." : entry ? `Get into ${entry.car?.name || "your chosen car"}, or walk around the stable.` : "Walk beside a front door to choose one of the six cars.", g2.inCar ? drive : entry ? use : walk, "G / View opens activities and destinations. The Motor Club is at the south end of this yard; the street exit is at the north end.");
     return make("Your next adventure", g2.inCar ? "Free roam \xB7 driving" : "Free roam \xB7 on foot", "Choose a place or activity in the Crew Guide.", guide, "Try the studio, a supper delivery, the garage, a filming drive or the cone course.");
   }
   function guidanceDistance(m, units = "mph") {
@@ -43838,7 +43838,7 @@ void main() {
     const dt = downtownToWorld(DOWNTOWN.extent.ew * 0.45, 270);
     return [
       { id: "prop-house", name: "Trinity Prop House", sub: "Props, preparation and pickup scenes", ...PROP_HOUSE.entrance },
-      { id: "base", name: "Crew stable \xB7 Production base", sub: "Five cars \xB7 Toronto Street gate", x: PLACES.base.x, z: PLACES.base.z, y: PLACES.base.y },
+      { id: "base", name: "Crew stable \xB7 Production base", sub: "Six cars \xB7 Toronto Street gate", x: PLACES.base.x, z: PLACES.base.z, y: PLACES.base.y },
       { id: "crew-garage", name: "Golden Hour Motor Club", sub: "Walk inside \xB7 service bench \xB7 light lab", ...GARAGE.entrance },
       { id: "last-light-diner", name: "Last Light Diner", sub: "Meet Junie and Nico \xB7 crew supper deliveries", ...DINER.entrance },
       { id: "singleton-stop", name: "Shell \xB7 353 Singleton", sub: "Enter from Gulden, south of the church \xB7 snacks and local notes", x: -417, z: 36.5, y: 8 },
@@ -78591,7 +78591,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-bf1e82351b68", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-73b8a6363a68", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
@@ -78728,6 +78728,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     g.gts.name = "Pecos GTS";
     g.gts.model = g.gtsModel;
     g.cars = [g.vehicle, g.gts];
+    g.vehicle.stableSpawn = { x: -594, z: -212, heading: 0 };
+    g.gts.stableSpawn = { x: -546, z: -212, heading: 0 };
     for (const [key2, name, factory, x] of [
       ["evora", "2017 Lotus Evora 400", createEvoraModel, -578],
       ["sprinter", "Sprinter 144 \xB7 Cummins \xB7 Allison", createSprinterModel, -570],
@@ -78885,10 +78887,10 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       g.downtown?.cancel();
       stopHero();
       g.setActiveCar(g.cars[0]);
-      g.cars[0].place(PLACES.heroCarSpawn.x, PLACES.heroCarSpawn.z, PLACES.heroCarSpawn.heading);
-      g.cars[1].place(PLACES.heroCarSpawn.x + 13, PLACES.heroCarSpawn.z + 2, PLACES.heroCarSpawn.heading);
       for (const c of g.cars) {
         if (c.stableSpawn) c.place(c.stableSpawn.x, c.stableSpawn.z, c.stableSpawn.heading);
+        else if (c === g.cars[0]) c.place(PLACES.heroCarSpawn.x, PLACES.heroCarSpawn.z, PLACES.heroCarSpawn.heading);
+        else if (c === g.cars[1]) c.place(PLACES.heroCarSpawn.x + 13, PLACES.heroCarSpawn.z + 2, PLACES.heroCarSpawn.heading);
         c.controlled = false;
         c.stopEngine();
       }
