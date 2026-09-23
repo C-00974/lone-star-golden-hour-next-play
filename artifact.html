@@ -71856,6 +71856,11 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       const g2 = sampleGround(x, z, y2);
       v.y = g2.y;
       v.ground = g2;
+      v.surface = g2.surface;
+      v.wet = g2.wet;
+      v.onRoad = !!g2.onRoad;
+      v.road = g2.road || null;
+      v.speedLimit = g2.speedLimit;
       v.pitch = v.rollA = 0;
       v.stuckT = 0;
       v.collision = 0;
@@ -72461,7 +72466,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       const fromSoft = !deep && (v.surface === "grass" || v.surface === "gravel");
       const pavedStuck = !deep && !fromSoft && (v.surface === "asphalt" || v.surface === "concrete") && (v.speed || 0) < 1.2;
       const rings = deep ? [0, 6, 12, 20, 30, 45, 70, 100, 140, 180, 230, 280, 340, 420] : [0, 4, 8, 12, 18, 24, 32, 45, 70, 100, 140];
-      const softMin = fromSoft ? 12 : pavedStuck ? 10 : 0;
+      const softMin = fromSoft ? 4 : pavedStuck ? 10 : 0;
       const yHint = deep ? null : v.y;
       const usable = (rd2) => {
         if (!rd2 || !rd2.inside || !isFinite(rd2.y)) return false;
@@ -72532,7 +72537,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         }
         return bestPad || pads[0];
       };
-      if (!best || best.clutter > 2 || softMin > 0 && best.dist < softMin) {
+      const localClearPaved = !!(best && best.surfaceRank === 0 && best.clutter <= 2 && best.dist <= 32);
+      if (!best || best.clutter > 2 || softMin > 0 && best.dist < softMin && !localClearPaved) {
         let clearer = null;
         const prefer = (cand, cur) => {
           if (!cur) return true;
@@ -78548,7 +78554,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-ff8d85d18429", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-1b6cda02fefa", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
