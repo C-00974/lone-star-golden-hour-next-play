@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-8a5933916678">
+<meta name="lsgh-build" content="0.35.0-next.0-1dd51611d3de">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72395,11 +72395,13 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       const crawlStall = ctl && v.surface === "grass" && v.throttle > 0.5 && !v.reverse && vfAbs < 0.6;
       v._crawlStall = crawlStall ? (v._crawlStall || 0) + dt : 0;
       if (v._crawlStall > 0.65) {
+        const side2 = Math.abs(v.yawRate) > 0.05 ? Math.sign(v.yawRate) : 1;
+        v.heading += side2 * 0.55;
+        v.yawRate = side2 * 2.4;
         const [sfx, sfz] = fwd();
-        v.vx += sfx * 6.2;
-        v.vz += sfz * 6.2;
-        if (Math.abs(v.yawRate) < 1.5) v.yawRate += (v.yawRate >= 0 ? 1 : -1) * 1.25;
-        v._crawlStall = 0.15;
+        v.vx = sfx * 7.5;
+        v.vz = sfz * 7.5;
+        v._crawlStall = 0.12;
       }
       const braking = ctl && (v.brake > 0.05 && !v.reverse || v.reverse && v.throttle > 0.05);
       model.setLights({ head: v.headlights || phaseNight > 0.3, brake: braking, reverse: v.reverse && v.engineOn && v.controlled });
@@ -78542,7 +78544,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-8a5933916678", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-1dd51611d3de", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
