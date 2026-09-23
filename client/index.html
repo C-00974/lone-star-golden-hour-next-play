@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-6688592e540f">
+<meta name="lsgh-build" content="0.35.0-next.0-bf1e82351b68">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -71937,7 +71937,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       }
       if ((S4.plantPower || 0) > 0.2 && v.throttle > 0.7 && Math.abs(v.steerIn) > 0.75 && Math.abs(v.vf) < 16) {
         const offPave = v.surface === "grass" || v.surface === "gravel" || !v.onRoad;
-        const cap = offPave ? 0.13 : 0.1;
+        const cap = offPave ? 0.09 : 0.1;
         v.steer = clamp3(v.steer, -cap, cap);
       }
       const thr = ctl ? clamp3(input2.throttle, 0, 1) : 0, brk = ctl ? clamp3(input2.brake, 0, 1) : 0;
@@ -72124,7 +72124,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       v.yawRate = supported ? lerp2(rKin, rDyn, kin) : r;
       if ((S4.plantPower || 0) > 0.2 && v.throttle > 0.7 && Math.abs(v.steerIn) > 0.75 && vfAbs < 16) {
         const crawlYaw = 1 - clamp3((vfAbs - 4) / 12, 0, 1);
-        v.yawRate *= 1 - 0.35 * crawlYaw;
+        v.yawRate *= 1 - 0.48 * crawlYaw;
       }
       v.heading += v.yawRate * dt;
       const [fx1, fz1] = fwd(), [rx1, rz1] = right2();
@@ -72402,7 +72402,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       v._stuckClock = (v._stuckClock || 0) + dt;
       if (v._stuckClock > 0.5) {
         const moved = Math.hypot(v.x - (v._stuckX ?? v.x), v.z - (v._stuckZ ?? v.z));
-        const stuckGate = v.surface === "grass" ? 1.25 : 0.35;
+        const steeredCrawl = v.surface === "grass" && Math.abs(v.steer) > 0.08;
+        const stuckGate = steeredCrawl ? 2.6 : v.surface === "grass" ? 1.25 : 0.35;
         if (ctl && (v.throttle > 0.5 || v.reverse && v.brake > 0.5) && moved < stuckGate) v.stuckT += v._stuckClock;
         else v.stuckT = 0;
         v._stuckX = v.x;
@@ -78600,7 +78601,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-6688592e540f", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-bf1e82351b68", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
