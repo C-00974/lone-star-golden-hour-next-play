@@ -72382,14 +72382,14 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         v._stuckZ = v.z;
         v._stuckClock = 0;
       }
-      if (ctl && v.stuckT > 0.55 && v.surface === "grass" && v.throttle > 0.5 && !v.reverse) {
+      if (ctl && v.stuckT > 0.55 && v.throttle > 0.5 && !v.reverse && (v.surface === "grass" || v.surface === "gravel" || !v.onRoad)) {
         const side2 = Math.abs(v.yawRate) > 0.05 ? Math.sign(v.yawRate) : 1;
-        v.heading += side2 * 0.65;
-        v.yawRate = side2 * 2.8;
+        v.heading += side2 * 0.85;
+        v.yawRate = side2 * 3.2;
         const [sfx, sfz] = fwd();
-        v.vx = sfx * 9;
-        v.vz = sfz * 9;
-        v.stuckT = 0.15;
+        v.vx = sfx * 11;
+        v.vz = sfz * 11;
+        v.stuckT = 0.1;
       }
       const braking = ctl && (v.brake > 0.05 && !v.reverse || v.reverse && v.throttle > 0.05);
       model.setLights({ head: v.headlights || phaseNight > 0.3, brake: braking, reverse: v.reverse && v.engineOn && v.controlled });
@@ -78532,7 +78532,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-7e546a308eeb", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-a2964b4c251d", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
@@ -78681,7 +78681,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       const car = createVehicle(model, key2);
       car.key = key2;
       car.name = name;
-      car.stableSpawn = { x, z: -227, heading: 0 };
+      car.stableSpawn = { x, z: -227, heading: Math.PI };
       g.cars.push(car);
     }
     g.heroHeadlights = createHeroHeadlights(scene, g.cars);
