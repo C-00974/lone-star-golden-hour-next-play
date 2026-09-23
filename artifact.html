@@ -71920,8 +71920,10 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         const kc = 0.9 - 0.45 * S4.drift;
         v.steer = clamp3(v.steer - (v.beta || 0) * kc, -maxSteer * 1.3, maxSteer * 1.3);
       }
-      if (v.surface === "grass" && (S4.plantPower || 0) > 0.2 && v.throttle > 0.45 && Math.abs(v.vf) < 14) {
-        v.steer = clamp3(v.steer, -0.16, 0.16);
+      if ((S4.plantPower || 0) > 0.2 && v.throttle > 0.7 && Math.abs(v.steerIn) > 0.75 && Math.abs(v.vf) < 16) {
+        const offPave = v.surface === "grass" || v.surface === "gravel" || !v.onRoad;
+        const cap = offPave ? 0.13 : 0.1;
+        v.steer = clamp3(v.steer, -cap, cap);
       }
       const thr = ctl ? clamp3(input2.throttle, 0, 1) : 0, brk = ctl ? clamp3(input2.brake, 0, 1) : 0;
       v.throttle = lerp2(v.throttle, thr, 1 - Math.exp(-dt * 10));
@@ -72105,10 +72107,9 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       yawAcc -= r * (v.drifting ? 0.18 : 0.35);
       const rDyn = r + yawAcc * dt;
       v.yawRate = supported ? lerp2(rKin, rDyn, kin) : r;
-      if (v.surface === "grass" && (S4.plantPower || 0) > 0.2 && v.throttle > 0.45 && Math.abs(v.steer) > 0.08 && vfAbs < 14) {
-        const hold = clamp3((Math.abs(v.steer) - 0.08) / 0.1, 0, 1);
-        const crawlYaw = 1 - clamp3((vfAbs - 4) / 10, 0, 1);
-        v.yawRate *= 1 - 0.4 * hold * crawlYaw;
+      if ((S4.plantPower || 0) > 0.2 && v.throttle > 0.7 && Math.abs(v.steerIn) > 0.75 && vfAbs < 16) {
+        const crawlYaw = 1 - clamp3((vfAbs - 4) / 12, 0, 1);
+        v.yawRate *= 1 - 0.35 * crawlYaw;
       }
       v.heading += v.yawRate * dt;
       const [fx1, fz1] = fwd(), [rx1, rz1] = right2();
@@ -78547,7 +78548,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-1858c32516f2", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-ff8d85d18429", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
