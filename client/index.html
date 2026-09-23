@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-c945ff7ca750">
+<meta name="lsgh-build" content="0.35.0-next.0-444bbdf07399">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -36622,7 +36622,7 @@ void main() {
     { id: "howell", name: "Howell St", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: eastLine(400, 200, 840, 200) },
     { id: "payne", name: "Payne St", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: eastLine(400, -240, 840, -240) },
     { id: "market_center", name: "Market Center Blvd", type: "street", surface: "concrete", width: 14, lanes: 2, speed: 30, pts: eastLine(700, -470, 700, 470) },
-    // --- Lower Greenville Phase 1 (OSM-informed centerline; feel over survey accuracy)
+    // --- Lower Greenville Phase 2 (OSM-informed centerline + Belmont cross; feel over survey accuracy)
     // Belmont→Alta-ish strip at x≈1080, east of Howell. Woodall crosses near z=0 for through traffic.
     {
       id: "greenville",
@@ -36666,6 +36666,17 @@ void main() {
       lanes: 2,
       speed: 25,
       pts: join(eastLine(840, 0, 840, -50, 10), eastLine(840, -50, 1080, -50, 15))
+    },
+    // Belmont Ave (OSM lat≈32.81737 → game z≈140): Woodall east approach → past Greenville for cross-street rhythm.
+    {
+      id: "greenville_belmont",
+      name: "Belmont Ave",
+      type: "street",
+      surface: "asphalt",
+      width: 11,
+      lanes: 2,
+      speed: 25,
+      pts: eastLine(840, 140, 1260, 140)
     }
   ];
   var DOWNTOWN = {
@@ -43074,7 +43085,7 @@ void main() {
     { id: "afterglow-main", name: "Afterglow on Main", kind: "Driving challenge \xB7 wagon or GTS", detail: "Stop in the blue starting bay with the wagon or GTS. Press Enter / A to start. Follow eight gates, hold the tracking speed, then stop on the mark." },
     { id: "lot42", name: "The Driver\u2019s Call \xB7 Lot 42", kind: "Dee \xB7 wagon or GTS", detail: "Choose your practice car, drive to the blue bay and press Enter / A to repair, line up and start. Six turquoise gates and one gold clockwise lap earn latest and best notes for that car. Read your notes, retry, or drive back to Dee." },
     { id: "kirk", name: "Ronald Kirk Bridge", kind: "Scenic stop \xB7 explore on foot", detail: "Walk out onto the pedestrian bridge for the arch and skyline. F / Y raises the scout camera; P / D-pad down opens free photo mode." },
-    { id: "greenville", name: "Greenville Ave \xB7 Lower", kind: "Dallas strip \xB7 drive and stroll", detail: "Cross the bridge on Woodall or take Howell east from Riverfront. A short OSM-shaped Greenville run with inspired porch bars \u2014 Phase 1 stub, real storefronts later." }
+    { id: "greenville", name: "Greenville Ave \xB7 Lower", kind: "Dallas strip \xB7 drive and stroll", detail: "Cross the bridge on Woodall or take Howell east from Riverfront. OSM-shaped Greenville with denser porch bars and a Belmont cross \u2014 Phase 2 feel, real storefronts later." }
   ];
   var chain = (labels, current) => labels.map((label, i) => ({ label, state: i < current ? "done" : i === current ? "now" : "later" }));
   var near = (p, q, r = 25) => !!p && !!q && Math.hypot(p.x - q.x, p.z - q.z) < r && (q.y == null || Math.abs(p.y - q.y) < 2.5);
@@ -43910,7 +43921,7 @@ void main() {
       { id: "studio-gallery", name: "Your studio exhibition", sub: "Hang your photographs and named cut cards \xB7 inside Second Unit", ...STUDIO.entrance },
       { id: "downtown", name: "Downtown \xB7 Main St", sub: "The city core", x: dt.x, z: dt.z, y: 8 },
       { id: "reunion", name: "Reunion Tower", sub: "Downtown landmark", x: 786, z: 552, y: 8 },
-      { id: "greenville", name: "Greenville Ave \xB7 Lower", sub: "East-side bar strip \xB7 Phase 1 stub", x: PLACES.greenville.x, z: PLACES.greenville.z, y: PLACES.greenville.y }
+      { id: "greenville", name: "Greenville Ave \xB7 Lower", sub: "East-side bar strip \xB7 Phase 2 Belmont", x: PLACES.greenville.x, z: PLACES.greenville.z, y: PLACES.greenville.y }
     ];
   }
   function remaining(path, x, z, destination = null, actorY = null) {
@@ -54970,15 +54981,26 @@ void main() {
 
   // src/world/greenville.js
   var CX = 1080;
+  var BELMONT_Z = 140;
   var SHOPS2 = [
+    // denser Greenville curb rhythm (N → S)
+    { z: -280, side: -1, name: "PORCH LIGHT", w: 12, d: 9, h: 3.8, color: 12167312 },
     { z: -260, side: -1, name: "VELVET PORCH", w: 14, d: 10, h: 4.2, color: 12891290 },
     { z: -220, side: 1, name: "NEON SPOON", w: 12, d: 9, h: 3.8, color: 12109e3 },
+    { z: -190, side: -1, name: "MIDBLOCK MULE", w: 13, d: 9, h: 4, color: 10123868 },
     { z: -160, side: -1, name: "AMBER & RYE", w: 16, d: 11, h: 5, color: 9071186 },
+    { z: -130, side: 1, name: "ORAM OUTDOOR", w: 12, d: 9, h: 3.7, color: 13813944 },
     { z: -100, side: 1, name: "PATIO RADIO", w: 13, d: 10, h: 4, color: 14274496 },
+    { z: -80, side: -1, name: "LOW GLOW", w: 11, d: 8, h: 3.5, color: 11044976 },
     { z: -50, side: -1, name: "LAST CALL ROOM", w: 18, d: 12, h: 5.4, color: 7227962 },
     { z: -50, side: 1, name: "SIDEWALK SOCIAL", w: 15, d: 10, h: 4.4, color: 15261648 },
     { z: 20, side: -1, name: "GOLD HOUR TAP", w: 14, d: 10, h: 4.6, color: 10910802 },
+    { z: 50, side: 1, name: "HALF BLOCK", w: 12, d: 9, h: 3.9, color: 13154468 },
     { z: 80, side: 1, name: "BELMONT BOWL", w: 12, d: 9, h: 3.6, color: 13616820 },
+    { z: 110, side: -1, name: "CORNER CURB", w: 13, d: 9, h: 4.1, color: 9203800 },
+    // Belmont cross (OSM-informed z≈140) — west + east of Greenville
+    { cross: "belmont", x: 1035, side: -1, name: "WEST BELMONT", w: 14, d: 10, h: 4.3, color: 11571312 },
+    { cross: "belmont", x: 1125, side: 1, name: "EAST BELMONT", w: 13, d: 9, h: 4, color: 13945014 },
     { z: 140, side: -1, name: "ALTA LANTERN", w: 13, d: 10, h: 4.2, color: 10126704 },
     { z: 180, side: 1, name: "CORRIDOR CLUB", w: 16, d: 11, h: 5.2, color: 6048318 }
   ];
@@ -55017,11 +55039,26 @@ void main() {
     registerNight(glass, 0.12, 1.1);
     const roof = new MeshStandardMaterial({ color: 3816768, roughness: 0.9 });
     const signMat = new MeshBasicMaterial({ toneMapped: false });
-    const bodies = [], glasses = [], roofs = [], signs = [];
+    const glasses = [], roofs = [];
     for (let i = 0; i < SHOPS2.length; i++) {
       const s = SHOPS2[i];
-      const x = CX + s.side * (9 + s.d / 2);
-      const z = s.z;
+      const onBelmont = s.cross === "belmont";
+      let x, z, faceX, faceZ, signRotY, tag;
+      if (onBelmont) {
+        x = s.x;
+        z = BELMONT_Z + s.side * (8 + s.d / 2);
+        faceX = x;
+        faceZ = BELMONT_Z + s.side * 7.6;
+        signRotY = s.side > 0 ? Math.PI : 0;
+        tag = "greenville_belmont";
+      } else {
+        x = CX + s.side * (9 + s.d / 2);
+        z = s.z;
+        faceX = CX + s.side * 8.2;
+        faceZ = z;
+        signRotY = s.side > 0 ? -Math.PI / 2 : Math.PI / 2;
+        tag = "greenville";
+      }
       const y0 = terrainHeight(x, z);
       const mat = i % 2 ? stucco.clone() : brick.clone();
       mat.color = new Color(s.color);
@@ -55031,11 +55068,16 @@ void main() {
       mesh2.castShadow = true;
       mesh2.receiveShadow = true;
       group.add(mesh2);
-      addBox(x, z, s.w * 0.48, s.d * 0.48, 0, y0, y0 + s.h, "greenville");
-      const faceX = CX + s.side * 8.2;
+      addBox(x, z, s.w * 0.48, s.d * 0.48, 0, y0, y0 + s.h, tag);
       const gw = Math.min(s.w - 1.2, 10), gh = 2.8;
-      const ggeo = new BoxGeometry(0.08, gh, gw);
-      ggeo.translate(faceX, y0 + 0.35 + gh / 2, z);
+      let ggeo;
+      if (onBelmont) {
+        ggeo = new BoxGeometry(gw, gh, 0.08);
+        ggeo.translate(faceX, y0 + 0.35 + gh / 2, faceZ);
+      } else {
+        ggeo = new BoxGeometry(0.08, gh, gw);
+        ggeo.translate(faceX, y0 + 0.35 + gh / 2, faceZ);
+      }
       glasses.push(ggeo);
       const rgeo = new BoxGeometry(s.w + 0.4, 0.25, s.d + 0.4);
       rgeo.translate(x, y0 + s.h + 0.1, z);
@@ -55044,8 +55086,12 @@ void main() {
       const sm3 = signMat.clone();
       sm3.map = tex2;
       const sign2 = new Mesh(new PlaneGeometry(Math.min(s.w - 1, 8), 1.1), sm3);
-      sign2.position.set(faceX + s.side * 0.12, y0 + 3.5, z);
-      sign2.rotation.y = s.side > 0 ? -Math.PI / 2 : Math.PI / 2;
+      if (onBelmont) {
+        sign2.position.set(faceX, y0 + 3.5, faceZ + s.side * 0.12);
+      } else {
+        sign2.position.set(faceX + s.side * 0.12, y0 + 3.5, faceZ);
+      }
+      sign2.rotation.y = signRotY;
       group.add(sign2);
     }
     if (glasses.length) {
@@ -55063,16 +55109,22 @@ void main() {
     }
     const poleMat = new MeshStandardMaterial({ color: 2895409, roughness: 0.7 });
     const poleGeo = new CylinderGeometry(0.07, 0.09, 3.2, 6);
-    const poles = [];
-    for (let z = -280; z <= 190; z += 45) {
+    for (let z = -280; z <= 190; z += 35) {
       for (const side2 of [-1, 1]) {
         const x = CX + side2 * 8.6, y2 = terrainHeight(x, z);
         const mesh2 = new Mesh(poleGeo, poleMat);
         mesh2.position.set(x, y2 + 1.6, z);
-        poles.push(mesh2);
+        group.add(mesh2);
       }
     }
-    for (const p of poles) group.add(p);
+    for (let x = 900; x <= 1220; x += 55) {
+      for (const side2 of [-1, 1]) {
+        const z = BELMONT_Z + side2 * 7.8, y2 = terrainHeight(x, z);
+        const mesh2 = new Mesh(poleGeo, poleMat);
+        mesh2.position.set(x, y2 + 1.6, z);
+        group.add(mesh2);
+      }
+    }
     const P2 = PLACES.greenville;
     addTrigger({
       id: "greenville",
@@ -55081,7 +55133,7 @@ void main() {
       r: 28,
       once: true,
       onEnter(g2) {
-        g2.hud?.banner?.("Greenville Ave \xB7 Lower", "Phase 1 strip \xB7 inspired storefronts", 3.5);
+        g2.hud?.banner?.("Greenville Ave \xB7 Lower", "Phase 2 strip \xB7 Belmont cross \xB7 inspired storefronts", 3.5);
       }
     });
     const pinY = eastY(P2.x);
@@ -78777,7 +78829,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-c945ff7ca750", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-444bbdf07399", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
