@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="red-county">
 <head>
 <meta charset="utf-8">
 <meta name="lsgh-build" content="0.35.0-next.0-480640a982a7">
 <meta name="lsgh-tip" content="bd0240b">
-<meta name="lsgh-mode" content="golden-hour">
+<meta name="lsgh-mode" content="red-county">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,9 +14,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0b0f16">
+<meta name="theme-color" content="#080505">
 <link rel="manifest" href="./manifest.webmanifest">
-<title>Lone Star: Red County</title>
+<title>Red County · Soft Open</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
 <style>
@@ -421,13 +421,13 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">Red County · Soft Open · tip bd0240b</div>
-    <h1>Lone Star<span>Red County</span></h1>
-    <p class="sub">Outlaw heist vertical slice on Greenville. Soft Open · Quiet — you are the car; no camera wincon. Golden Hour film-crew chapters stay available below.</p>
-    <div class="menu" id="title-menu"><button class="btn primary" id="btn-soft-open" disabled>Red County · Soft Open</button><button class="btn" id="btn-continue" disabled>Take a drive · Crew stable</button><button class="btn" id="btn-gh-toggle" type="button" aria-expanded="false" aria-controls="gh-chapters">Golden Hour chapters</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
-    <div id="gh-chapters" class="menu gh-chapters hidden" hidden><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button></div>
+    <div class="kicker">Soft Open · Quiet · tip bd0240b</div>
+    <h1>Red County<span>Soft Open</span></h1>
+    <p class="sub">Outlaw heist on Greenville. You are the wheelman. Quiet approach — no camera, no film crew, no scrapbook win.</p>
+    <div class="menu" id="title-menu"><button class="btn primary" id="btn-soft-open" disabled>Start Soft Open</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
+    <div id="gh-chapters" class="menu gh-chapters hidden" hidden><button class="btn hidden" id="btn-continue" hidden disabled aria-hidden="true"></button><button class="btn hidden" id="btn-gh-toggle" hidden disabled aria-hidden="true"></button><button class="btn hidden" id="btn-forecourt" hidden disabled aria-hidden="true"></button><button class="btn hidden" id="btn-working-set" hidden disabled aria-hidden="true"></button><button class="btn hidden" id="btn-invitation" hidden disabled aria-hidden="true"></button><button class="btn hidden" id="btn-crew-supply" hidden disabled aria-hidden="true"></button><button class="btn hidden" id="btn-driver-call" hidden disabled aria-hidden="true"></button><button class="btn hidden" id="btn-economy" hidden disabled aria-hidden="true"></button><button class="btn hidden" id="btn-scout-roll" hidden disabled aria-hidden="true"></button><button class="btn hidden" id="btn-crew-car" hidden disabled aria-hidden="true"></button><button class="btn hidden" id="btn-pickup" hidden disabled aria-hidden="true"></button><button class="btn hidden" id="btn-prop" hidden disabled aria-hidden="true"></button><button class="btn hidden" id="btn-chapter" hidden disabled aria-hidden="true"></button><button class="btn hidden" id="btn-play" hidden disabled aria-hidden="true"></button></div>
     <div id="loading"><span class="lbl">Building West Dallas…</span><div class="bar"><i></i></div></div>
-    <div class="foot">WASD · Move    E · Interact    G · Crew Guide    T · Director</div>
+    <div class="foot">WASD · Drive    E · Interact    G · Guide    R · Recover</div>
   </div>
   <div id="pause" class="overlay dim hidden"><div class="panel"><h2>Paused</h2><p class="lead">Need a next step? Your Crew Guide keeps the plan.</p><div class="menu" style="justify-content:flex-start"><button class="btn primary" id="btn-resume">Resume</button><button class="btn" id="btn-pguide">Crew Guide · G</button><button class="btn" id="btn-checkpoint">Retry from checkpoint</button><button class="btn" id="btn-restart">Restart mission</button><button class="btn" id="btn-freeroam">Free roam</button><button class="btn" id="btn-psettings">Settings</button><button class="btn" id="btn-pcontrols">Controls</button><button class="btn" id="btn-title">Title</button></div></div></div>
   <div id="settings" class="overlay dim hidden"><div class="panel"><h2>Settings</h2><p class="lead">Changes apply immediately. Progress and settings stay in this browser.</p><div class="stack" id="settings-rows"></div><div class="foot"><button class="btn" id="btn-settings-reset">Reset defaults</button><button class="btn primary" id="btn-settings-close">Done</button></div></div></div>
@@ -81053,7 +81053,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   });
   function detectRedCountyMode() {
     try {
-      if (false) return true;
+      if (true) return true;
       if (document.documentElement.classList.contains("red-county")) return true;
       const mode = new URLSearchParams(location.search).get("mode") || "";
       if (mode === "red-county" || mode === "soft-open") return true;

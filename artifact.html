@@ -15,6 +15,74 @@
   --text:#f4efe6; --muted:#b9b2a6; --ok:#7ddc8a; --warn:#ffcf5c; --bad:#ff6b6b; --line:rgba(244,239,230,.14);
   --font-head:'Barlow Condensed','Oswald','Arial Narrow',Impact,sans-serif; --font-body:'Barlow',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
 }
+
+/* ---------- Red County / Soft Open identity (html.red-county entry) ---------- */
+html.red-county{
+  --gold:#c43c2b; --gold2:#e8dcc8; --ink:#080505; --panel:rgba(12,6,6,.9); --panel2:rgba(18,8,8,.96);
+  --text:#f2ebe3; --muted:#9a9088; --ok:#8fd99a; --warn:#d4a574; --bad:#ff5a4a; --line:rgba(232,220,200,.14);
+  --rc-blood:#8b1e1a; --rc-rust:#a8482f; --rc-bone:#e8dcc8; --rc-asphalt:#1c1c1e;
+}
+html.red-county,html.red-county body,html.red-county #app{background:#080505!important;color:var(--text)}
+html.red-county .btn:focus-visible,html.red-county select:focus-visible,html.red-county input:focus-visible{outline-color:var(--rc-rust)}
+html.red-county #title{
+  background:
+    linear-gradient(185deg,rgba(8,5,5,.97) 0%,rgba(14,6,6,.94) 38%,rgba(48,12,10,.97) 100%),
+    repeating-linear-gradient(-14deg,transparent 0 10px,rgba(139,30,26,.07) 10px 11px);
+  justify-content:flex-end;padding-bottom:8vh;
+}
+html.red-county #title .kicker{
+  color:var(--rc-rust);letter-spacing:.42em;font-size:clamp(11px,1.2vw,14px);opacity:1;
+  border:1px solid rgba(168,72,47,.45);display:inline-block;padding:6px 14px;margin:0 auto;
+  background:rgba(0,0,0,.35);
+}
+html.red-county #title h1{
+  color:var(--rc-bone);font-weight:800;letter-spacing:.06em;
+  text-shadow:3px 3px 0 #3a0c0a,0 12px 40px rgba(0,0,0,.85);
+  font-size:clamp(52px,10vw,132px);
+}
+html.red-county #title h1 span{
+  display:block;font-weight:600;font-size:.26em;letter-spacing:.32em;color:var(--rc-blood);
+  margin-top:.4em;padding-top:.32em;border-top:3px solid var(--rc-rust);
+  text-shadow:none;
+}
+html.red-county #title .sub{
+  color:#b7aea4;max-width:48ch;font-size:clamp(13px,1.15vw,16px);line-height:1.45;
+  border-left:3px solid var(--rc-blood);padding:8px 0 8px 14px;text-align:left;margin:8px auto 22px;
+}
+html.red-county .btn{
+  border-radius:0;border:2px solid rgba(232,220,200,.32);background:#121014;
+  letter-spacing:.2em;backdrop-filter:none;box-shadow:3px 3px 0 #000;
+}
+html.red-county .btn:hover{background:rgba(139,30,26,.4);border-color:var(--rc-rust);transform:none}
+html.red-county .btn.primary{
+  background:var(--rc-blood);color:var(--rc-bone);border-color:#5c1210;
+  box-shadow:4px 4px 0 #1a0808;font-weight:700;
+}
+html.red-county .btn.primary:hover{background:#a82822;border-color:#7a1814}
+html.red-county #gh-chapters,
+html.red-county #btn-gh-toggle,
+html.red-county #btn-continue,
+html.red-county #btn-play{display:none!important}
+html.red-county #loading{color:var(--muted)}
+html.red-county #loading .bar{background:rgba(255,255,255,.08)}
+html.red-county #loading .bar i{background:linear-gradient(90deg,var(--rc-blood),var(--rc-rust))}
+html.red-county #title .foot{color:#6e6660;letter-spacing:.14em}
+html.red-county #persistence-status{background:#1a0c0c;color:#f0d4c8;border-color:#8b1e1a}
+
+/* Soft Open live HUD chrome (works with or without red-county entry) */
+html.rc-heist #objective{border-radius:0;border:1px solid rgba(196,60,43,.45);border-left:4px solid #8b1e1a;background:rgba(12,6,6,.88)}
+html.rc-heist #objective .lab{color:#c43c2b}
+html.rc-heist #objective .dist{color:#e8dcc8}
+html.rc-heist #toast{color:#e8dcc8;letter-spacing:.18em}
+html.rc-heist #banner .sm{color:#a8482f}
+html.rc-heist #banner .big{color:#f2ebe3;text-shadow:0 4px 24px rgba(80,10,8,.8)}
+html.rc-heist #challenge{border-radius:0;border-color:rgba(196,60,43,.4)}
+html.rc-heist #challenge .set{color:#ff8d6b}
+html.rc-heist #gps .lab{color:#c43c2b}
+html.rc-heist #gps .far{color:#e8dcc8}
+html.rc-heist #speedo .g{color:#c43c2b}
+html.rc-heist #speedo .rpm i{background:linear-gradient(90deg,#8b1e1a,#c43c2b)}
+
 html,body{height:100%;margin:0;background:#0b0f16;color:var(--text);font-family:var(--font-body);overflow:hidden;color-scheme:dark}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .btn:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
@@ -341,7 +409,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">Red County · Soft Open · tip fb4ac38</div>
+    <div class="kicker">Red County · Soft Open · tip bd0240b</div>
     <h1>Lone Star<span>Red County</span></h1>
     <p class="sub">Outlaw heist vertical slice on Greenville. Soft Open · Quiet — you are the car; no camera wincon. Golden Hour film-crew chapters stay available below.</p>
     <div class="menu" id="title-menu"><button class="btn primary" id="btn-soft-open" disabled>Red County · Soft Open</button><button class="btn" id="btn-continue" disabled>Take a drive · Crew stable</button><button class="btn" id="btn-gh-toggle" type="button" aria-expanded="false" aria-controls="gh-chapters">Golden Hour chapters</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -53534,6 +53602,12 @@ void main() {
       g2.guide?.refresh();
     };
     const carLabel = () => CAR_LABEL[state.car] || state.car;
+    const syncRcHeist = () => {
+      try {
+        document.documentElement.classList.toggle("rc-heist", !!active);
+      } catch {
+      }
+    };
     function setMarkers() {
       if (!active) {
         g2.minimap.setMarkers([]);
@@ -53541,7 +53615,7 @@ void main() {
       }
       const marks = [];
       if (["window", "pinch"].includes(state.stage) && !state.hasCase) {
-        marks.push({ x: ALLEY.x, z: ALLEY.z, color: "#f2b134", icon: "flag" });
+        marks.push({ x: ALLEY.x, z: ALLEY.z, color: "#c43c2b", icon: "flag" });
       }
       if (state.hasCase || state.botched || state.stage === "escape") {
         marks.push({ x: DROP.x, z: DROP.z, color: state.hasCase ? "#6dffa8" : "#ff8d6b", icon: "flag" });
@@ -53651,6 +53725,7 @@ void main() {
     function wrapUp(clean) {
       endingOpen = false;
       active = false;
+      syncRcHeist();
       generation++;
       g2.activities.release(SOFT_OPEN_ID, token);
       token = null;
@@ -53695,6 +53770,7 @@ void main() {
       token = g2.activities.claim(SOFT_OPEN_ID);
       if (token == null) return false;
       active = true;
+      syncRcHeist();
       generation++;
       endingOpen = false;
       heat = 0;
@@ -53707,6 +53783,7 @@ void main() {
     function suspend() {
       if (!active) return false;
       active = false;
+      syncRcHeist();
       generation++;
       endingOpen = false;
       heat = 0;
@@ -78473,9 +78550,12 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         if (l) l.style.display = "none";
       },
       enablePlay(v) {
-        $2("#btn-play").disabled = !v;
-        $2("#btn-continue").disabled = !v;
-        $2("#btn-continue").style.display = "";
+        const play = $2("#btn-play"), cont = $2("#btn-continue");
+        if (play) play.disabled = !v;
+        if (cont) {
+          cont.disabled = !v;
+          if (!document.documentElement.classList.contains("red-county")) cont.style.display = "";
+        }
       },
       onPlay(fn) {
         $2("#btn-play").onclick = fn;
@@ -80950,7 +81030,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-3314bea6a88a", tipSha: false ? "" : "fb4ac38", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-480640a982a7", tipSha: false ? "" : "bd0240b", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
@@ -80959,18 +81039,75 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   window.addEventListener("keyup", (e) => {
     window.__ls_keys[e.code] = false;
   });
+  function detectRedCountyMode() {
+    try {
+      if (false) return true;
+      if (document.documentElement.classList.contains("red-county")) return true;
+      const mode = new URLSearchParams(location.search).get("mode") || "";
+      if (mode === "red-county" || mode === "soft-open") return true;
+      const path = (location.pathname || "").toLowerCase();
+      if (/red-county\.html$/.test(path) || /soft-open\.html$/.test(path)) return true;
+      const meta = document.querySelector('meta[name="lsgh-mode"]');
+      if (meta && meta.content === "red-county") return true;
+    } catch {
+    }
+    return false;
+  }
+  function applyRedCountyTitleChrome(g2) {
+    try {
+      document.documentElement.classList.add("red-county");
+      document.title = "Red County \xB7 Soft Open";
+      const tip = g2.tipSha || (true ? "bd0240b" : "") || "";
+      const kicker = document.querySelector("#title .kicker");
+      if (kicker) kicker.textContent = tip ? "Soft Open \xB7 Quiet \xB7 tip " + tip : "Soft Open \xB7 Quiet";
+      const h1 = document.querySelector("#title h1");
+      if (h1) h1.innerHTML = "Red County<span>Soft Open</span>";
+      const sub2 = document.querySelector("#title .sub");
+      if (sub2) sub2.textContent = "Outlaw heist on Greenville. You are the wheelman. Quiet approach \u2014 no camera, no film crew, no scrapbook win.";
+      const menu = document.getElementById("title-menu");
+      if (menu) {
+        for (const id7 of ["btn-continue", "btn-gh-toggle"]) {
+          const el2 = document.getElementById(id7);
+          if (el2) {
+            el2.hidden = true;
+            el2.setAttribute("aria-hidden", "true");
+            el2.classList.add("hidden");
+          }
+        }
+        const soft = document.getElementById("btn-soft-open");
+        if (soft && menu.firstElementChild !== soft) menu.insertBefore(soft, menu.firstChild);
+      }
+      const gh = document.getElementById("gh-chapters");
+      if (gh) {
+        gh.hidden = true;
+        gh.classList.add("hidden");
+      }
+      const foot = document.querySelector("#title .foot");
+      if (foot) foot.textContent = "WASD \xB7 Drive    E \xB7 Interact    G \xB7 Guide    R \xB7 Recover";
+      const load = document.querySelector("#loading .lbl");
+      if (load && /West Dallas|Building/i.test(load.textContent || "")) load.textContent = "Staging Greenville\u2026";
+    } catch (e) {
+      console.warn("red-county title chrome", e);
+    }
+  }
   async function boot() {
+    g.redCounty = detectRedCountyMode();
+    if (g.redCounty) applyRedCountyTitleChrome(g);
     try {
       const baked = g.tipSha || "";
       const v = new URLSearchParams(location.search).get("v") || "";
       const tip = baked || (/^[0-9a-f]{7,12}$/i.test(v) ? v : "");
       if (tip) {
         g.tipSha = tip;
-        const kicker = document.querySelector("#title .kicker");
-        if (kicker) kicker.textContent = "Red County \xB7 Soft Open \xB7 tip " + tip;
-        try {
-          document.title = "Lone Star: Red County";
-        } catch {
+        if (g.redCounty) {
+          applyRedCountyTitleChrome(g);
+        } else {
+          const kicker = document.querySelector("#title .kicker");
+          if (kicker) kicker.textContent = "Red County \xB7 Soft Open \xB7 tip " + tip;
+          try {
+            document.title = "Lone Star: Red County";
+          } catch {
+          }
         }
       }
     } catch {
@@ -81356,7 +81493,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     const startTitleMusic = () => {
       audio.init();
       audio.resume();
-      audio.setMusic?.(g.state === "title" ? "title" : "roam");
+      const bed = g.state === "title" ? g.redCounty ? "none" : "title" : "roam";
+      audio.setMusic?.(bed);
     };
     window.addEventListener("pointerdown", startTitleMusic, { once: true });
     window.addEventListener("keydown", startTitleMusic, { once: true });
@@ -81488,7 +81626,11 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       const cont = document.getElementById("btn-continue");
       if (cont) cont.classList.remove("primary");
       const s = softOpenStore.value;
-      b.textContent = s.started && s.stage !== "complete" ? "Continue Soft Open \xB7 Quiet" : "Red County \xB7 Soft Open";
+      if (g.redCounty) {
+        b.textContent = s.started && s.stage !== "complete" ? "Continue Soft Open \xB7 Quiet" : "Start Soft Open";
+      } else {
+        b.textContent = s.started && s.stage !== "complete" ? "Continue Soft Open \xB7 Quiet" : "Red County \xB7 Soft Open";
+      }
     };
     g.updateSoftOpenTitle();
     document.getElementById("btn-soft-open").onclick = () => {
@@ -81500,7 +81642,17 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     };
     const ghToggle = document.getElementById("btn-gh-toggle");
     const ghChapters = document.getElementById("gh-chapters");
-    if (ghToggle && ghChapters) {
+    if (g.redCounty) {
+      if (ghToggle) {
+        ghToggle.hidden = true;
+        ghToggle.classList.add("hidden");
+        ghToggle.onclick = null;
+      }
+      if (ghChapters) {
+        ghChapters.hidden = true;
+        ghChapters.classList.add("hidden");
+      }
+    } else if (ghToggle && ghChapters) {
       ghToggle.onclick = () => {
         const open = ghChapters.classList.toggle("hidden") === false;
         ghChapters.hidden = !open;
@@ -82030,7 +82182,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     g.diner?.reset();
     g.garage?.reset();
     g.downtown?.cancel();
-    audio.setMusic?.("title");
+    audio.setMusic?.(g.redCounty ? "none" : "title");
     g.state = "title";
     g.hud.show(false);
     g.menus.hideAll();
