@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-aee7c8bd4f29">
-<meta name="lsgh-tip" content="e97a4e4">
+<meta name="lsgh-build" content="0.35.0-next.0-67ac135399b1">
+<meta name="lsgh-tip" content="cc7fc6d">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -349,7 +349,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip e97a4e4 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip cc7fc6d · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -73659,8 +73659,6 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       v.pitch = v.rollA = 0;
       v.stuckT = 0;
       v.collision = 0;
-      v._softRoll = 1;
-      v._glanceCool = 0;
       v.pitchV = v.rollV = v.steerIn = v.throttle = v.brake = v.ax = v.ay = 0;
       v.gear = 1;
       v.rpm = v.engineOn ? S4.idle : 0;
@@ -73765,11 +73763,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         if (v.brake > 0.2 && v.vf < 0.5 && v.throttle < 0.1 && (v.stopDwell > 0.3 || v.reverse)) v.reverse = true;
         if (v.throttle > 0.1 && v.vf > -0.6) v.reverse = false;
       }
-      const slipAbs = Math.abs(v.beta || 0);
-      const latShare = (v.speed || 0) > 1.5 ? Math.abs(v.vl || 0) / Math.max(v.speed, 1e-3) : 0;
-      const mostlyLong = slipAbs < 0.22 && latShare < 0.38;
-      const groundFloor = mostlyLong ? v.speed || 0 : 0;
-      const speedForPower = Math.max(vfAbs, groundFloor, 6);
+      const speedForPower = Math.max(vfAbs, 6);
       let fDrive = 0, fBrake = 0;
       if (v.reverse) {
         const reverseDrive = 1 - smoothstep2(15 * 0.44704, 16 * 0.44704, Math.max(0, -v.vf));
@@ -73807,14 +73801,6 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         const crawl = 1 - clamp3((vfAbs - 3) / 9, 0, 1);
         const steered = Math.abs(v.steer) > 0.08 ? 1 : 0;
         turfRoll = lerp2(5.4 - 1.1 * steered, 1.28 - 0.12 * steered, crawl);
-      }
-      if (v.surface === "grass" || v.surface === "gravel") {
-        v._softRoll = turfRoll;
-      } else if ((v._softRoll || 0) > 1.02) {
-        v._softRoll = lerp2(v._softRoll, 1, 1 - Math.exp(-dt * 2.8));
-        turfRoll = Math.max(turfRoll, v._softRoll);
-      } else {
-        v._softRoll = 1;
       }
       const fDrag = -S4.cdA * 0.6 * v.vf * vfAbs - (supported ? S4.roll : 0) * signV * turfRoll - (inWater ? 900 * v.vf : 0);
       const serviceBrake = -signV * fBrake;
@@ -74198,7 +74184,6 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       prevSteer = v.steer;
       v.telemetry.jerk = Math.abs(v.ay - prevAy) / dt;
       prevAy = v.ay;
-      if ((v._glanceCool || 0) > 0) v._glanceCool = Math.max(0, v._glanceCool - dt);
       v._stuckClock = (v._stuckClock || 0) + dt;
       if (v._stuckClock > 0.5) {
         const moved = Math.hypot(v.x - (v._stuckX ?? v.x), v.z - (v._stuckZ ?? v.z));
@@ -74213,23 +74198,14 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       {
         const steeredSnag = Math.abs(v.steer) > 0.1;
         const needStuck = steeredSnag ? 0.32 : 0.55;
-        if (ctl && !(v._glanceCool > 0) && v.stuckT > needStuck && v.throttle > 0.5 && !v.reverse && (v.surface === "grass" || v.surface === "gravel" || !v.onRoad)) {
+        if (ctl && v.stuckT > needStuck && v.throttle > 0.5 && !v.reverse && (v.surface === "grass" || v.surface === "gravel" || !v.onRoad)) {
           const side2 = steeredSnag ? Math.sign(v.steer) || 1 : Math.abs(v.yawRate) > 0.05 ? Math.sign(v.yawRate) : 1;
           v.heading += side2 * 0.85;
           v.yawRate = side2 * 3.2;
           const [sfx, sfz] = fwd();
-          const cur = Math.hypot(v.vx, v.vz);
-          if (cur < 7.5) {
-            const want = Math.min(7.5, Math.max(cur + 3.5, 5.5));
-            v.vx = sfx * want;
-            v.vz = sfz * want;
-          } else {
-            const keep = Math.min(cur, 14) * 0.82;
-            v.vx = sfx * keep;
-            v.vz = sfz * keep;
-          }
+          v.vx = sfx * 11;
+          v.vz = sfz * 11;
           v.stuckT = 0.1;
-          v._glanceCool = 0.85;
         }
       }
       const braking = ctl && (v.brake > 0.05 && !v.reverse || v.reverse && v.throttle > 0.05);
@@ -80410,7 +80386,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-aee7c8bd4f29", tipSha: false ? "" : "e97a4e4", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-67ac135399b1", tipSha: false ? "" : "cc7fc6d", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
