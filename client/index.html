@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-e2848902714d">
+<meta name="lsgh-build" content="0.35.0-next.0-43dab5d3ea38">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -43085,7 +43085,7 @@ void main() {
     { id: "afterglow-main", name: "Afterglow on Main", kind: "Driving challenge \xB7 wagon or GTS", detail: "Stop in the blue starting bay with the wagon or GTS. Press Enter / A to start. Follow eight gates, hold the tracking speed, then stop on the mark." },
     { id: "lot42", name: "The Driver\u2019s Call \xB7 Lot 42", kind: "Dee \xB7 wagon or GTS", detail: "Choose your practice car, drive to the blue bay and press Enter / A to repair, line up and start. Six turquoise gates and one gold clockwise lap earn latest and best notes for that car. Read your notes, retry, or drive back to Dee." },
     { id: "kirk", name: "Ronald Kirk Bridge", kind: "Scenic stop \xB7 explore on foot", detail: "Walk out onto the pedestrian bridge for the arch and skyline. F / Y raises the scout camera; P / D-pad down opens free photo mode." },
-    { id: "greenville", name: "Greenville Ave \xB7 Lower", kind: "Dallas strip \xB7 drive and stroll", detail: "Cross the bridge on Woodall or take Howell east from Riverfront. OSM-shaped Greenville with denser porch bars and a Belmont cross \u2014 Phase 2 feel, real storefronts later." }
+    { id: "greenville", name: "Greenville Ave \xB7 Lower", kind: "Dallas strip \xB7 drive and stroll", detail: "Cross the bridge on Woodall or take Howell east from Riverfront. OSM-shaped Greenville with porch bars, Belmont cross, and curb parking \u2014 feel over survey accuracy; real storefronts later." }
   ];
   var chain = (labels, current) => labels.map((label, i) => ({ label, state: i < current ? "done" : i === current ? "now" : "later" }));
   var near = (p, q, r = 25) => !!p && !!q && Math.hypot(p.x - q.x, p.z - q.z) < r && (q.y == null || Math.abs(p.y - q.y) < 2.5);
@@ -43921,7 +43921,7 @@ void main() {
       { id: "studio-gallery", name: "Your studio exhibition", sub: "Hang your photographs and named cut cards \xB7 inside Second Unit", ...STUDIO.entrance },
       { id: "downtown", name: "Downtown \xB7 Main St", sub: "The city core", x: dt.x, z: dt.z, y: 8 },
       { id: "reunion", name: "Reunion Tower", sub: "Downtown landmark", x: 786, z: 552, y: 8 },
-      { id: "greenville", name: "Greenville Ave \xB7 Lower", sub: "East-side bar strip \xB7 Phase 2 Belmont", x: PLACES.greenville.x, z: PLACES.greenville.z, y: PLACES.greenville.y }
+      { id: "greenville", name: "Greenville Ave \xB7 Lower", sub: "East-side bar strip \xB7 curb parking \xB7 Belmont", x: PLACES.greenville.x, z: PLACES.greenville.z, y: PLACES.greenville.y }
     ];
   }
   function remaining(path, x, z, destination = null, actorY = null) {
@@ -55002,6 +55002,18 @@ void main() {
     { z: 140, side: -1, name: "ALTA LANTERN", w: 13, d: 10, h: 4.2, color: 10126704, awn: ["#c9a227", "#1e1e22"], neon: 16767082, panes: 4, door: 0.35, neonSign: true },
     { z: 180, side: 1, name: "CORRIDOR CLUB", w: 16, d: 11, h: 5.2, color: 6048318, awn: ["#2c1a28", "#e8d0e0"], neon: 16744640, panes: 5, door: 0.2 }
   ];
+  var CURB_SPOTS = [
+    { z: -245, side: -1, color: 2771566 },
+    { z: -205, side: 1, color: 12868680 },
+    { z: -145, side: -1, color: 3816768 },
+    { z: -95, side: 1, color: 13945008 },
+    { z: -25, side: -1, color: 1929128 },
+    { z: 35, side: 1, color: 7223842 },
+    { z: 95, side: -1, color: 3103290 },
+    { z: 165, side: 1, color: 5979502 },
+    { cross: "belmont", x: 1060, side: -1, color: 11875628 },
+    { cross: "belmont", x: 1105, side: 1, color: 13214247 }
+  ];
   function fasciaTexture(title, { neonHex = null, bg = "#1a1c1e", accent = "#f2b134" } = {}) {
     const c = document.createElement("canvas");
     c.width = 512;
@@ -55345,6 +55357,185 @@ void main() {
         group.add(mesh2);
       }
     }
+    const asphaltMat = new MeshStandardMaterial({ color: 2763822, roughness: 0.96, metalness: 0.02 });
+    const paintMat2 = new MeshStandardMaterial({ color: 16052196, roughness: 0.85, metalness: 0 });
+    const wheelMat = new MeshStandardMaterial({ color: 1316376, roughness: 0.8, metalness: 0.05 });
+    const glassCarMat = new MeshStandardMaterial({
+      color: 1712680,
+      roughness: 0.25,
+      metalness: 0.4,
+      emissive: 16761962,
+      emissiveIntensity: 0.06
+    });
+    registerNight(glassCarMat, 0.06, 0.55);
+    const stallGeos = [], paintGeos = [], bodyGeos = [], cabinGeos = [], wheelGeos = [], glassGeos = [];
+    const CAR_L = 4.6, CAR_W = 1.85, CAR_H = 1.15, CAB_H = 0.55;
+    for (let i = 0; i < CURB_SPOTS.length; i++) {
+      const s = CURB_SPOTS[i];
+      const onBelmont = s.cross === "belmont";
+      let px2, pz2, heading2;
+      if (onBelmont) {
+        px2 = s.x;
+        pz2 = BELMONT_Z + s.side * 5.6;
+        heading2 = s.side > 0 ? Math.PI / 2 : -Math.PI / 2;
+      } else {
+        px2 = CX + s.side * 6.15;
+        pz2 = s.z;
+        heading2 = i % 2 ? Math.PI : 0;
+      }
+      const y0 = terrainHeight(px2, pz2);
+      const fx = Math.sin(heading2), fz = Math.cos(heading2);
+      const rx = Math.cos(heading2), rz = -Math.sin(heading2);
+      const stallL = 6.2, stallW = 2.4;
+      {
+        const g2 = new BoxGeometry(stallW, 0.06, stallL);
+        g2.rotateY(heading2);
+        g2.translate(px2, y0 + 0.03, pz2);
+        stallGeos.push(g2);
+      }
+      {
+        const sidePaint = 0.08;
+        for (const lat of [-stallW / 2 + 0.05, stallW / 2 - 0.05]) {
+          const g2 = new BoxGeometry(sidePaint, 0.04, stallL - 0.3);
+          g2.rotateY(heading2);
+          g2.translate(px2 + rx * lat, y0 + 0.07, pz2 + rz * lat);
+          paintGeos.push(g2);
+        }
+        const end2 = new BoxGeometry(stallW - 0.2, 0.04, 0.1);
+        end2.rotateY(heading2);
+        end2.translate(px2 - fx * (stallL / 2 - 0.25), y0 + 0.07, pz2 - fz * (stallL / 2 - 0.25));
+        paintGeos.push(end2);
+      }
+      const bodyY = y0 + 0.38 + CAR_H / 2;
+      {
+        const g2 = new BoxGeometry(CAR_W, CAR_H, CAR_L);
+        g2.rotateY(heading2);
+        g2.translate(px2, bodyY, pz2);
+        bodyGeos.push(g2);
+      }
+      {
+        const g2 = new BoxGeometry(CAR_W * 0.88, CAB_H, CAR_L * 0.52);
+        g2.rotateY(heading2);
+        g2.translate(px2 + fx * 0.15, y0 + 0.38 + CAR_H + CAB_H / 2, pz2 + fz * 0.15);
+        cabinGeos.push(g2);
+      }
+      {
+        const g2 = new BoxGeometry(CAR_W * 0.82, CAB_H * 0.7, CAR_L * 0.42);
+        g2.rotateY(heading2);
+        g2.translate(px2 + fx * 0.12, y0 + 0.38 + CAR_H + CAB_H * 0.55, pz2 + fz * 0.12);
+        glassGeos.push(g2);
+      }
+      for (const [lon, lat] of [[-0.32, -0.78], [-0.32, 0.78], [0.32, -0.78], [0.32, 0.78]]) {
+        const wx = px2 + fx * (lon * CAR_L) + rx * (lat * CAR_W * 0.5);
+        const wz = pz2 + fz * (lon * CAR_L) + rz * (lat * CAR_W * 0.5);
+        const g2 = new CylinderGeometry(0.32, 0.32, 0.28, 8);
+        g2.rotateZ(Math.PI / 2);
+        g2.rotateY(heading2);
+        g2.translate(wx, y0 + 0.32, wz);
+        wheelGeos.push(g2);
+      }
+      addBox(px2, pz2, CAR_W * 0.55, CAR_L * 0.48, heading2, y0, y0 + 1.6, "greenville_curb");
+      const marker = new Object3D();
+      marker.name = `gv-curb-car-${i}`;
+      marker.position.set(px2, y0 + 0.5, pz2);
+      marker.userData.curbParking = true;
+      marker.userData.spotIndex = i;
+      group.add(marker);
+    }
+    const EMPTY_CUTOUTS = [
+      { z: -175, side: -1 },
+      { z: -60, side: 1 },
+      { z: 70, side: -1 },
+      { cross: "belmont", x: 1010, side: 1 }
+    ];
+    for (let i = 0; i < EMPTY_CUTOUTS.length; i++) {
+      const s = EMPTY_CUTOUTS[i];
+      const onBelmont = s.cross === "belmont";
+      let px2, pz2, heading2;
+      if (onBelmont) {
+        px2 = s.x;
+        pz2 = BELMONT_Z + s.side * 5.6;
+        heading2 = Math.PI / 2;
+      } else {
+        px2 = CX + s.side * 6.15;
+        pz2 = s.z;
+        heading2 = 0;
+      }
+      const y0 = terrainHeight(px2, pz2);
+      const fx = Math.sin(heading2), fz = Math.cos(heading2);
+      const rx = Math.cos(heading2), rz = -Math.sin(heading2);
+      const stallL = 6, stallW = 2.35;
+      {
+        const g2 = new BoxGeometry(stallW, 0.05, stallL);
+        g2.rotateY(heading2);
+        g2.translate(px2, y0 + 0.025, pz2);
+        stallGeos.push(g2);
+      }
+      for (const lat of [-stallW / 2 + 0.05, stallW / 2 - 0.05]) {
+        const g2 = new BoxGeometry(0.07, 0.035, stallL - 0.35);
+        g2.rotateY(heading2);
+        g2.translate(px2 + rx * lat, y0 + 0.06, pz2 + rz * lat);
+        paintGeos.push(g2);
+      }
+      const marker = new Object3D();
+      marker.name = `gv-curb-stall-${i}`;
+      marker.position.set(px2, y0 + 0.1, pz2);
+      marker.userData.curbParking = true;
+      marker.userData.emptyStall = true;
+      group.add(marker);
+    }
+    if (stallGeos.length) {
+      const g2 = mergeGeometries(stallGeos, false);
+      const m = new Mesh(g2, asphaltMat);
+      m.name = "gv-curb-asphalt";
+      m.receiveShadow = true;
+      group.add(m);
+    }
+    if (paintGeos.length) {
+      const g2 = mergeGeometries(paintGeos, false);
+      const m = new Mesh(g2, paintMat2);
+      m.name = "gv-curb-paint";
+      group.add(m);
+    }
+    if (bodyGeos.length) {
+      const buckets = /* @__PURE__ */ new Map();
+      for (let i = 0; i < bodyGeos.length; i++) {
+        const col3 = CURB_SPOTS[i].color;
+        const key2 = col3 >>> 0;
+        if (!buckets.has(key2)) buckets.set(key2, []);
+        buckets.get(key2).push(bodyGeos[i]);
+      }
+      let bi = 0;
+      for (const [col3, geos] of buckets) {
+        const mat = new MeshStandardMaterial({ color: col3, roughness: 0.55, metalness: 0.12 });
+        const g2 = mergeGeometries(geos, false);
+        const m = new Mesh(g2, mat);
+        m.name = `gv-curb-bodies-${bi++}`;
+        m.castShadow = true;
+        m.receiveShadow = true;
+        group.add(m);
+      }
+    }
+    if (cabinGeos.length) {
+      const cabinMat2 = new MeshStandardMaterial({ color: 1974822, roughness: 0.5, metalness: 0.15 });
+      const g2 = mergeGeometries(cabinGeos, false);
+      const m = new Mesh(g2, cabinMat2);
+      m.name = "gv-curb-cabins";
+      m.castShadow = true;
+      group.add(m);
+    }
+    if (glassGeos.length) {
+      const g2 = mergeGeometries(glassGeos, false);
+      const m = new Mesh(g2, glassCarMat);
+      m.name = "gv-curb-glass";
+      group.add(m);
+    }
+    if (wheelGeos.length) {
+      const g2 = mergeGeometries(wheelGeos, false);
+      const m = new Mesh(g2, wheelMat);
+      m.name = "gv-curb-wheels";
+      group.add(m);
+    }
     const P2 = PLACES.greenville;
     addTrigger({
       id: "greenville",
@@ -55353,7 +55544,7 @@ void main() {
       r: 28,
       once: true,
       onEnter(g2) {
-        g2.hud?.banner?.("Greenville Ave \xB7 Lower", "Phase 3 facades \xB7 awnings \xB7 neon \xB7 inspired storefronts", 3.5);
+        g2.hud?.banner?.("Greenville Ave \xB7 Lower", "Phase 4 curb parking \xB7 facades \xB7 neon \xB7 inspired storefronts", 3.5);
       }
     });
     const pinY = eastY(P2.x);
@@ -79049,7 +79240,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-e2848902714d", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-43dab5d3ea38", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
