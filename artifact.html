@@ -338,10 +338,10 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip cb53ce0 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 9629a9b · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
-    <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
+    <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-soft-open" disabled>Red County · Soft Open</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
     <div id="loading"><span class="lbl">Building West Dallas…</span><div class="bar"><i></i></div></div>
     <div class="foot">WASD · Move    E · Interact    G · Crew Guide    T · Director</div>
   </div>
@@ -5094,19 +5094,19 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
       scale3.z = sz;
       return this;
     }
-    makePerspective(left, right2, top, bottom, near4, far, coordinateSystem = WebGLCoordinateSystem) {
+    makePerspective(left, right2, top, bottom, near5, far, coordinateSystem = WebGLCoordinateSystem) {
       const te = this.elements;
-      const x = 2 * near4 / (right2 - left);
-      const y2 = 2 * near4 / (top - bottom);
+      const x = 2 * near5 / (right2 - left);
+      const y2 = 2 * near5 / (top - bottom);
       const a2 = (right2 + left) / (right2 - left);
       const b = (top + bottom) / (top - bottom);
       let c, d;
       if (coordinateSystem === WebGLCoordinateSystem) {
-        c = -(far + near4) / (far - near4);
-        d = -2 * far * near4 / (far - near4);
+        c = -(far + near5) / (far - near5);
+        d = -2 * far * near5 / (far - near5);
       } else if (coordinateSystem === WebGPUCoordinateSystem) {
-        c = -far / (far - near4);
-        d = -far * near4 / (far - near4);
+        c = -far / (far - near5);
+        d = -far * near5 / (far - near5);
       } else {
         throw new Error("THREE.Matrix4.makePerspective(): Invalid coordinate system: " + coordinateSystem);
       }
@@ -5128,19 +5128,19 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
       te[15] = 0;
       return this;
     }
-    makeOrthographic(left, right2, top, bottom, near4, far, coordinateSystem = WebGLCoordinateSystem) {
+    makeOrthographic(left, right2, top, bottom, near5, far, coordinateSystem = WebGLCoordinateSystem) {
       const te = this.elements;
       const w = 1 / (right2 - left);
       const h = 1 / (top - bottom);
-      const p = 1 / (far - near4);
+      const p = 1 / (far - near5);
       const x = (right2 + left) * w;
       const y2 = (top + bottom) * h;
       let z, zInv;
       if (coordinateSystem === WebGLCoordinateSystem) {
-        z = (far + near4) * p;
+        z = (far + near5) * p;
         zInv = -2 * p;
       } else if (coordinateSystem === WebGPUCoordinateSystem) {
-        z = near4 * p;
+        z = near5 * p;
         zInv = -1 * p;
       } else {
         throw new Error("THREE.Matrix4.makeOrthographic(): Invalid coordinate system: " + coordinateSystem);
@@ -8532,13 +8532,13 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   var _minTarget = /* @__PURE__ */ new Vector2();
   var _maxTarget = /* @__PURE__ */ new Vector2();
   var PerspectiveCamera = class extends Camera {
-    constructor(fov2 = 50, aspect2 = 1, near4 = 0.1, far = 2e3) {
+    constructor(fov2 = 50, aspect2 = 1, near5 = 0.1, far = 2e3) {
       super();
       this.isPerspectiveCamera = true;
       this.type = "PerspectiveCamera";
       this.fov = fov2;
       this.zoom = 1;
-      this.near = near4;
+      this.near = near5;
       this.far = far;
       this.focus = 10;
       this.aspect = aspect2;
@@ -8673,8 +8673,8 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
       this.updateProjectionMatrix();
     }
     updateProjectionMatrix() {
-      const near4 = this.near;
-      let top = near4 * Math.tan(DEG2RAD * 0.5 * this.fov) / this.zoom;
+      const near5 = this.near;
+      let top = near5 * Math.tan(DEG2RAD * 0.5 * this.fov) / this.zoom;
       let height = 2 * top;
       let width = this.aspect * height;
       let left = -0.5 * width;
@@ -8687,8 +8687,8 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
         height *= view.height / fullHeight;
       }
       const skew = this.filmOffset;
-      if (skew !== 0) left += near4 * skew / this.getFilmWidth();
-      this.projectionMatrix.makePerspective(left, left + width, top, top - height, near4, this.far, this.coordinateSystem);
+      if (skew !== 0) left += near5 * skew / this.getFilmWidth();
+      this.projectionMatrix.makePerspective(left, left + width, top, top - height, near5, this.far, this.coordinateSystem);
       this.projectionMatrixInverse.copy(this.projectionMatrix).invert();
     }
     toJSON(meta) {
@@ -8708,28 +8708,28 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   var fov = -90;
   var aspect = 1;
   var CubeCamera = class extends Object3D {
-    constructor(near4, far, renderTarget) {
+    constructor(near5, far, renderTarget) {
       super();
       this.type = "CubeCamera";
       this.renderTarget = renderTarget;
       this.coordinateSystem = null;
       this.activeMipmapLevel = 0;
-      const cameraPX = new PerspectiveCamera(fov, aspect, near4, far);
+      const cameraPX = new PerspectiveCamera(fov, aspect, near5, far);
       cameraPX.layers = this.layers;
       this.add(cameraPX);
-      const cameraNX = new PerspectiveCamera(fov, aspect, near4, far);
+      const cameraNX = new PerspectiveCamera(fov, aspect, near5, far);
       cameraNX.layers = this.layers;
       this.add(cameraNX);
-      const cameraPY = new PerspectiveCamera(fov, aspect, near4, far);
+      const cameraPY = new PerspectiveCamera(fov, aspect, near5, far);
       cameraPY.layers = this.layers;
       this.add(cameraPY);
-      const cameraNY = new PerspectiveCamera(fov, aspect, near4, far);
+      const cameraNY = new PerspectiveCamera(fov, aspect, near5, far);
       cameraNY.layers = this.layers;
       this.add(cameraNY);
-      const cameraPZ = new PerspectiveCamera(fov, aspect, near4, far);
+      const cameraPZ = new PerspectiveCamera(fov, aspect, near5, far);
       cameraPZ.layers = this.layers;
       this.add(cameraPZ);
-      const cameraNZ = new PerspectiveCamera(fov, aspect, near4, far);
+      const cameraNZ = new PerspectiveCamera(fov, aspect, near5, far);
       cameraNZ.layers = this.layers;
       this.add(cameraNZ);
     }
@@ -10784,7 +10784,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
     };
   }
   var OrthographicCamera = class extends Camera {
-    constructor(left = -1, right2 = 1, top = 1, bottom = -1, near4 = 0.1, far = 2e3) {
+    constructor(left = -1, right2 = 1, top = 1, bottom = -1, near5 = 0.1, far = 2e3) {
       super();
       this.isOrthographicCamera = true;
       this.type = "OrthographicCamera";
@@ -10794,7 +10794,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
       this.right = right2;
       this.top = top;
       this.bottom = bottom;
-      this.near = near4;
+      this.near = near5;
       this.far = far;
       this.updateProjectionMatrix();
     }
@@ -10914,7 +10914,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
      * and far planes ensure the scene is rendered in its entirety (the cubeCamera
      * is placed at the origin).
      */
-    fromScene(scene, sigma = 0, near4 = 0.1, far = 100) {
+    fromScene(scene, sigma = 0, near5 = 0.1, far = 100) {
       _oldTarget = this._renderer.getRenderTarget();
       _oldActiveCubeFace = this._renderer.getActiveCubeFace();
       _oldActiveMipmapLevel = this._renderer.getActiveMipmapLevel();
@@ -10923,7 +10923,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
       this._setSize(256);
       const cubeUVRenderTarget = this._allocateTargets();
       cubeUVRenderTarget.depthBuffer = true;
-      this._sceneToCubeUV(scene, near4, far, cubeUVRenderTarget);
+      this._sceneToCubeUV(scene, near5, far, cubeUVRenderTarget);
       if (sigma > 0) {
         this._blur(cubeUVRenderTarget, 0, 0, sigma);
       }
@@ -11042,10 +11042,10 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
       const tmpMesh = new Mesh(this._lodPlanes[0], material);
       this._renderer.compile(tmpMesh, _flatCamera);
     }
-    _sceneToCubeUV(scene, near4, far, cubeUVRenderTarget) {
+    _sceneToCubeUV(scene, near5, far, cubeUVRenderTarget) {
       const fov2 = 90;
       const aspect2 = 1;
-      const cubeCamera = new PerspectiveCamera(fov2, aspect2, near4, far);
+      const cubeCamera = new PerspectiveCamera(fov2, aspect2, near5, far);
       const upSign = [1, -1, 1, 1, 1, 1];
       const forwardSign = [1, 1, 1, -1, -1, -1];
       const renderer = this._renderer;
@@ -17384,14 +17384,14 @@ void main() {
         const ipd = cameraLPos.distanceTo(cameraRPos);
         const projL = cameraL2.projectionMatrix.elements;
         const projR = cameraR2.projectionMatrix.elements;
-        const near4 = projL[14] / (projL[10] - 1);
+        const near5 = projL[14] / (projL[10] - 1);
         const far = projL[14] / (projL[10] + 1);
         const topFov = (projL[9] + 1) / projL[5];
         const bottomFov = (projL[9] - 1) / projL[5];
         const leftFov = (projL[8] - 1) / projL[0];
         const rightFov = (projR[8] + 1) / projR[0];
-        const left = near4 * leftFov;
-        const right2 = near4 * rightFov;
+        const left = near5 * leftFov;
+        const right2 = near5 * rightFov;
         const zOffset = ipd / (-leftFov + rightFov);
         const xOffset = zOffset * -leftFov;
         cameraL2.matrixWorld.decompose(camera.position, camera.quaternion, camera.scale);
@@ -17403,7 +17403,7 @@ void main() {
           camera.projectionMatrix.copy(cameraL2.projectionMatrix);
           camera.projectionMatrixInverse.copy(cameraL2.projectionMatrixInverse);
         } else {
-          const near22 = near4 + zOffset;
+          const near22 = near5 + zOffset;
           const far2 = far + zOffset;
           const left2 = left - xOffset;
           const right22 = right2 + (ipd - xOffset);
@@ -19591,11 +19591,11 @@ void main() {
     }
   };
   var Fog = class _Fog {
-    constructor(color, near4 = 1, far = 1e3) {
+    constructor(color, near5 = 1, far = 1e3) {
       this.isFog = true;
       this.name = "";
       this.color = new Color(color);
-      this.near = near4;
+      this.near = near5;
       this.far = far;
     }
     clone() {
@@ -30819,9 +30819,9 @@ void main() {
   };
   var _matrix = /* @__PURE__ */ new Matrix4();
   var Raycaster = class {
-    constructor(origin, direction, near4 = 0, far = Infinity) {
+    constructor(origin, direction, near5 = 0, far = Infinity) {
       this.ray = new Ray(origin, direction);
-      this.near = near4;
+      this.near = near5;
       this.far = far;
       this.camera = null;
       this.layers = new Layers();
@@ -37411,6 +37411,7 @@ void main() {
     if (g2.propJob?.active) return { id: "recover-prop", label: "Return to assignment checkpoint", detail: "Bring back your assigned car and prop at this stage. Completed steps and retained photographs stay." };
     if (g2.lot42?.active && g2.lot42.phase !== "prepare") return { id: "retry-lot42", label: "Repair, line up & retry Lot 42", detail: "Start a fresh countdown in the blue bay with the same empty car. This attempt ends; your saved notes stay." };
     if (g2.downtown?.active) return { id: "retry-downtown", label: "Retry downtown take", detail: "Return to the starting bay. This take ends; your saved best stays." };
+    if (g2.softOpen?.active) return { id: "recover-soft-open", label: "Return to Soft Open approach", detail: "Put you back on Greenville south of the alley with the same car and Quiet approach. Case and heat stay as they are." };
     if (g2.afterDark?.active) return { id: "recover-chapter", label: "Return to crew checkpoint", detail: "Restart this chapter stage with your assigned car and equipment. Earlier stages and retained photos stay." };
     if (g2.mission.state === "run") return { id: "checkpoint", label: g2.mission.run?.checkpoint ? "Return to checkpoint \xB7 +3 seconds" : "Return to start \xB7 +3 seconds", detail: "The crew resets the car. Gates after the checkpoint must be driven again." };
     if (g2.inCar) return { id: "reset-car", label: "Repair and reset car", detail: g2.delivery?.active ? "This ends the supper delivery. Junie can prepare another order." : "Move this car back onto a nearby road and repair it. Your saved results stay." };
@@ -37425,6 +37426,7 @@ void main() {
     if (g2.director?.recording) return { id: "end-director", label: "Stop recording \xB7 keep take", detail: "Keep the drive recorded so far for this session. Open the Director\u2019s Chair on your crew board to watch it." };
     if (g2.dinerPickup?.active) return { id: "suspend-diner-pickup", label: "Pause pickup \xB7 explore freely", detail: "Keep your checkpoint. Resume Nico\u2019s Window Pickup from the Next section of your crew board." };
     if (g2.propJob?.active) return { id: "suspend-prop", label: "Pause assignment \xB7 explore freely", detail: "Keep your setup and retained photographs. Resume The Missing Scene from your crew board." };
+    if (g2.softOpen?.active) return { id: "suspend-soft-open", label: "Pause Soft Open \xB7 explore freely", detail: "Keep case, heat, and Quiet progress. Resume Soft Open from Title or the yard board." };
     if (g2.afterDark?.active) return { id: "suspend-chapter", label: "Pause chapter \xB7 explore freely", detail: "Keep the last completed stage. Resume from your crew board; an unfinished take starts fresh." };
     if (g2.lot42?.active) return { id: "end-lot42", label: "Pause driving practice \xB7 keep car choice", detail: "Keep exploring here. Resume your selected car from the Crew Guide; any unfinished course starts fresh. Earned notes stay." };
     if (g2.downtown?.active) return { id: "end-downtown", label: "End downtown take", detail: "Keep exploring from here. This unfinished take earns no result; saved bests stay." };
@@ -37508,6 +37510,13 @@ void main() {
       g2.guide?.refresh();
       return true;
     }
+    if (id7 === "suspend-soft-open") {
+      g2.softOpen.suspend();
+      g2.hud.setObjective?.("Free roam", "Soft Open progress is kept. Resume from Title \u2192 Red County \xB7 Soft Open.");
+      if (g2.paused) g2.menus.setPauseOptions?.(crewPauseOptions(g2));
+      g2.guide?.refresh();
+      return true;
+    }
     if (id7 === "suspend-chapter") {
       g2.afterDark.suspend();
       g2.hud.setObjective?.("Free roam", "Your chapter checkpoint is kept. Resume from the Crew Guide.");
@@ -37533,6 +37542,7 @@ void main() {
     if (id7 === "recover-crew-car") return g2.crewCar.recover();
     if (id7 === "recover-diner-pickup") return g2.dinerPickup.recover();
     if (id7 === "recover-prop") return g2.propJob.recover();
+    if (id7 === "recover-soft-open") return g2.softOpen.recover();
     if (id7 === "recover-chapter") return g2.afterDark.recover();
     if (id7 === "end-bridge") {
       g2.mission.freeRoam();
@@ -42001,9 +42011,9 @@ void main() {
         return LOOKS[look].name;
       },
       present(actor, dt = 0, camera = null) {
-        const dx = actor.x - center.x, dz2 = actor.z - center.z, near4 = dx * dx + dz2 * dz2 < 115 * 115;
+        const dx = actor.x - center.x, dz2 = actor.z - center.z, near5 = dx * dx + dz2 * dz2 < 115 * 115;
         const cameraNear = !!camera && Math.hypot(camera.position.x - center.x, camera.position.z - center.z) < 115;
-        detail.visible = near4 || cameraNear;
+        detail.visible = near5 || cameraNear;
         lights.forEach((l) => l.visible = detail.visible);
         if (detail.visible && dt > 0) for (const npc of npcs) {
           npc.setPose("idle", dt, 0);
@@ -42645,10 +42655,10 @@ void main() {
       }
     }
     return { group, surface: surface2, colliders: colliders2, npcs, present(actor, dt = 0) {
-      const near4 = Math.hypot(actor.x - cx, actor.z - cz) < 100;
-      group.visible = near4;
-      lights.forEach((l) => l.visible = near4);
-      if (near4 && dt > 0) for (const npc of npcs) {
+      const near5 = Math.hypot(actor.x - cx, actor.z - cz) < 100;
+      group.visible = near5;
+      lights.forEach((l) => l.visible = near5);
+      if (near5 && dt > 0) for (const npc of npcs) {
         npc.setPose("idle", dt, 0);
         npc.syncVisual(1);
       }
@@ -43063,10 +43073,10 @@ void main() {
       animate,
       setLook,
       present(actor) {
-        const near4 = Math.hypot(actor.x - cx, actor.z - cz) < 75;
-        group.visible = near4;
+        const near5 = Math.hypot(actor.x - cx, actor.z - cz) < 75;
+        group.visible = near5;
         practicals.forEach((l) => {
-          l.visible = near4;
+          l.visible = near5;
         });
       }
     };
@@ -43528,9 +43538,9 @@ void main() {
       },
       setDoor,
       present(viewer) {
-        const near4 = Math.hypot(viewer.x + 446, viewer.z + 240) < 100;
-        group.visible = near4;
-        lamp.visible = near4;
+        const near5 = Math.hypot(viewer.x + 446, viewer.z + 240) < 100;
+        group.visible = near5;
+        lamp.visible = near5;
       }
     };
   }
@@ -44151,8 +44161,8 @@ void main() {
       describe() {
         const job = state().job, def = job && ERRANDS[job.kind];
         if (!job) return null;
-        const pickup = job.stage === "pickup", shop = SHOPS[pickup ? def.from : def.to], near4 = atCounter(g2.player, shop), pad2 = g2.lastInputDevice === "gamepad", inCar = !!g2.inCar, stopped = Math.abs(g2.vehicle?.speed ?? 0) < 0.5, participant = inCar ? g2.vehicle : g2.player;
-        return { title: def.name + " \xB7 " + money(def.pay), phase: pickup ? "Collect the parcel" : "Delivery in hand", action: inCar ? stopped ? "Step out and continue to " + shop.name + " on foot." : "Park safely, then step out to reach the counter on foot." : near4 ? pickup ? "Collect your " + def.parcel + " at the green counter." : "Hand over the parcel to collect " + money(def.pay) + "." : "Walk to " + shop.name + " and its green shopping mark.", control: inCar ? stopped ? pad2 ? "A" : "E" : pad2 ? "LT" : "S" : near4 ? pad2 ? "A" : "E" : pad2 ? "Left stick" : "W A S D", tip: shop.tip + " No timer. G / View \u2192 Wallet keeps pause, resume and directions.", target: shop, distance: Math.hypot((participant?.x ?? g2.player.x) - shop.x, (participant?.z ?? g2.player.z) - shop.z), steps: [{ label: "Collect the parcel", state: pickup ? "now" : "done" }, { label: "Carry to the other counter", state: pickup ? "later" : "now" }, { label: "Hand over and get paid", state: "later" }] };
+        const pickup = job.stage === "pickup", shop = SHOPS[pickup ? def.from : def.to], near5 = atCounter(g2.player, shop), pad2 = g2.lastInputDevice === "gamepad", inCar = !!g2.inCar, stopped = Math.abs(g2.vehicle?.speed ?? 0) < 0.5, participant = inCar ? g2.vehicle : g2.player;
+        return { title: def.name + " \xB7 " + money(def.pay), phase: pickup ? "Collect the parcel" : "Delivery in hand", action: inCar ? stopped ? "Step out and continue to " + shop.name + " on foot." : "Park safely, then step out to reach the counter on foot." : near5 ? pickup ? "Collect your " + def.parcel + " at the green counter." : "Hand over the parcel to collect " + money(def.pay) + "." : "Walk to " + shop.name + " and its green shopping mark.", control: inCar ? stopped ? pad2 ? "A" : "E" : pad2 ? "LT" : "S" : near5 ? pad2 ? "A" : "E" : pad2 ? "Left stick" : "W A S D", tip: shop.tip + " No timer. G / View \u2192 Wallet keeps pause, resume and directions.", target: shop, distance: Math.hypot((participant?.x ?? g2.player.x) - shop.x, (participant?.z ?? g2.player.z) - shop.z), steps: [{ label: "Collect the parcel", state: pickup ? "now" : "done" }, { label: "Carry to the other counter", state: pickup ? "later" : "now" }, { label: "Hand over and get paid", state: "later" }] };
       },
       refresh() {
         if (!busy) {
@@ -45892,7 +45902,7 @@ void main() {
     });
     const panel2 = createGamePanel(g2, { id: "forecourt-brief", title: "The Forecourt Call", onClose: () => close() });
     const handsOwned = () => held2 && g2.player.workingSetCarry === lease && g2.player.carryingLabel === held2.spec.label;
-    const near4 = (p) => onFoot() && reachablePoint(g2.player, p, 2.5, raycast);
+    const near5 = (p) => onFoot() && reachablePoint(g2.player, p, 2.5, raycast);
     const propSightline = (p) => (...args) => raycast(...args, null, (c) => c.data?.reactiveProp !== p);
     const ready = () => set2.props.every((p) => arranged.has(p.kind) && !p.carried && !p.awake && distance2(p, p.def.mark) < 0.18 && p.tilt < 0.05);
     function close() {
@@ -45931,10 +45941,10 @@ void main() {
         panel2.content.append(paragraph(api.describe().action), button("Back to the forecourt", close));
         if (stage2 === "meet") panel2.content.append(button("Make room for the crew", () => {
           if (meet()) close();
-        }, !near4(FORECOURT.counter)));
+        }, !near5(FORECOURT.counter)));
         panel2.content.append(button("Reset the three crew objects", () => {
           if (reset()) close();
-        }, !near4(FORECOURT.desk) || !!held2 || !!rolling), button("End call \xB7 keep photographs", () => {
+        }, !near5(FORECOURT.desk) || !!held2 || !!rolling), button("End call \xB7 keep photographs", () => {
           if (suspend()) close();
         }, !!held2 || !!rolling));
         if (completed2) panel2.content.append(paragraph("Luz: That corner looks ready for a story. End this call to browse snacks and local notes at my counter, or take another photograph while you are here."));
@@ -45972,7 +45982,7 @@ void main() {
       return true;
     }
     function meet() {
-      if (stage2 !== "meet" || !near4(FORECOURT.counter)) return false;
+      if (stage2 !== "meet" || !near5(FORECOURT.counter)) return false;
       stage2 = "dress";
       toast("Luz: Cone beside the walk, bin out of the way, camera case inside. Then we can bring your car around.");
       return true;
@@ -46046,7 +46056,7 @@ void main() {
       } else toast(arranged.size + " / 3 ready. The cone stays outside; the camera case belongs inside.");
     }
     function reset() {
-      if (!near4(FORECOURT.desk) || held2 || rolling) {
+      if (!near5(FORECOURT.desk) || held2 || rolling) {
         toast("Return to the crew table with empty hands before resetting.");
         return false;
       }
@@ -46938,7 +46948,7 @@ void main() {
     const accepted = (car) => !!car && car === g2.cars.find((c) => c.key === "sprinter" && c.stableSpawn) && !car.suspension;
     const allowed = () => !disposed && g2.state === "play" && g2.mission.state === "free" && !g2.hero && !g2.discoveries?.gym && g2.activities.allowed(SUPPLY_ID);
     const usable = () => active && owns() && allowed() && accepted(participant) && cargo.intact() && canSimulate(g2);
-    const near4 = (p, radius2 = 2.1) => supplyStanding(g2) && reachablePoint(g2.player, p, radius2, trace);
+    const near5 = (p, radius2 = 2.1) => supplyStanding(g2) && reachablePoint(g2.player, p, radius2, trace);
     const atPickup = () => supplySettled(participant) && crewCarParked(participant, set2.start);
     const parked = () => supplySettled(participant) && crewCarParked(participant, set2.parking);
     const earned = () => validSupplyArrival(state.arrival, state.runId, set2.route);
@@ -47037,7 +47047,7 @@ void main() {
       g2.hud.toast(arrived ? "Your driven arrival is kept. Unload the case, then bring it inside to Inez." : next === "pickup" ? "The Sprinter is at the loading bay. Collect Rae\u2019s case in storage." : "Your case is kept. Load the Sprinter here and drive to Second Unit again.", 5);
       return true;
     }
-    const canCollect = () => usable() && state.stage === "pickup" && atPickup() && g2.propJob.room.doorOpen && near4(set2.pickup);
+    const canCollect = () => usable() && state.stage === "pickup" && atPickup() && g2.propJob.room.doorOpen && near5(set2.pickup);
     const canTransfer = () => usable() && supplyRearReach(g2, participant, trace) && (state.stage === "load" && atPickup() && cargo.mode === "carried" || state.stage === "unload" && earned() && parked() && cargo.mode === "loaded");
     function collect() {
       if (!canCollect() || !cargo.carry()) return false;
@@ -47061,7 +47071,7 @@ void main() {
       return false;
     }
     function handoff() {
-      if (!usable() || state.stage !== "handoff" || cargo.mode !== "carried" || !earned() || !inStudio(g2.player) || !near4(set2.review, 2.7)) return false;
+      if (!usable() || state.stage !== "handoff" || cargo.mode !== "carried" || !earned() || !inStudio(g2.player) || !near5(set2.review, 2.7)) return false;
       cargo.clear();
       state.last = { runId: state.runId, car: "sprinter", caseKind: "equipment-case", recipient: "inez", location: "second-unit", completedAt: clock() };
       state.completed = Math.min(Number.MAX_SAFE_INTEGER, state.completed + 1);
@@ -47141,7 +47151,7 @@ void main() {
         } else if (canTransfer()) {
           transfer();
           consumeInteraction(input2);
-        } else if (state.stage === "handoff" && near4(set2.review, 2.7) && inStudio(g2.player)) {
+        } else if (state.stage === "handoff" && near5(set2.review, 2.7) && inStudio(g2.player)) {
           handoff();
           consumeInteraction(input2);
         }
@@ -47197,7 +47207,7 @@ void main() {
           control = "";
         }
         const p = participant ? target2() : set2.start, i = SUPPLY_STAGES.indexOf(state.stage);
-        if (near4(p) && (state.stage === "pickup" && atPickup() || state.stage === "handoff" || ["load", "unload"].includes(state.stage) && supplyRearReach(g2, participant, trace))) control = use;
+        if (near5(p) && (state.stage === "pickup" && atPickup() || state.stage === "handoff" || ["load", "unload"].includes(state.stage) && supplyRearReach(g2, participant, trace))) control = use;
         if (state.stage === "unload" && g2.inCar && parked()) control = use;
         return {
           title: SUPPLY_TITLE,
@@ -47589,7 +47599,7 @@ void main() {
     const empty2 = (car) => accepted(car) && car.payloadKg === 0 && !g2.player.carrying;
     const standing = () => !g2.inCar && !g2.player.anim && g2.player.grounded !== false && !(g2.player.tumble > 0);
     const onFoot = () => standing() && !g2.player.cameraUp;
-    const near4 = (point10, r = 2.7) => onFoot() && reachablePoint(g2.player, point10, r, trace);
+    const near5 = (point10, r = 2.7) => onFoot() && reachablePoint(g2.player, point10, r, trace);
     const allowed = () => !disposed && g2.state === "play" && g2.mission.state === "free" && !g2.hero && !g2.discoveries?.gym && g2.activities.allowed(CREW_CAR_ID);
     const owns = () => lease != null && g2.activities.owns(CREW_CAR_ID, lease);
     const free2 = () => !active && allowed() && !g2.activities.owner && !g2.player.anim && !g2.player.carrying && !g2.scoutRoll?.active && !g2.delivery?.active && !g2.studioJob?.active && !g2.downtown?.active && !g2.lot42?.active;
@@ -47715,7 +47725,7 @@ void main() {
       return true;
     }
     function inspect() {
-      if (!usable() || state.stage !== "prepare" || !near4(set2.service)) return false;
+      if (!usable() || state.stage !== "prepare" || !near5(set2.service)) return false;
       if (!atGarage()) {
         g2.hud.toast("Bring the empty Brazos wagon to the marked garage space and let it settle, then return to this bench.", 4);
         return false;
@@ -47733,14 +47743,14 @@ void main() {
       return true;
     }
     function service() {
-      if (!usable() || state.stage !== "prepare" || !near4(set2.service) || !atGarage()) return false;
+      if (!usable() || state.stage !== "prepare" || !near5(set2.service) || !atGarage()) return false;
       participant.damage.repair();
       g2.hud.toast("Crew wagon serviced. Inspect it when you are ready to roll.", 3);
       return true;
     }
     const currentReview = (request) => active && owns() && allowed() && generation === request && state.stage === "review";
     async function finish(data, request, screen2) {
-      if (busy || !currentReview(request) || !review.active || !near4(set2.review) || g2.guide?.active || g2.scrapbook?.active || g2.photo?.active || g2.paused) return null;
+      if (busy || !currentReview(request) || !review.active || !near5(set2.review) || g2.guide?.active || g2.scrapbook?.active || g2.photo?.active || g2.paused) return null;
       const original = findCrewCarFrame(album());
       if (!original || data.photoIds?.length !== 1 || data.photoIds[0] !== original.id) return null;
       const title = crewCarTitle(data.title), current = () => currentReview(request) && screen2.current() && findCrewCarFrame(album())?.blob === original.blob;
@@ -47774,7 +47784,7 @@ void main() {
     }
     function openReview() {
       if (!(active && owns() && state.stage === "review") && !free2()) return false;
-      if (!canSimulate(g2) || !near4(set2.review) || saving != null) return false;
+      if (!canSimulate(g2) || !near5(set2.review) || saving != null) return false;
       if (!g2.scrapbook.store.status.ready) {
         g2.hud.toast("Your Scrapbook is still opening. Give the photographs a moment.", 3);
         return false;
@@ -47947,7 +47957,7 @@ void main() {
         const p = proof.snapshot(), point10 = target2();
         if (state.stage === "prepare") {
           action = atGarage() ? api.needsService ? "Use the bench to service the crew wagon, then inspect it." : "Walk to the service bench and inspect the crew wagon." : "Bring the empty Brazos wagon to the garage\u2019s gold parking mark. Stop, get out, and inspect it at the bench.";
-          control = near4(set2.service) && atGarage() ? key2("E", "A") : g2.inCar ? key2("W / S", "RT / LT") : control;
+          control = near5(set2.service) && atGarage() ? key2("E", "A") : g2.inCar ? key2("W / S", "RT / LT") : control;
         } else if (state.stage === "drive") {
           action = g2.inCar && g2.vehicle === participant ? p.gateIndex < set2.route.gates.length ? point10.instruction || `Follow the route through ${point10.name}.` : "Pull into the gold arrival bay, line up with its arrow, then hold the wagon still." : "Get into your Brazos wagon and follow the crew route.";
           control = g2.inCar ? key2("W / S \xB7 A / D", "RT / LT \xB7 Left stick") : Math.hypot(g2.player.x - participant.x, g2.player.z - participant.z) < 4 ? key2("E", "A") : control;
@@ -47956,7 +47966,7 @@ void main() {
           control = g2.inCar ? parked() ? key2("E", "A") : key2("W / S", "RT / LT") : g2.player.cameraUp ? key2("Enter", "A") : key2("F, then Enter", "Y, then A");
         } else if (state.stage === "review") {
           action = "Walk inside Second Unit and talk to Inez. Name your arrival photograph and keep it.";
-          control = near4(set2.review) ? key2("E", "A") : control;
+          control = near5(set2.review) ? key2("E", "A") : control;
         } else {
           action = "Your named arrival photograph is kept. G / View offers its place in the studio exhibition.";
           control = key2("G", "View");
@@ -51659,12 +51669,12 @@ void main() {
     const index = () => DINER_PICKUP_STAGES.indexOf(state.stage);
     const carrying = () => active && state.stage === "place";
     const onFoot = () => !g2.inCar && !g2.player.anim && !g2.player.cameraUp && g2.player.grounded !== false && !(g2.player.tumble > 0);
-    const near4 = (point10, radius2 = 2.1) => onFoot() && reachablePoint(g2.player, point10, radius2, trace);
+    const near5 = (point10, radius2 = 2.1) => onFoot() && reachablePoint(g2.player, point10, radius2, trace);
     const allowed = () => !disposed && g2.state === "play" && g2.mission?.state === "free" && !g2.hero && !g2.discoveries?.gym && g2.activities?.allowed(DINER_PICKUP_ID) === true;
     const ownsLease = () => lease != null && g2.activities.owner === DINER_PICKUP_ID && g2.activities.claim(DINER_PICKUP_ID) === lease;
     const free2 = () => !active && allowed() && !g2.activities.owner && !g2.player.anim && !g2.player.carrying && !g2.scoutRoll?.active && !g2.lot42?.active && !g2.delivery?.active && !g2.studioJob?.active && !g2.downtown?.active;
     const usable = () => active && ownsLease() && allowed() && canSimulate(g2);
-    const at5 = (point10, radius2 = 2.1) => usable() && near4(point10, radius2);
+    const at5 = (point10, radius2 = 2.1) => usable() && near5(point10, radius2);
     const invalidate = () => {
       generation++;
       pending = null;
@@ -51739,7 +51749,7 @@ void main() {
       return true;
     }
     function start3(key2) {
-      if (!Object.hasOwn(DINER_PICKUP_BRIEFS, key2) || !free2() || !canSimulate(g2) || !near4(set2.reviewPoint, 2.7)) return false;
+      if (!Object.hasOwn(DINER_PICKUP_BRIEFS, key2) || !free2() || !canSimulate(g2) || !near5(set2.reviewPoint, 2.7)) return false;
       if (!acquire()) return false;
       Object.assign(state, { started: true, stage: "collect", runId: makeRunId(), brief: key2, frame: null, frames: {} });
       syncCarry();
@@ -51780,7 +51790,7 @@ void main() {
       g2.hud.toast("The original frame is missing from Scrapbook. Your set is kept; make the photograph again.", 5);
     }
     const reviewCurrent = (request) => active && ownsLease() && allowed() && request === generation && state.stage === "review";
-    const reviewPermitted = (request) => reviewCurrent(request) && review?.active && !g2.paused && !g2.photo?.active && !g2.guide?.active && !g2.scrapbook?.active && near4(set2.reviewPoint, 2.7) && set2.containsDiner(g2.player);
+    const reviewPermitted = (request) => reviewCurrent(request) && review?.active && !g2.paused && !g2.photo?.active && !g2.guide?.active && !g2.scrapbook?.active && near5(set2.reviewPoint, 2.7) && set2.containsDiner(g2.player);
     function complete(last, score6, imagePersisted) {
       state.last = last;
       state.completed = Math.min(Number.MAX_SAFE_INTEGER, state.completed + 1);
@@ -51843,7 +51853,7 @@ void main() {
     }
     function finishReview(data, request, cut) {
       if (paired()) return finishPair(data, request, cut);
-      if (!active || !ownsLease() || !allowed() || !review?.active || g2.paused || g2.photo?.active || g2.guide?.active || g2.scrapbook?.active || request !== generation || state.stage !== "review" || !near4(set2.reviewPoint, 2.7) || !set2.containsDiner(g2.player)) return null;
+      if (!active || !ownsLease() || !allowed() || !review?.active || g2.paused || g2.photo?.active || g2.guide?.active || g2.scrapbook?.active || request !== generation || state.stage !== "review" || !near5(set2.reviewPoint, 2.7) || !set2.containsDiner(g2.player)) return null;
       const photo = currentPhoto();
       if (!photo || !Array.isArray(data?.photoIds) || data.photoIds.length !== 1 || data.photoIds[0] !== photo.id) return null;
       const score6 = state.frame.score;
@@ -51851,7 +51861,7 @@ void main() {
       return complete({ brief: state.brief, title, photoId: photo.id, runId: state.runId, score: score6 }, score6, photo.persisted === true);
     }
     function openReview() {
-      if (!review || !canSimulate(g2) || !near4(set2.reviewPoint, 2.7) || !set2.containsDiner(g2.player)) return false;
+      if (!review || !canSimulate(g2) || !near5(set2.reviewPoint, 2.7) || !set2.containsDiner(g2.player)) return false;
       if (savingRequest === generation) {
         g2.hud.toast("Your postcard is still saving. Give it a moment, then return to Nico.", 4);
         return false;
@@ -51932,7 +51942,7 @@ void main() {
           g2.hud.toast("Pause or finish your current activity before joining Nico\u2019s pickup.", 3);
           return false;
         }
-        if (!near4(set2.reviewPoint, 2.7)) {
+        if (!near5(set2.reviewPoint, 2.7)) {
           g2.setDestination({ ...set2.dinerEntrance, id: "last-light-diner", name: "Last Light Diner" });
           g2.hud.toast("Meet Nico inside Last Light Diner to choose the story.", 3);
           return false;
@@ -52032,20 +52042,20 @@ void main() {
         let control = walk, action = "", tip = "G / View opens your call sheet. Pause pickup keeps your checkpoint and earlier photographs.";
         if (state.stage === "collect") {
           action = set2.room.doorOpen ? "Walk into Prop House storage and collect the " + DINER_PICKUP_BRIEFS[state.brief].propLabel + "." : "Walk next door to Trinity Prop House. Slide open the storage door.";
-          if (near4(point10)) control = use;
+          if (near5(point10)) control = use;
         }
         if (state.stage === "place") {
           action = set2.containsDiner(g2.player) ? "Carry the prop to the highlighted set point and place it." : "Carry the prop back along the frontage and through the diner entrance.";
-          if (set2.containsDiner(g2.player) && near4(point10)) control = use;
+          if (set2.containsDiner(g2.player) && near5(point10)) control = use;
           tip = "Carry it on foot. Put it on the set before running, jumping or entering a car.";
         }
         if (state.stage === "frame") {
           action = busy ? "Developing your photograph. Your next step appears when it is retained." : set2.containsDiner(g2.player) ? paired() ? `Stand on the ${currentShot().name} mark. ${currentShot().instruction} Capture when Ready.` : "Stand on the pickup floor mark. Frame the story and capture when Ready." : "Return through the diner entrance to the pickup floor mark.";
-          control = busy ? "" : set2.containsDiner(g2.player) && near4(point10, currentShot().mark.r ?? 1.3) ? key2("Enter", "A") : walk;
+          control = busy ? "" : set2.containsDiner(g2.player) && near5(point10, currentShot().mark.r ?? 1.3) ? key2("Enter", "A") : walk;
         }
         if (state.stage === "review") {
           action = "Return to Nico. Name your postcard and finish the pickup.";
-          if (near4(point10, 2.7)) control = use;
+          if (near5(point10, 2.7)) control = use;
         }
         if (state.stage === "complete") {
           action = "Your pickup is finished. View the postcard or choose another brief from the Crew Guide.";
@@ -52574,11 +52584,11 @@ void main() {
           kit.position.set(NIGHT_SET.kit.x + 1.4, NIGHT_SET.kit.y + 0.94, NIGHT_SET.kit.z);
           kit.rotation.y = 0;
         }
-        const near4 = Math.hypot(viewer.x - NIGHT_SET.deck.x, viewer.z - NIGHT_SET.deck.z) < 75;
+        const near5 = Math.hypot(viewer.x - NIGHT_SET.deck.x, viewer.z - NIGHT_SET.deck.z) < 75;
         for (const lamp of lamps) {
-          lamp.rig.visible = rigged > lamp.index && near4;
+          lamp.rig.visible = rigged > lamp.index && near5;
           lamp.ring.visible = stage2 === "set" && rigged === lamp.index;
-          lamp.light.intensity = rigged > lamp.index && near4 ? participant?.key === "gts" ? 55 : 95 : 0;
+          lamp.light.intensity = rigged > lamp.index && near5 ? participant?.key === "gts" ? 55 : 95 : 0;
           lamp.light.color.set(look === "moon" ? 9292287 : 16759410);
         }
         marker.visible = !!target2 && !["supper", "drive", "studio", "wrap"].includes(stage2);
@@ -53429,6 +53439,535 @@ void main() {
     return api;
   }
 
+  // src/game/softOpenProgress.js
+  var HEIST_TITLE = "Soft Open";
+  var APPROACHES = ["quiet", "decoy", "loud"];
+  var CARS = ["camaro1le", "evora"];
+  var STAGES = ["brief", "prep", "window", "pinch", "escape", "clean", "botched", "complete"];
+  var idOk = (s) => typeof s === "string" && /^[a-zA-Z0-9_-]{1,100}$/.test(s);
+  function normalizeSoftOpen(raw) {
+    const out = {
+      version: 1,
+      started: false,
+      stage: "brief",
+      car: "camaro1le",
+      approach: "quiet",
+      runId: "",
+      hasCase: false,
+      botched: false,
+      heatPeak: 0,
+      quietCompleted: 0,
+      last: null
+    };
+    if (!isRecord(raw)) return out;
+    out.started = raw.started === true;
+    out.car = CARS.includes(raw.car) ? raw.car : "camaro1le";
+    out.approach = APPROACHES.includes(raw.approach) ? raw.approach : "quiet";
+    if (idOk(raw.runId)) out.runId = raw.runId;
+    out.hasCase = raw.hasCase === true;
+    out.botched = raw.botched === true;
+    if (Number.isFinite(raw.heatPeak) && raw.heatPeak >= 0) out.heatPeak = Math.min(100, raw.heatPeak);
+    if (Number.isSafeInteger(raw.quietCompleted) && raw.quietCompleted >= 0) out.quietCompleted = raw.quietCompleted;
+    if (isRecord(raw.last)) {
+      out.last = {
+        outcome: raw.last.outcome === "botched" ? "botched" : "clean",
+        car: CARS.includes(raw.last.car) ? raw.last.car : out.car,
+        approach: APPROACHES.includes(raw.last.approach) ? raw.last.approach : "quiet",
+        heatPeak: Number.isFinite(raw.last.heatPeak) ? Math.min(100, Math.max(0, raw.last.heatPeak)) : 0
+      };
+    }
+    let index = Math.max(0, STAGES.indexOf(raw.stage));
+    if (!out.started || !out.runId) index = 0;
+    out.stage = STAGES[index] || "brief";
+    return out;
+  }
+  function createSoftOpenStore(options = {}) {
+    return createPersistentStore({
+      key: "lsgh.soft-open.v1",
+      scope: "Soft Open heist",
+      version: 1,
+      normalize: normalizeSoftOpen,
+      ...options
+    });
+  }
+  var softOpenStore = createSoftOpenStore();
+
+  // src/game/softOpen.js
+  var SOFT_OPEN_ID = "soft-open";
+  var ALLEY = Object.freeze({
+    id: "soft-open-alley",
+    name: "Alley pinch \xB7 Last Call Room",
+    x: 1054,
+    z: -52,
+    y: eastY(1054),
+    r: 11
+  });
+  var APPROACH = Object.freeze({ x: 1080, z: -130, y: eastY(1080), heading: 0 });
+  var DROP = Object.freeze({
+    id: "soft-open-drop",
+    name: "Greenville soft wash",
+    x: 1118,
+    z: 255,
+    y: eastY(1118),
+    r: 14
+  });
+  var WINDOW_SEC = 75;
+  var STANDBY_SEC = 8;
+  var SPEED_HEAT_MPS = 17.5;
+  var STRIP_X = 1080;
+  var CAR_LABEL = { camaro1le: "Camaro 1LE", evora: "Evora 400" };
+  var near3 = (a2, b, r) => !!a2 && !!b && Math.hypot(a2.x - b.x, a2.z - b.z) < r;
+  var onStrip = (p) => Math.abs((p?.x || 0) - STRIP_X) < 42 && p.z > -380 && p.z < 320;
+  function createSoftOpen(g2, { store: store4 = softOpenStore } = {}) {
+    let active = false, token = null, generation = 0, participant = null;
+    let heat = 0, windowLeft = 0, windowOpen = false, standby = false;
+    let speedHeatAcc = 0, endingOpen = false;
+    const state = store4.value;
+    const freeWorld = () => g2.state === "play" && g2.mission.state === "free" && !g2.lot42?.active && !g2.downtown?.active && !g2.scoutRoll?.active && !g2.delivery?.active && !g2.studioJob?.active && !g2.hero && !g2.afterDark?.active && !g2.propJob?.active && !g2.dinerPickup?.active && !g2.crewCar?.active && !g2.crewSupply?.active;
+    const eligible = () => !active && freeWorld() && g2.activities.allowed(SOFT_OPEN_ID);
+    const checkpoint = () => {
+      store4.commit();
+      g2.guide?.refresh();
+    };
+    const carLabel = () => CAR_LABEL[state.car] || state.car;
+    function setMarkers() {
+      if (!active) {
+        g2.minimap.setMarkers([]);
+        return;
+      }
+      const marks = [];
+      if (["window", "pinch"].includes(state.stage) && !state.hasCase) {
+        marks.push({ x: ALLEY.x, z: ALLEY.z, color: "#f2b134", icon: "flag" });
+      }
+      if (state.hasCase || state.botched || state.stage === "escape") {
+        marks.push({ x: DROP.x, z: DROP.z, color: state.hasCase ? "#6dffa8" : "#ff8d6b", icon: "flag" });
+      }
+      g2.minimap.setMarkers(marks);
+    }
+    function routeForStage() {
+      if (!active) return;
+      if (!state.hasCase && !state.botched && ["window", "pinch"].includes(state.stage)) {
+        g2.setDestination({ id: ALLEY.id, name: ALLEY.name, x: ALLEY.x, z: ALLEY.z, y: ALLEY.y });
+      } else if (state.hasCase || state.botched || state.stage === "escape") {
+        g2.setDestination({ id: DROP.id, name: DROP.name, x: DROP.x, z: DROP.z, y: DROP.y });
+      } else {
+        g2.setDestination(null);
+      }
+      setMarkers();
+    }
+    function hudPhase() {
+      if (!active) return;
+      const heatTxt = `Heat ${Math.round(heat)} \xB7 Case ${state.hasCase ? "yes" : "no"}`;
+      if (state.stage === "prep") {
+        g2.hud.setObjective("Soft Open \xB7 prep", `Quiet \xB7 ${carLabel()} \xB7 confirm when ready`);
+        g2.hud.setChallenge(false);
+        return;
+      }
+      if (standby && !windowOpen) {
+        g2.hud.setObjective("Stand by south of the alley", `${heatTxt} \xB7 Rae calls the window in ${Math.ceil(windowLeft)}s`);
+        g2.hud.setChallenge(true, "Soft Open \xB7 Quiet");
+        g2.hud.challenge(STANDBY_SEC - windowLeft, 1, windowLeft / STANDBY_SEC, "STAND BY");
+        return;
+      }
+      if (!state.hasCase && !state.botched && windowOpen) {
+        g2.hud.setObjective("Alley pinch \xB7 window open", `${heatTxt} \xB7 ${Math.ceil(windowLeft)}s left \xB7 no camera needed`);
+        g2.hud.setChallenge(true, "Soft Open \xB7 Quiet");
+        g2.hud.challenge(WINDOW_SEC - windowLeft, Math.max(0, 1 - heat / 100), Math.max(0, windowLeft / WINDOW_SEC), `WINDOW ${Math.ceil(windowLeft)}s`);
+        return;
+      }
+      if (state.hasCase || state.botched || state.stage === "escape") {
+        g2.hud.setObjective(state.hasCase ? "Soft wash drop" : "Abort \xB7 soft wash", `${heatTxt} \xB7 keep Greenville speed down`);
+        g2.hud.setChallenge(true, "Soft Open \xB7 Quiet");
+        g2.hud.challenge(0, Math.max(0, 1 - heat / 100), state.hasCase ? 1 : 0, state.hasCase ? "CASE ON BOARD" : "EMPTY-HANDED");
+      }
+    }
+    function bumpHeat(amount, reason) {
+      if (!active || endingOpen || !(amount > 0)) return;
+      const next = Math.min(100, heat + amount);
+      if (next === heat) return;
+      heat = next;
+      state.heatPeak = Math.max(state.heatPeak || 0, heat);
+      if (reason) g2.hud.toast(reason, 2.2);
+      if (heat >= 100) {
+        state.botched = true;
+        if (!state.hasCase) failWindow("Heat\u2019s cooked before the case. Soft wash \u2014 abort the quiet book.");
+        else {
+          state.stage = "escape";
+          g2.hud.say("Rae \xB7 radio", "Heat\u2019s cooked. Soft wash, now \u2014 Quiet book\u2019s burned.", 4);
+          checkpoint();
+          routeForStage();
+        }
+      }
+      hudPhase();
+    }
+    function openWindow() {
+      if (!active || windowOpen || state.hasCase || state.botched) return;
+      standby = false;
+      windowOpen = true;
+      windowLeft = WINDOW_SEC;
+      state.stage = "window";
+      checkpoint();
+      g2.hud.clearCaptions();
+      g2.hud.say("Rae \xB7 radio", "Window\u2019s open. Poker case leaving the alley. You\u2019re the car \u2014 don\u2019t trash Ellis\u2019s bar.", 4.2);
+      g2.hud.banner("Window open", "Quiet \xB7 alley pinch", 2.8);
+      routeForStage();
+      hudPhase();
+    }
+    function takeCase() {
+      if (!active || state.hasCase || !windowOpen || windowLeft <= 0) return false;
+      const actor = g2.inCar ? g2.vehicle : g2.player;
+      if (!near3(actor, ALLEY, ALLEY.r)) return false;
+      state.hasCase = true;
+      state.stage = "escape";
+      windowOpen = false;
+      standby = false;
+      checkpoint();
+      g2.audio.play?.("gateGood");
+      g2.hud.clearCaptions();
+      g2.hud.say("Rae \xB7 radio", "Case is yours. Soft wash on the south lot \u2014 easy on Greenville speed.", 4);
+      g2.hud.banner("Case secured", "Quiet take \xB7 go to soft wash", 2.8);
+      routeForStage();
+      hudPhase();
+      return true;
+    }
+    function failWindow(why) {
+      if (!active || state.hasCase) return;
+      windowOpen = false;
+      standby = false;
+      state.botched = true;
+      state.stage = "escape";
+      checkpoint();
+      g2.hud.clearCaptions();
+      g2.hud.say("Rae \xB7 radio", why || "Window\u2019s gone. Empty-handed \u2014 still hit the soft wash so we can reset.", 4.2);
+      g2.hud.banner("Botched window", "Fail-forward \xB7 soft wash", 3);
+      bumpHeat(12, null);
+      routeForStage();
+      hudPhase();
+    }
+    function wrapUp(clean) {
+      endingOpen = false;
+      active = false;
+      generation++;
+      g2.activities.release(SOFT_OPEN_ID, token);
+      token = null;
+      participant = null;
+      heat = 0;
+      windowLeft = 0;
+      windowOpen = false;
+      standby = false;
+      g2.hud.setChallenge(false);
+      g2.minimap.setMarkers([]);
+      if (g2.gps?.dest?.id?.startsWith("soft-open")) g2.setDestination(null);
+      g2.guide?.refresh();
+      g2.updateSoftOpenTitle?.();
+      g2.hud.setObjective(clean ? "Soft Open Quiet \xB7 done" : "Soft Open \xB7 botched", "Title \u2192 Red County \xB7 Soft Open. Handling unchanged.");
+      g2.hud.banner(clean ? "Clean Soft Open" : "Botched Soft Open", clean ? "Glass County teased" : "Yard reset", 3.2);
+      g2.audio.play?.(clean ? "gateGood" : "cone");
+    }
+    function finish(outcome) {
+      if (!active || endingOpen) return false;
+      endingOpen = true;
+      const clean = outcome === "clean";
+      state.last = { outcome: clean ? "clean" : "botched", car: state.car, approach: "quiet", heatPeak: state.heatPeak || heat };
+      if (clean) state.quietCompleted = Math.min(Number.MAX_SAFE_INTEGER, (state.quietCompleted || 0) + 1);
+      state.stage = "complete";
+      state.botched = !clean;
+      checkpoint();
+      g2.hud.setChallenge(false);
+      g2.minimap.setMarkers([]);
+      g2.setDestination(null);
+      g2.hud.clearCaptions();
+      const text3 = clean ? "Rae counts the alley cash, taps the case shut. \u201CClean Soft Open. Glass County\u2019s next \u2014 when you\u2019re ready.\u201D Quiet book stays quiet. No scrapbook needed." : "Rae doesn\u2019t look up long. \u201CBotched Soft Open. Case cold or heat loud \u2014 either way Ellis still has a bar. We reset from the yard.\u201D";
+      g2.conversation.show({
+        name: clean ? "Rae \xB7 clean" : "Rae \xB7 botched",
+        place: DROP.name,
+        text: text3,
+        choices: [{ label: clean ? "Soft Open Quiet \xB7 complete" : "Return to the yard", action: () => wrapUp(clean) }]
+      });
+      return true;
+    }
+    function acquire() {
+      if (!eligible() || !canSimulate(g2)) return false;
+      token = g2.activities.claim(SOFT_OPEN_ID);
+      if (token == null) return false;
+      active = true;
+      generation++;
+      endingOpen = false;
+      heat = 0;
+      windowLeft = 0;
+      windowOpen = false;
+      standby = false;
+      speedHeatAcc = 0;
+      return true;
+    }
+    function suspend() {
+      if (!active) return false;
+      active = false;
+      generation++;
+      endingOpen = false;
+      heat = 0;
+      windowLeft = 0;
+      windowOpen = false;
+      standby = false;
+      g2.hud.setChallenge(false);
+      g2.activities.release(SOFT_OPEN_ID, token);
+      token = null;
+      participant = null;
+      if (g2.gps?.dest?.id?.startsWith("soft-open")) g2.setDestination(null);
+      g2.minimap.setMarkers([]);
+      checkpoint();
+      return true;
+    }
+    function placeApproach() {
+      participant = g2.cars.find((c) => c.key === state.car);
+      if (!participant) return false;
+      const bay = findSafeCarBay(g2, participant, APPROACH);
+      if (!bay) {
+        g2.hud.toast("Approach bay blocked. Clear Greenville south of Last Call, then retry Soft Open.", 5);
+        return false;
+      }
+      for (const car of g2.cars) {
+        car.controlled = false;
+        car.stopEngine?.();
+      }
+      g2.inCar = false;
+      g2.setActiveCar(participant);
+      participant.place(bay.x, bay.z, bay.heading, bay.y);
+      g2.seatDriver(participant);
+      g2.camera.recenter();
+      g2.cameraSnap = true;
+      return true;
+    }
+    function beginRun() {
+      if (!active) return false;
+      Object.assign(state, {
+        started: true,
+        stage: "window",
+        approach: "quiet",
+        hasCase: false,
+        botched: false,
+        heatPeak: 0,
+        runId: "soft-" + (globalThis.crypto?.randomUUID?.() || String(Date.now()))
+      });
+      heat = 0;
+      if (!placeApproach()) {
+        suspend();
+        return false;
+      }
+      checkpoint();
+      g2.hud.banner(HEIST_TITLE, "Quiet \xB7 stand by for Rae", 3);
+      g2.hud.say("Rae \xB7 radio", "You\u2019re on Greenville. Hold south of the alley \u2014 I\u2019ll call the window. No camera needed for this one.", 4);
+      standby = true;
+      windowOpen = false;
+      windowLeft = STANDBY_SEC;
+      routeForStage();
+      hudPhase();
+      return true;
+    }
+    function talkBrief() {
+      if (!canSimulate(g2) || g2.player.anim) return false;
+      if (active) {
+        g2.hud.toast("Soft Open is live. G shows the next beat; R recovers the approach.", 3);
+        return true;
+      }
+      if (!eligible()) {
+        g2.hud.toast("Finish or pause your current activity before Soft Open.", 3);
+        return false;
+      }
+      g2.conversation.show({
+        name: "Rae \xB7 briefing",
+        place: "Red County \xB7 Soft Open",
+        text: "Poker room cash case leaves the alley behind Ellis\u2019s bar. You\u2019re the car. Quiet approach only for this book \u2014 don\u2019t trash the bar, don\u2019t need a camera. Decoy and Loud stay on the shelf.",
+        choices: [
+          ...state.started && !["complete", "brief", "prep"].includes(state.stage) ? [{ label: "Resume Soft Open \xB7 saved run", action: () => api.resume() }] : [],
+          { label: "Take Soft Open \xB7 Quiet", action: () => api.talkPrep() }
+        ]
+      });
+      return true;
+    }
+    function talkPrep() {
+      if (!active && !eligible()) return false;
+      if (!active && !acquire()) {
+        g2.hud.toast("Another crew call owns the board.", 3);
+        return false;
+      }
+      state.stage = "prep";
+      state.approach = "quiet";
+      checkpoint();
+      hudPhase();
+      g2.conversation.show({
+        name: "Yard \xB7 Soft Open prep",
+        place: "Thin yard \xB7 Quiet locked",
+        text: "Approach: Quiet (selected). Decoy \u2014 coming soon. Loud \u2014 coming soon. Pick the car. Confirm drops you on Greenville south of the alley.",
+        choices: [
+          { label: `Camaro 1LE${state.car === "camaro1le" ? " \xB7 selected" : ""}`, action: () => {
+            state.car = "camaro1le";
+            checkpoint();
+            api.talkPrep();
+          } },
+          { label: `Evora 400${state.car === "evora" ? " \xB7 selected" : ""}`, action: () => {
+            state.car = "evora";
+            checkpoint();
+            api.talkPrep();
+          } },
+          { label: `Confirm Quiet \xB7 start in ${carLabel()}`, action: () => api.start(state.car) },
+          { label: "Not tonight", action: () => {
+            suspend();
+            g2.hud.toast("Soft Open stayed on the board.", 2.5);
+          } }
+        ]
+      });
+      return true;
+    }
+    function start3(carKey = state.car) {
+      if (!CARS.includes(carKey)) return false;
+      if (!active && !acquire()) return false;
+      state.car = carKey;
+      state.approach = "quiet";
+      return beginRun();
+    }
+    function resume() {
+      if (active) {
+        g2.hud.toast("Soft Open is already live.", 2);
+        return true;
+      }
+      if (!state.started || state.stage === "complete" || state.stage === "brief") return talkBrief();
+      if (state.stage === "prep") return talkPrep();
+      if (!acquire()) return false;
+      if (!placeApproach()) {
+        suspend();
+        return false;
+      }
+      if (state.hasCase || state.botched) {
+        state.stage = "escape";
+        windowOpen = false;
+        standby = false;
+      } else {
+        state.stage = "window";
+        windowOpen = true;
+        standby = false;
+        windowLeft = Math.max(20, WINDOW_SEC * 0.5);
+      }
+      heat = Math.min(100, state.heatPeak || 0);
+      routeForStage();
+      hudPhase();
+      g2.hud.banner("Soft Open resumed", state.hasCase ? "Case on board \xB7 soft wash" : "Window live \xB7 alley pinch", 3);
+      return true;
+    }
+    function recover() {
+      if (!active) return false;
+      endingOpen = false;
+      g2.conversation.close?.();
+      if (!placeApproach()) return false;
+      if (state.hasCase || state.botched) {
+        state.stage = "escape";
+        windowOpen = false;
+        standby = false;
+      } else {
+        state.stage = "window";
+        windowOpen = true;
+        standby = false;
+        windowLeft = Math.max(25, windowLeft || WINDOW_SEC * 0.45);
+        state.hasCase = false;
+      }
+      heat = Math.min(heat, 55);
+      checkpoint();
+      routeForStage();
+      hudPhase();
+      g2.hud.banner("Soft Open checkpoint", "Back on Greenville approach", 2.8);
+      return true;
+    }
+    function update(dt) {
+      if (!active || !(dt > 0) || !canSimulate(g2) || endingOpen) return;
+      if (g2.paused || g2.photo?.active || g2.menus.anyOpen() || g2.conversation?.active) return;
+      if (!state.hasCase && !state.botched) {
+        if (standby && !windowOpen) {
+          windowLeft -= dt;
+          if (windowLeft <= 0) openWindow();
+          else hudPhase();
+        } else if (windowOpen) {
+          windowLeft -= dt;
+          if (near3(g2.inCar ? g2.vehicle : g2.player, ALLEY, ALLEY.r)) takeCase();
+          if (windowOpen && !state.hasCase && windowLeft <= 0) failWindow("Window closed. Case is gone.");
+          else hudPhase();
+        }
+      }
+      if (state.hasCase || state.botched || state.stage === "escape") {
+        const actor = g2.inCar ? g2.vehicle : g2.player;
+        if (near3(actor, DROP, DROP.r) && (!g2.inCar || Math.abs(g2.vehicle.speed) < 4)) {
+          finish(state.hasCase && !state.botched && heat < 100 ? "clean" : "botched");
+          return;
+        }
+      }
+      if (g2.inCar && participant && g2.vehicle === participant) {
+        const v = g2.vehicle;
+        if (onStrip(v) && v.speed > SPEED_HEAT_MPS) {
+          speedHeatAcc += dt;
+          if (speedHeatAcc > 0.85) {
+            speedHeatAcc = 0;
+            bumpHeat(4, "Rae: Ease off Greenville \u2014 strip speed feeds heat.");
+          }
+        } else speedHeatAcc = 0;
+      }
+      hudPhase();
+    }
+    events.on("collision", (e) => {
+      if (!active || endingOpen || e.vehicle !== participant || !(e.strength > 0.28)) return;
+      const amt = e.strength > 0.6 ? 14 : e.strength > 0.4 ? 8 : 4;
+      bumpHeat(amt, e.strength > 0.55 ? "Contact on Greenville \xB7 heat up" : "Scrape \xB7 heat ticks");
+    });
+    events.on("mission", (next) => {
+      if (active && next !== "free") suspend();
+    });
+    const api = {
+      id: SOFT_OPEN_ID,
+      get active() {
+        return active;
+      },
+      get stage() {
+        return state.stage;
+      },
+      get heat() {
+        return heat;
+      },
+      get hasCase() {
+        return state.hasCase;
+      },
+      get state() {
+        return state;
+      },
+      talkBrief,
+      talkPrep,
+      start: start3,
+      resume,
+      recover,
+      suspend,
+      update,
+      present() {
+      },
+      describe() {
+        if (!active) {
+          return {
+            title: HEIST_TITLE,
+            action: state.quietCompleted ? `Quiet clears: ${state.quietCompleted}. Start another Soft Open from Title.` : "Title \u2192 Red County \xB7 Soft Open. Quiet only for this book."
+          };
+        }
+        if (state.stage === "prep") return { title: HEIST_TITLE, action: "Pick Camaro or Evora. Quiet is locked. Confirm to hit Greenville." };
+        if (!state.hasCase && !state.botched) {
+          return {
+            title: HEIST_TITLE,
+            action: windowOpen ? `Alley pinch \xB7 ${Math.ceil(windowLeft)}s \xB7 no camera needed.` : "Stand by south of the alley for Rae\u2019s window call."
+          };
+        }
+        return {
+          title: HEIST_TITLE,
+          action: state.hasCase ? "Soft wash drop south-east of the strip. Keep heat down." : "Empty-handed \xB7 still reach soft wash for the botched cut."
+        };
+      }
+    };
+    return api;
+  }
+
   // src/ui/conditionHud.js
   function createConditionHud(g2) {
     const el2 = document.createElement("aside");
@@ -53762,15 +54301,15 @@ void main() {
         fail("We lost the take. Try again within three minutes.");
         return snapshot();
       }
-      const near4 = project3(course.points, pose2, Math.max(0, segment - 8), Math.min(course.points.length - 2, segment + 12));
-      segment = near4.i;
-      const offRoute = near4.d > 15 || Math.abs(pose2.y - near4.y) > 2;
+      const near5 = project3(course.points, pose2, Math.max(0, segment - 8), Math.min(course.points.length - 2, segment + 12));
+      segment = near5.i;
+      const offRoute = near5.d > 15 || Math.abs(pose2.y - near5.y) > 2;
       offRouteTime = offRoute ? offRouteTime + dt : 0;
       if (offRouteTime > 2) {
         fail("You left the filming route. Follow the marked turns.");
         return snapshot();
       }
-      const movingBackwards = pose2.speed > 2 && dx * near4.tx + dz2 * near4.tz < -2 * dt;
+      const movingBackwards = pose2.speed > 2 && dx * near5.tx + dz2 * near5.tz < -2 * dt;
       wrongWayTime = movingBackwards ? wrongWayTime + dt : Math.max(0, wrongWayTime - dt);
       if (wrongWayTime > 2) {
         fail("Wrong way. Follow the filming arrows.");
@@ -57994,7 +58533,7 @@ void main() {
   // src/game/deliveryTrip.js
   function createDeliveryTrip({ origin, destination }) {
     let phase = "outbound", time = 0, condition = 100, distance5 = 0, driven = 0, last = null, result2 = null;
-    const near4 = (a2, b, r) => a2 && Math.hypot(a2.x - b.x, a2.z - b.z) < r && Math.abs(a2.y - b.y) < 1.4;
+    const near5 = (a2, b, r) => a2 && Math.hypot(a2.x - b.x, a2.z - b.z) < r && Math.abs(a2.y - b.y) < 1.4;
     const fail = (reason) => {
       if (["outbound", "return"].includes(phase)) {
         phase = "failed";
@@ -58039,12 +58578,12 @@ void main() {
         if (phase === "outbound" && Number.isFinite(strength) && strength > 0.08) condition = Math.max(0, condition - strength * 24);
       },
       deliver(car) {
-        if (phase !== "outbound" || !near4(car, destination, 18) || car.speed > 0.3 || driven < Math.hypot(origin.x - destination.x, origin.z - destination.z) * 0.65) return false;
+        if (phase !== "outbound" || !near5(car, destination, 18) || car.speed > 0.3 || driven < Math.hypot(origin.x - destination.x, origin.z - destination.z) * 0.65) return false;
         phase = "return";
         return true;
       },
       report(car) {
-        if (phase !== "return" || !near4(car, origin, 24) || car.speed > 0.3) return null;
+        if (phase !== "return" || !near5(car, origin, 24) || car.speed > 0.3) return null;
         phase = "complete";
         result2 = { success: true, condition: Math.round(condition * 10) / 10, time, distance: Math.round(distance5), grade: condition >= 90 ? "Dinner, still perfect" : condition >= 70 ? "A little shaken" : "The crew is still grateful" };
         return result2;
@@ -58077,13 +58616,13 @@ void main() {
   }
 
   // src/game/delivery.js
-  var near3 = (a2, b, r) => a2 && Math.hypot(a2.x - b.x, a2.z - b.z) < r && Math.abs(a2.y - b.y) < 1.4;
+  var near4 = (a2, b, r) => a2 && Math.hypot(a2.x - b.x, a2.z - b.z) < r && Math.abs(a2.y - b.y) < 1.4;
   function createDelivery(g2, course, { hud = createDeliveryHud(), record = recordDelivery } = {}) {
     let trip = null, participant = null, runId = 0, lastResult = null, ownedDestination = null, lease = null;
     const active = () => trip && ["outbound", "return"].includes(trip.phase);
     const available = () => g2.activities?.allowed("delivery") !== false && g2.state === "play" && g2.mission.state === "free" && !g2.scoutRoll?.active && !g2.downtown?.active && !g2.discoveries?.gym && !g2.studioJob?.active;
-    const onFootAt = (point10) => available() && canSimulate(g2) && !g2.inCar && !g2.player.anim && !g2.player.cameraUp && near3(g2.player, point10, 2.6);
-    const candidate = () => g2.cars.filter((c) => carStopped(c) && !c.damage?.destroyed && near3(c, course.origin, 24)).sort((a2, b) => Math.hypot(a2.x - course.origin.x, a2.z - course.origin.z) - Math.hypot(b.x - course.origin.x, b.z - course.origin.z))[0];
+    const onFootAt = (point10) => available() && canSimulate(g2) && !g2.inCar && !g2.player.anim && !g2.player.cameraUp && near4(g2.player, point10, 2.6);
+    const candidate = () => g2.cars.filter((c) => carStopped(c) && !c.damage?.destroyed && near4(c, course.origin, 24)).sort((a2, b) => Math.hypot(a2.x - course.origin.x, a2.z - course.origin.z) - Math.hypot(b.x - course.origin.x, b.z - course.origin.z))[0];
     const route2 = (d) => {
       ownedDestination = d;
       g2.setDestination(d);
@@ -58136,7 +58675,7 @@ void main() {
       start() {
         if (active() || !onFootAt(course.pickup)) return false;
         const car = g2.afterDark?.active ? g2.afterDark.participant : candidate();
-        if (!car || !carStopped(car) || !near3(car, course.origin, 24) || car.damage?.destroyed) {
+        if (!car || !carStopped(car) || !near4(car, course.origin, 24) || car.damage?.destroyed) {
           g2.hud.toast("Park a stopped car outside the diner first. The order rides in your car.", 4);
           return false;
         }
@@ -63172,16 +63711,16 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     return m;
   }
   function paveY(x, z) {
-    let walk = -1e9, sw = 0, sy = 0, near4 = 1e9;
+    let walk = -1e9, sw = 0, sy = 0, near5 = 1e9;
     for (const s of straights()) {
       const p = sproj(s, x, z);
-      if (p.dist < near4) near4 = p.dist;
+      if (p.dist < near5) near5 = p.dist;
       if (p.dist < s.half + 12) walk = Math.max(walk, p.y + 0.19);
       const d = Math.max(7, p.dist), w = 1 / (d * d);
       sw += w;
       sy += w * p.y;
     }
-    const blend = lerp2(sw ? sy / sw : eastY(x), eastY(x), smoothstep2(18, 70, near4)) + 0.17;
+    const blend = lerp2(sw ? sy / sw : eastY(x), eastY(x), smoothstep2(18, 70, near5)) + 0.17;
     return Math.max(walk, blend, terrainHeight(x, z) + 0.07);
   }
   function padField(r, cell = 7.5) {
@@ -64404,10 +64943,10 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     return { group, surface: surface2, colliders: colliders2, get opening() {
       return opening;
     }, present(actor, dt = 0) {
-      const near4 = Math.hypot(actor.x - cx, actor.z - cz) < 100;
-      group.visible = near4;
-      for (const l of lights) l.visible = near4;
-      if (near4 && dt > 0 && keeper) {
+      const near5 = Math.hypot(actor.x - cx, actor.z - cz) < 100;
+      group.visible = near5;
+      for (const l of lights) l.visible = near5;
+      if (near5 && dt > 0 && keeper) {
         keeper.setPose("idle", dt, 0);
         keeper.syncVisual(1);
       }
@@ -69140,8 +69679,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       glow2.frustumCulled = false;
       group.add(glow2);
       world2.lamps.push(glow2);
-      const near4 = lampList.map((p, i) => [Math.hypot(p[0] + 600, p[2]), i]).sort((a2, b) => a2[0] - b[0]).slice(0, 12);
-      for (const [, i] of near4) {
+      const near5 = lampList.map((p, i) => [Math.hypot(p[0] + 600, p[2]), i]).sort((a2, b) => a2[0] - b[0]).slice(0, 12);
+      for (const [, i] of near5) {
         const [x, y2, z] = lampList[i];
         const pl = new PointLight(16761466, 0, 38, 2);
         pl.position.set(x, y2 - 0.35, z);
@@ -75276,7 +75815,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       scene.add(m);
       return m;
     };
-    const near4 = { kinds: {}, wheels: base.wheels, nw: 0 }, far = { kinds: {}, wheels: null, nw: 0 };
+    const near5 = { kinds: {}, wheels: base.wheels, nw: 0 }, far = { kinds: {}, wheels: null, nw: 0 };
     for (const kind of TRAFFIC_KINDS) {
       const k = base.kinds[kind];
       for (const m of [k.body, k.glass, k.lights]) {
@@ -75284,7 +75823,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         m.count = 0;
         m.visible = false;
       }
-      near4.kinds[kind] = { body: k.body, glass: k.glass, lights: k.lights, n: 0 };
+      near5.kinds[kind] = { body: k.body, glass: k.glass, lights: k.lights, n: 0 };
       far.kinds[kind] = { body: mk(k.body, k.body.name + ":far"), glass: mk(k.glass, k.glass.name + ":far"), lights: mk(k.lights, k.lights.name + ":far"), n: 0 };
     }
     base.wheels.castShadow = false;
@@ -75292,7 +75831,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     base.wheels.count = 0;
     base.wheels.visible = false;
     far.wheels = mk(base.wheels, "traffic:wheels:far", farWheelGeometry());
-    const sets = [near4, far];
+    const sets = [near5, far];
     const handles = [];
     const _f3 = new Frustum(), _pv = new Matrix4(), _s5 = new Sphere();
     let enabled2 = true, drawn = 0, nearN = 0;
@@ -75313,16 +75852,16 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     };
     return {
       base,
-      near: near4,
+      near: near5,
       far,
-      kinds: near4.kinds,
+      kinds: near5.kinds,
       wheels: base.wheels,
       release(handle) {
         const i = handles.indexOf(handle);
         if (i >= 0) handles.splice(i, 1);
       },
       alloc(kind, paint2) {
-        if (!near4.kinds[kind]) return null;
+        if (!near5.kinds[kind]) return null;
         let n = 0;
         for (const h2 of handles) if (h2.kind === kind) n++;
         if (n >= capacity) return null;
@@ -75368,7 +75907,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
             _s5.radius = h.r + 6;
             if (!fr.intersectsSphere(_s5)) continue;
           }
-          const S4 = isNear ? near4 : far, k = S4.kinds[h.kind];
+          const S4 = isNear ? near5 : far, k = S4.kinds[h.kind];
           if (k.n >= k.body.instanceMatrix.count) continue;
           const i = k.n++;
           k.body.setMatrixAt(i, h.mat);
@@ -76362,7 +76901,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         player.commitInterpolation?.();
       }
     }
-    function stepPed(p, dt, near4) {
+    function stepPed(p, dt, near5) {
       if (p.state === "idle") {
         p.waitT -= dt;
         if (p.waitT <= 0) pickTarget(p);
@@ -76406,7 +76945,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         }
       }
       const g2 = groundAt(p.x, p.z, p.y);
-      p.y += (g2.y - p.y) * (near4 ? 0.6 : 1);
+      p.y += (g2.y - p.y) * (near5 ? 0.6 : 1);
       const pose2 = p.state === "walk" ? "walk" : "idle";
       p.ch.setPose(pose2, dt, pose2 === "walk" ? p.speed : 0);
       p.ch.group.position.set(p.x, p.y, p.z);
@@ -76716,8 +77255,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
             return;
           }
           const actor = g2.inCar ? g2.vehicle : g2.player;
-          const near4 = g2.mission.state === "free" && !g2.scoutRoll?.active && Math.hypot(actor.x - downtownCourse.start.x, actor.z - downtownCourse.start.z) < 24;
-          if (near4) {
+          const near5 = g2.mission.state === "free" && !g2.scoutRoll?.active && Math.hypot(actor.x - downtownCourse.start.x, actor.z - downtownCourse.start.z) < 24;
+          if (near5) {
             nearShown = true;
             g2.hud.setObjective("Afterglow on Main", canStart() ? "Enter \xB7 start location rehearsal. Four smooth right turns, then hold the tracking speed and stop on the mark." : "Stop in the blue bay with the wagon or GTS, then press Enter to roll.");
           } else if (nearShown) {
@@ -77378,9 +77917,9 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         const invert = settings.invertY ? -1 : 1;
         const motion = settings.motionEffects ?? 1;
         const cabin2 = !target2.onFoot && st4.mode === "cockpit" && opts.car?.model?.dims?.cockpit;
-        const near4 = cabin2 && !st4.override ? 0.035 : 0.3;
-        if (camera.near !== near4) {
-          camera.near = near4;
+        const near5 = cabin2 && !st4.override ? 0.035 : 0.3;
+        if (camera.near !== near5) {
+          camera.near = near5;
           camera.updateProjectionMatrix();
         }
         if (st4.override) {
@@ -78378,7 +78917,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         return;
       }
       const continuous = previous && Math.hypot(v.x - previous.x, v.z - previous.z) <= 2 + 200 * dt;
-      const near4 = nearestOnPolyline(RUN.centerline, v.x, v.z, v.y);
+      const near5 = nearestOnPolyline(RUN.centerline, v.x, v.z, v.y);
       const gi = R.gateIdx;
       if (participating && continuous && gi < RUN.gates.length) {
         const gt = RUN.gates[gi];
@@ -78403,7 +78942,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
             g2.audio.play?.(sc.s > 0.55 ? "gateGood" : "gateBad");
           }
           if (gt.id === "g5") R.minSpeedLoop = Math.min(R.minSpeedLoop, v.speed);
-        } else if (onDeck && progressAt(previous.x, previous.z, previous.y) <= GATE_S[gi] + 28 && progressAt(v.x, v.z, v.y) > GATE_S[gi] + 28 && near4.d < 30) {
+        } else if (onDeck && progressAt(previous.x, previous.z, previous.y) <= GATE_S[gi] + 28 && progressAt(v.x, v.z, v.y) > GATE_S[gi] + 28 && near5.d < 30) {
           R.gates[gi] = { s: 0, a: 99, word: "MISSED" };
           R.gateIdx++;
           hud.gateFlash("MISSED " + gt.name.toUpperCase(), "var(--bad)");
@@ -78428,7 +78967,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         R.slipPen += p;
       }
       R.smooth = Math.max(0, R.smooth);
-      if (near4.d > 18 && !(R.gateIdx >= 9 || v.x < -150)) {
+      if (near5.d > 18 && !(R.gateIdx >= 9 || v.x < -150)) {
         R.offCourseT += dt;
         if (R.offCourseT > 1.6) {
           M3.checkpointReset("Off course");
@@ -78904,7 +79443,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     buildAmbience();
     buildMusic();
   }
-  var CARS = {
+  var CARS2 = {
     wagon: { idle: 850, redline: 7200, order: 1 / 20, starter: { f0: 70, glide: 40, pulse: 6.5, lp: 700, g: 0.35 } },
     // V6: rpm/60 * 6/2
     evora: { idle: 850, redline: 7e3, order: 1 / 20, supercharged: true, starter: { f0: 95, glide: 56, pulse: 8, lp: 1050, g: 0.25 } },
@@ -79164,7 +79703,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   }
   function updateEngine(dt, st4, now3, shiftCue) {
     const E2 = N.engine;
-    const car = CARS[st4.car] ? st4.car : "wagon", C3 = CARS[car], gts = car === "gts";
+    const car = CARS2[st4.car] ? st4.car : "wagon", C3 = CARS2[car], gts = car === "gts";
     S3.car = car;
     const on = !!st4.engineOn, startT = Math.max(0, st4.startT || 0);
     const thr = clamp10(st4.throttle || 0, 0, 1), load0 = clamp10(st4.load ?? thr, 0, 1);
@@ -79237,14 +79776,14 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     if (shiftCue && catchK > 0.9) {
       const down = st4.shiftDir < 0;
       if (gts) {
-        const near4 = 1 - 0.55 * Math.min(1, dist);
+        const near5 = 1 - 0.55 * Math.min(1, dist);
         const gate = (at5, g2, f2) => {
-          burst({ dest: N.busEngine, at: at5, gain: g2 * near4, type: "bandpass", freq: f2, freqEnd: f2 * 0.55, Q: 1.6, attack: 4e-4, hold: 3e-3, decay: 0.026 });
-          tone({ type: "triangle", freq: f2 * 0.72, freqEnd: f2 * 0.62, glide: 0.02, dest: N.busEngine, at: at5, gain: 0.05 * g2 * near4, attack: 5e-4, decay: 0.045 });
+          burst({ dest: N.busEngine, at: at5, gain: g2 * near5, type: "bandpass", freq: f2, freqEnd: f2 * 0.55, Q: 1.6, attack: 4e-4, hold: 3e-3, decay: 0.026 });
+          tone({ type: "triangle", freq: f2 * 0.72, freqEnd: f2 * 0.62, glide: 0.02, dest: N.busEngine, at: at5, gain: 0.05 * g2 * near5, attack: 5e-4, decay: 0.045 });
         };
         gate(now3 + 5e-3, 0.3, 6100);
         gate(now3 + 0.068, 0.72, 4900);
-        tone({ freq: 168, freqEnd: 96, glide: 0.03, dest: N.busEngine, at: now3 + 0.068, gain: 0.12 * near4, decay: 0.07 });
+        tone({ freq: 168, freqEnd: 96, glide: 0.03, dest: N.busEngine, at: now3 + 0.068, gain: 0.12 * near5, decay: 0.07 });
         if (down) burst({ buf: pick3(B.pop), dest: N.busEngine, at: now3 + 0.05, rate: 0.85, gain: 0.24 + 0.2 * rpmN, type: "bandpass", freq: 780, freqEnd: 380, Q: 0.8, attack: 4e-3, hold: 0.05, decay: 0.16 });
         else burst({ buf: pick3(B.pop), dest: N.busEngine, at: now3 + 0.02, rate: 1.1, gain: 0.2 + 0.16 * rpmN, type: "bandpass", freq: 1100, Q: 1.1, attack: 1e-3, hold: 6e-3, decay: 0.07 });
       } else {
@@ -80407,7 +80946,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-45d9707b2afa", tipSha: false ? "" : "cb53ce0", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-b4b22b40ade6", tipSha: false ? "" : "9629a9b", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
@@ -80477,7 +81016,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     g.minimap = createMinimap(document.querySelector("#minimap canvas"));
     g.menus.enablePlay(false);
     g.audio = audio;
-    const persistenceStatus = { "Crew supply run": crewSupplyStore.status, "The crew car": crewCarStore.status, "Studio Gallery": galleryStore.status, "Nico\u2019s pickup": dinerPickupStore.status, "The Missing Scene": propStore.status, "Last Light chapter": afterDarkStore.status, progress: saveStatus, settings: settingsStatus, "downtown progress": downtownProgressStatus, "crew jobs": deliveryProgressStatus, "studio takes": studioProgressStatus, "Lot 42 practice": lot42ProgressStatus, "scouting rolls": scoutRollProgressStatus };
+    const persistenceStatus = { "Crew supply run": crewSupplyStore.status, "The crew car": crewCarStore.status, "Studio Gallery": galleryStore.status, "Nico\u2019s pickup": dinerPickupStore.status, "The Missing Scene": propStore.status, "Last Light chapter": afterDarkStore.status, "Soft Open heist": softOpenStore.status, progress: saveStatus, settings: settingsStatus, "downtown progress": downtownProgressStatus, "crew jobs": deliveryProgressStatus, "studio takes": studioProgressStatus, "Lot 42 practice": lot42ProgressStatus, "scouting rolls": scoutRollProgressStatus };
     const statusEl = document.createElement("div");
     statusEl.id = "persistence-status";
     statusEl.setAttribute("role", "status");
@@ -80693,6 +81232,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       onInteract: () => g.delivery.talkDropoff()
     });
     g.afterDark = createAfterDark(g, world, buildAfterDarkSet(scene));
+    g.softOpen = createSoftOpen(g);
     const propRoom = buildPropHouse(world);
     g.propJob = createPropJob(g, world, propRoom, buildPropDressing(scene));
     g.dinerPickup = installDinerPickup(g, world, propRoom);
@@ -80719,6 +81259,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       g.propJob?.suspend();
       g.propJob?.reset();
       g.afterDark?.suspend();
+      g.softOpen?.suspend();
       g.player.condition?.restore();
       g.scrapbook?.close();
       g.guide?.close(false);
@@ -80931,6 +81472,21 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       if (afterDarkStore.value.started && afterDarkStore.value.stage !== "complete") g.afterDark.resume();
       else g.afterDark.talkBrief();
     };
+    g.updateSoftOpenTitle = () => {
+      const b = document.getElementById("btn-soft-open");
+      if (!b) return;
+      b.disabled = !g.booted;
+      const s = softOpenStore.value;
+      b.textContent = s.started && s.stage !== "complete" ? "Continue Soft Open \xB7 Quiet" : "Red County \xB7 Soft Open";
+    };
+    g.updateSoftOpenTitle();
+    document.getElementById("btn-soft-open").onclick = () => {
+      if (!g.booted) return;
+      startGame(true);
+      const s = softOpenStore.value;
+      if (s.started && s.stage !== "complete") g.softOpen.resume();
+      else g.softOpen.talkBrief();
+    };
     g.menus.onPlay(() => startGame(false));
     g.menus.onContinue(() => startGame(true));
     g.performCrewAction = (id7) => performCrewAction(g, id7, () => setPaused(false));
@@ -81103,6 +81659,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     g.menus.loadingDone();
     g.menus.enablePlay(true);
     g.updateChapterTitle();
+    g.updateSoftOpenTitle?.();
     g.updatePropTitle();
     g.updatePickupTitle();
     g.updateCrewCarTitle();
@@ -81434,7 +81991,9 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     g.propJob?.suspend();
     g.propJob?.reset();
     g.afterDark?.suspend();
+    g.softOpen?.suspend();
     g.updateChapterTitle?.();
+    g.updateSoftOpenTitle?.();
     g.updatePickupTitle?.();
     g.updateCrewCarTitle?.();
     g.updateSupplyTitle?.();
@@ -81920,6 +82479,9 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         } else if (g.propJob?.active) {
           g.propJob.recover();
           return;
+        } else if (g.softOpen?.active) {
+          g.softOpen.recover();
+          return;
         } else if (g.afterDark?.active) {
           g.afterDark.recover();
           return;
@@ -81990,6 +82552,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     g.delivery.update(dt);
     g.studioJob.update(dt);
     g.afterDark.update(dt);
+    g.softOpen?.update(dt);
     g.propJob.update(dt);
     g.dinerPickup.update(dt);
     g.crewCar.update(dt);
@@ -82221,12 +82784,12 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         g._gpsT = (g._gpsT || 0) + dt;
         if (g._gpsT > 2 && g.gps.path && g.gps.dest) {
           g._gpsT = 0;
-          let near4 = Infinity;
+          let near5 = Infinity;
           for (const p2 of g.gps.path) {
             const d = (p2.x - t2.x) ** 2 + (p2.z - t2.z) ** 2;
-            if (d < near4) near4 = d;
+            if (d < near5) near5 = d;
           }
-          if (Math.sqrt(near4) > 70) {
+          if (Math.sqrt(near5) > 70) {
             g.gps.path = route({ x: t2.x, z: t2.z, y: t2.y }, g.gps.dest);
             g.minimap.setGpsRoute(g.gps.show && g.gps.path ? g.gps.path : null);
           }
@@ -82286,6 +82849,7 @@ run ${M3.run ? "gate " + M3.run.gateIdx + " t " + M3.run.t.toFixed(1) + " smooth
     g.workingSet?.presentWorld();
     g.economy?.presentWorld();
     g.afterDark.present();
+    g.softOpen?.present?.();
     g.propJob.presentWorld();
     g.dinerPickup.presentWorld();
     g.crewCar.presentWorld();
@@ -82323,7 +82887,7 @@ run ${M3.run ? "gate " + M3.run.gateIdx + " t " + M3.run.t.toFixed(1) + " smooth
       if (v.speed < 1.5) c2.push(["E", "Get out"]);
       if (g.lot42.canRetry) c2.push(["R", "Repair & retry Lot 42"]);
       else if (g.downtown.active) c2.push(["R", "Retry downtown take"]);
-      else if (M3.state === "run" || g.afterDark?.active || g.propJob?.active || g.dinerPickup?.active || g.crewCar?.active || g.crewSupply?.active) c2.push(["R", "Crew checkpoint"]);
+      else if (M3.state === "run" || g.softOpen?.active || g.afterDark?.active || g.propJob?.active || g.dinerPickup?.active || g.crewCar?.active || g.crewSupply?.active) c2.push(["R", "Crew checkpoint"]);
       else c2.push(["R", "Reset to road"]);
       c2.push(["P", "Photo mode"]);
       return c2;
@@ -82338,10 +82902,10 @@ run ${M3.run ? "gate " + M3.run.gateIdx + " t " + M3.run.t.toFixed(1) + " smooth
     if (g.studio.inside && g.studioJob.phase === "framing") c.unshift(["Enter", "Take studio frame"]);
     const nearCar = entryCandidate();
     if (nearCar) c.unshift(["E", "Enter the " + (nearCar.car.name || (nearCar.car.key === "gts" ? "GTS" : "wagon"))]);
-    const near4 = interactionCandidate();
-    if (near4) {
+    const near5 = interactionCandidate();
+    if (near5) {
       if (nearCar) c.shift();
-      c.unshift(["E", typeof near4.label === "function" ? near4.label() : near4.label]);
+      c.unshift(["E", typeof near5.label === "function" ? near5.label() : near5.label]);
       return c;
     }
     if (!nearCar && !p.carrying) {
