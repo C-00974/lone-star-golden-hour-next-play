@@ -338,7 +338,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 8534a78 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 7fe786a · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -43085,7 +43085,7 @@ void main() {
     { id: "afterglow-main", name: "Afterglow on Main", kind: "Driving challenge \xB7 wagon or GTS", detail: "Stop in the blue starting bay with the wagon or GTS. Press Enter / A to start. Follow eight gates, hold the tracking speed, then stop on the mark." },
     { id: "lot42", name: "The Driver\u2019s Call \xB7 Lot 42", kind: "Dee \xB7 wagon or GTS", detail: "Choose your practice car, drive to the blue bay and press Enter / A to repair, line up and start. Six turquoise gates and one gold clockwise lap earn latest and best notes for that car. Read your notes, retry, or drive back to Dee." },
     { id: "kirk", name: "Ronald Kirk Bridge", kind: "Scenic stop \xB7 explore on foot", detail: "Walk out onto the pedestrian bridge for the arch and skyline. F / Y raises the scout camera; P / D-pad down opens free photo mode." },
-    { id: "greenville", name: "Greenville Ave \xB7 Lower", kind: "Dallas strip \xB7 drive and stroll", detail: "Cross the bridge on Woodall or take Howell east from Riverfront. Longer OSM-shaped Greenville with porch bars, Phase 8 inventable interiors (24 of 24 shops), Phase 12 outdoor patio seating on 24 of 24 shops, Phase 14 street trees and lamp posts on all curb spans, Phase 15 painted crosswalks and curb cuts at Belmont plus mid-corridor, Phase 16 continuous sidewalk ribbons on all 24 shop spans, Belmont cross, and curb parking \u2014 feel over survey accuracy; real storefronts later." }
+    { id: "greenville", name: "Greenville Ave \xB7 Lower", kind: "Dallas strip \xB7 drive and stroll", detail: "Cross the bridge on Woodall or take Howell east from Riverfront. Longer OSM-shaped Greenville with porch bars, Phase 8 inventable interiors (24 of 24 shops), Phase 12 outdoor patio seating on 24 of 24 shops, Phase 14 street trees and lamp posts on all curb spans, Phase 15 painted crosswalks and curb cuts at Belmont plus mid-corridor, Phase 16 continuous sidewalk ribbons on all 24 shop spans, Phase 17 sidewalk benches and planters on all 24 spans, Belmont cross, and curb parking \u2014 feel over survey accuracy; real storefronts later." }
   ];
   var chain = (labels, current) => labels.map((label, i) => ({ label, state: i < current ? "done" : i === current ? "now" : "later" }));
   var near = (p, q, r = 25) => !!p && !!q && Math.hypot(p.x - q.x, p.z - q.z) < r && (q.y == null || Math.abs(p.y - q.y) < 2.5);
@@ -43921,7 +43921,7 @@ void main() {
       { id: "studio-gallery", name: "Your studio exhibition", sub: "Hang your photographs and named cut cards \xB7 inside Second Unit", ...STUDIO.entrance },
       { id: "downtown", name: "Downtown \xB7 Main St", sub: "The city core", x: dt.x, z: dt.z, y: 8 },
       { id: "reunion", name: "Reunion Tower", sub: "Downtown landmark", x: 786, z: 552, y: 8 },
-      { id: "greenville", name: "Greenville Ave \xB7 Lower", sub: "East-side bar strip \xB7 Phase 16 sidewalks \xB7 crosswalks \xB7 trees/lamps (24) \xB7 patio (24) \xB7 interiors (24)", x: PLACES.greenville.x, z: PLACES.greenville.z, y: PLACES.greenville.y }
+      { id: "greenville", name: "Greenville Ave \xB7 Lower", sub: "East-side bar strip \xB7 Phase 17 benches/planters \xB7 sidewalks \xB7 crosswalks \xB7 trees/lamps (24) \xB7 patio (24) \xB7 interiors (24)", x: PLACES.greenville.x, z: PLACES.greenville.z, y: PLACES.greenville.y }
     ];
   }
   function remaining(path, x, z, destination = null, actorY = null) {
@@ -55161,6 +55161,8 @@ void main() {
     let streetFurnitureCount = 0;
     const sidewalkPad = [], sidewalkEdge = [];
     let sidewalkCount = 0;
+    const benchSeat = [], benchLeg = [], planterBox = [], planterFoliage = [];
+    let amenityCount = 0;
     for (let i = 0; i < SHOPS2.length; i++) {
       const s = SHOPS2[i];
       const onBelmont = s.cross === "belmont";
@@ -55688,6 +55690,54 @@ void main() {
         marker.userData.shopIndex = i;
         group.add(marker);
       }
+      {
+        amenityCount++;
+        const amOut = onBelmont ? 1.55 : 1.45;
+        const along = Math.min(s.w * 0.32, 2.6);
+        const bx2 = faceX + nx * amOut - ax * along;
+        const bz2 = faceZ + nz * amOut - az * along;
+        const by2 = terrainHeight(bx2, bz2);
+        {
+          const seat = onBelmont ? new BoxGeometry(1.35, 0.08, 0.42) : new BoxGeometry(0.42, 0.08, 1.35);
+          seat.translate(bx2, by2 + 0.46, bz2);
+          benchSeat.push(seat);
+          const back = onBelmont ? new BoxGeometry(1.35, 0.42, 0.08) : new BoxGeometry(0.08, 0.42, 1.35);
+          back.translate(bx2 - nx * 0.18, by2 + 0.72, bz2 - nz * 0.18);
+          benchSeat.push(back);
+          for (const sign3 of [-1, 1]) {
+            const lx = bx2 + ax * sign3 * 0.52;
+            const lz = bz2 + az * sign3 * 0.52;
+            const leg = new CylinderGeometry(0.04, 0.045, 0.42, 5);
+            leg.translate(lx, by2 + 0.22, lz);
+            benchLeg.push(leg);
+          }
+        }
+        const bMark = new Object3D();
+        bMark.name = `gv-bench-${i}`;
+        bMark.position.set(bx2, by2 + 0.5, bz2);
+        bMark.userData.amenity = "bench";
+        bMark.userData.shopName = s.name;
+        bMark.userData.shopIndex = i;
+        group.add(bMark);
+        const px2 = faceX + nx * amOut + ax * along;
+        const pz2 = faceZ + nz * amOut + az * along;
+        const py2 = terrainHeight(px2, pz2);
+        {
+          const box6 = new BoxGeometry(0.55, 0.42, 0.55);
+          box6.translate(px2, py2 + 0.22, pz2);
+          planterBox.push(box6);
+          const leaf = new SphereGeometry(0.32 + i % 3 * 0.03, 7, 5);
+          leaf.translate(px2, py2 + 0.62, pz2);
+          planterFoliage.push(leaf);
+        }
+        const pMark = new Object3D();
+        pMark.name = `gv-planter-${i}`;
+        pMark.position.set(px2, py2 + 0.4, pz2);
+        pMark.userData.amenity = "planter";
+        pMark.userData.shopName = s.name;
+        pMark.userData.shopIndex = i;
+        group.add(pMark);
+      }
       if (!touchBudget || i % 3 === 0) {
         streetFurnitureCount++;
         const furnOut = onBelmont ? 3.55 : 3.45;
@@ -55894,6 +55944,37 @@ void main() {
       const m = new Mesh(g2, mat);
       m.name = "gv-sidewalk-edge";
       m.receiveShadow = true;
+      group.add(m);
+    }
+    if (benchSeat.length) {
+      const mat = new MeshStandardMaterial({ color: 7230264, roughness: 0.82, metalness: 0.04 });
+      const g2 = mergeDispose(benchSeat);
+      const m = new Mesh(g2, mat);
+      m.name = "gv-bench-seat";
+      m.castShadow = true;
+      m.receiveShadow = true;
+      group.add(m);
+    }
+    if (benchLeg.length) {
+      const mat = new MeshStandardMaterial({ color: 3817026, roughness: 0.45, metalness: 0.55 });
+      const g2 = mergeDispose(benchLeg);
+      const m = new Mesh(g2, mat);
+      m.name = "gv-bench-leg";
+      group.add(m);
+    }
+    if (planterBox.length) {
+      const mat = new MeshStandardMaterial({ color: 9075304, roughness: 0.9, metalness: 0.02 });
+      const g2 = mergeDispose(planterBox);
+      const m = new Mesh(g2, mat);
+      m.name = "gv-planter-box";
+      m.receiveShadow = true;
+      group.add(m);
+    }
+    if (planterFoliage.length) {
+      const mat = new MeshStandardMaterial({ color: 4156218, roughness: 0.92 });
+      const g2 = mergeDispose(planterFoliage);
+      const m = new Mesh(g2, mat);
+      m.name = "gv-planter-foliage";
       group.add(m);
     }
     const xwStripe = [], xwPad = [], curbCut = [];
@@ -56200,7 +56281,7 @@ void main() {
       r: 28,
       once: true,
       onEnter(g2) {
-        g2.hud?.banner?.("Greenville Ave \xB7 Lower", "Phase 16 sidewalks \xB7 crosswalks \xB7 trees/lamps (24) \xB7 patio (24) \xB7 interiors (24)", 3.5);
+        g2.hud?.banner?.("Greenville Ave \xB7 Lower", "Phase 17 benches/planters \xB7 sidewalks \xB7 crosswalks \xB7 trees/lamps (24) \xB7 patio (24) \xB7 interiors (24)", 3.5);
       }
     });
     const pinY = eastY(P2.x);
@@ -80071,7 +80152,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-01cbb17acfd5", tipSha: false ? "" : "8534a78", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-2f9a644a5902", tipSha: false ? "" : "7fe786a", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
