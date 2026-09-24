@@ -338,7 +338,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 4ac0668 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip cb53ce0 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -80281,13 +80281,20 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/core/loop.js
   function createLoop({ step: step2 = 1 / 120, maxSub = 8, fixed: fixed2, render: render2, onFrame }) {
     let last = null, acc = 0, running2 = false, raf = 0, timeScale = 1;
+    let simTotal = 0, wallTotal = 0;
     const frameTimes = [];
     const stats = { fps: 0, frames: 0, ms: 0, rawMs: 0, p95: 0, p99: 0, longFrames: 0, _t: 0, _n: 0, fixedMs: 0, renderMs: 0, steps: 0, _fx: 0, _rd: 0, _st: 0 };
+    function clampMaxSub(v) {
+      const n = Math.round(Number(v));
+      if (!Number.isFinite(n)) return 8;
+      return Math.max(1, Math.min(4096, n));
+    }
     function frame2(t) {
       if (!running2) return;
       raf = requestAnimationFrame(frame2);
       const rawDt = last == null ? 0 : Math.max(0, (t - last) / 1e3);
       last = t;
+      if (rawDt > 0) wallTotal += rawDt;
       const dt = Math.min(rawDt, 0.1) * timeScale;
       acc += dt;
       let n = 0;
@@ -80303,6 +80310,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         discarded = acc - retained2;
         acc = retained2;
       }
+      if (n > 0) simTotal += n * step2;
       const t1 = performance.now();
       render2(dt, Math.min(1, acc / step2));
       const renderMs = performance.now() - t1;
@@ -80346,7 +80354,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       last = null;
       acc = 0;
     };
-    return {
+    const loop = {
       start() {
         if (running2) return;
         running2 = true;
@@ -80363,19 +80371,43 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       get step() {
         return step2;
       },
+      // Peer-measure: allow high scales; plain play stays near 1. Prior hard-cap of 4 made
+      // timeScale(8+) a no-op vs the substep ceiling (Claude bfV91byo).
       set timeScale(v) {
-        timeScale = Number.isFinite(v) ? Math.max(0, Math.min(4, v)) : 1;
+        timeScale = Number.isFinite(v) ? Math.max(0, Math.min(64, v)) : 1;
       },
       get timeScale() {
         return timeScale;
+      },
+      set maxSub(v) {
+        maxSub = clampMaxSub(v);
+      },
+      get maxSub() {
+        return maxSub;
+      },
+      /** Raise timeScale and maxSub together so surplus is not discarded. */
+      simSpeed(k = 1) {
+        const scale3 = Number.isFinite(k) ? Math.max(0, k) : 1;
+        loop.timeScale = scale3;
+        loop.maxSub = scale3 <= 1 ? 8 : Math.ceil(12 * scale3) + 4;
+        return { timeScale: loop.timeScale, maxSub: loop.maxSub };
+      },
+      /** Monotonic totals for probe ratio = sim/wall (seconds). */
+      get totals() {
+        return { sim: simTotal, wall: wallTotal };
+      },
+      resetTotals() {
+        simTotal = 0;
+        wallTotal = 0;
       }
     };
+    return loop;
   }
 
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-67ac135399b1", tipSha: false ? "" : "4ac0668", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-45d9707b2afa", tipSha: false ? "" : "cb53ce0", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
@@ -82403,6 +82435,21 @@ run ${M3.run ? "gate " + M3.run.gateIdx + " t " + M3.run.t.toFixed(1) + " smooth
     },
     timeScale(v) {
       g.loop.timeScale = v;
+      return g.loop.timeScale;
+    },
+    maxSub(v) {
+      if (v != null) g.loop.maxSub = v;
+      return g.loop.maxSub;
+    },
+    simSpeed(k = 1) {
+      return g.loop.simSpeed(k);
+    },
+    totals() {
+      return g.loop.totals;
+    },
+    resetTotals() {
+      g.loop.resetTotals();
+      return g.loop.totals;
     },
     updaters(v) {
       g._updatersOff = !v;
