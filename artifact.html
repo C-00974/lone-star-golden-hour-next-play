@@ -335,7 +335,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 8c69588 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 6c9e336 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -54979,6 +54979,40 @@ void main() {
   // src/world/greenville.js
   var CX = 1080;
   var BELMONT_Z = 140;
+  function wantsTouchMemoryBudget() {
+    try {
+      const q = new URLSearchParams(location.search);
+      if (q.get("touch") === "1" || q.get("phone") === "1") return true;
+    } catch {
+    }
+    try {
+      const coarse = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
+      const touch = (navigator.maxTouchPoints || 0) > 0 || "ontouchstart" in window;
+      const small = Math.min(screen.width || 9999, screen.height || 9999) <= 920;
+      return !!(coarse && touch) || touch && small;
+    } catch {
+      return false;
+    }
+  }
+  function disposeGeos(list) {
+    if (!list) return;
+    for (const g2 of list) {
+      try {
+        g2.dispose?.();
+      } catch {
+      }
+    }
+    list.length = 0;
+  }
+  function mergeDispose(list) {
+    if (!list || !list.length) return null;
+    const merged = mergeGeometries(list, false);
+    disposeGeos(list);
+    return merged;
+  }
+  var TOUCH_LOAD_R = 110;
+  var TOUCH_UNLOAD_R = 160;
+  var _gvTouch = null;
   var SHOPS2 = [
     // Phase 5 north extend (N = −Z)
     { z: -360, side: -1, name: "NORTH PORCH", patio: true, interior: true, w: 13, d: 9, h: 4, color: 11838604, awn: ["#1d3557", "#f4efe4"], neon: 8042751, panes: 4, door: 0.3, neonSign: true },
@@ -55095,6 +55129,12 @@ void main() {
   function buildGreenville(world2) {
     const group = new Group();
     group.name = "Lower Greenville";
+    const touchBudget = wantsTouchMemoryBudget();
+    const heavy = new Group();
+    heavy.name = "gv-heavy";
+    group.add(heavy);
+    group.userData.touchBudget = touchBudget;
+    group.userData.heavy = heavy;
     const brick = new MeshStandardMaterial({ color: 12101780, roughness: 0.92, metalness: 0.02 });
     const stucco = new MeshStandardMaterial({ color: 15261648, roughness: 0.95 });
     const glass = new MeshStandardMaterial({
@@ -55472,7 +55512,7 @@ void main() {
         tube4.name = `gv-neon-tube-${i}`;
         group.add(tube4);
       }
-      if (s.interior) {
+      if (s.interior && !touchBudget) {
         interiorCount++;
         const iw = s.w * 0.88, id7 = s.d * 0.78;
         const roomKind = typeof s.room === "number" ? s.room : i % 4;
@@ -55561,7 +55601,7 @@ void main() {
         marker.userData.roomKind = roomKind;
         group.add(marker);
       }
-      if (s.patio) {
+      if (s.patio && !touchBudget) {
         patioCount++;
         const patioOut = onBelmont ? 2.35 : 2.2;
         const px2 = faceX + nx * patioOut;
@@ -55645,7 +55685,7 @@ void main() {
         marker.userData.shopIndex = i;
         group.add(marker);
       }
-      {
+      if (!touchBudget || i % 2 === 0) {
         streetFurnitureCount++;
         const furnOut = onBelmont ? 3.55 : 3.45;
         const edgeSign = i % 2 === 0 ? 1 : -1;
@@ -55696,34 +55736,42 @@ void main() {
       }
     }
     if (glasses.length) {
-      const g2 = mergeGeometries(glasses, false);
-      const m = new Mesh(g2, glass);
-      m.name = "gv-glass-merged";
-      m.castShadow = false;
-      m.receiveShadow = true;
-      group.add(m);
+      const g2 = mergeDispose(glasses);
+      if (g2) {
+        const m = new Mesh(g2, glass);
+        m.name = "gv-glass-merged";
+        m.castShadow = false;
+        m.receiveShadow = true;
+        group.add(m);
+      }
     }
     if (mullions.length) {
-      const g2 = mergeGeometries(mullions, false);
-      const m = new Mesh(g2, trimMat2);
-      m.name = "gv-mullions";
-      group.add(m);
+      const g2 = mergeDispose(mullions);
+      if (g2) {
+        const m = new Mesh(g2, trimMat2);
+        m.name = "gv-mullions";
+        group.add(m);
+      }
     }
     if (sills.length) {
-      const g2 = mergeGeometries(sills, false);
-      const m = new Mesh(g2, sillMat);
-      m.name = "gv-sills";
-      group.add(m);
+      const g2 = mergeDispose(sills);
+      if (g2) {
+        const m = new Mesh(g2, sillMat);
+        m.name = "gv-sills";
+        group.add(m);
+      }
     }
     if (roofs.length) {
-      const g2 = mergeGeometries(roofs, false);
-      const m = new Mesh(g2, roof);
-      m.castShadow = true;
-      group.add(m);
+      const g2 = mergeDispose(roofs);
+      if (g2) {
+        const m = new Mesh(g2, roof);
+        m.castShadow = true;
+        group.add(m);
+      }
     }
     if (intFloor.length) {
       const mat = new MeshStandardMaterial({ color: 6968900, roughness: 0.92, metalness: 0.02 });
-      const g2 = mergeGeometries(intFloor, false);
+      const g2 = mergeDispose(intFloor);
       const m = new Mesh(g2, mat);
       m.name = "gv-interior-floors";
       m.receiveShadow = true;
@@ -55731,7 +55779,7 @@ void main() {
     }
     if (intWood.length) {
       const mat = new MeshStandardMaterial({ color: 9069113, roughness: 0.78, metalness: 0.04 });
-      const g2 = mergeGeometries(intWood, false);
+      const g2 = mergeDispose(intWood);
       const m = new Mesh(g2, mat);
       m.name = "gv-interior-wood";
       m.castShadow = true;
@@ -55740,7 +55788,7 @@ void main() {
     }
     if (intDark.length) {
       const mat = new MeshStandardMaterial({ color: 2761760, roughness: 0.55, metalness: 0.08 });
-      const g2 = mergeGeometries(intDark, false);
+      const g2 = mergeDispose(intDark);
       const m = new Mesh(g2, mat);
       m.name = "gv-interior-dark";
       m.castShadow = true;
@@ -55748,7 +55796,7 @@ void main() {
     }
     if (intMetal.length) {
       const mat = new MeshStandardMaterial({ color: 4869714, roughness: 0.45, metalness: 0.55 });
-      const g2 = mergeGeometries(intMetal, false);
+      const g2 = mergeDispose(intMetal);
       const m = new Mesh(g2, mat);
       m.name = "gv-interior-metal";
       group.add(m);
@@ -55762,14 +55810,14 @@ void main() {
         metalness: 0.05
       });
       registerNight(mat, 0.55, 1.8);
-      const g2 = mergeGeometries(intGlow, false);
+      const g2 = mergeDispose(intGlow);
       const m = new Mesh(g2, mat);
       m.name = "gv-interior-glow";
       group.add(m);
     }
     if (patioWood.length) {
       const mat = new MeshStandardMaterial({ color: 9136709, roughness: 0.82, metalness: 0.03 });
-      const g2 = mergeGeometries(patioWood, false);
+      const g2 = mergeDispose(patioWood);
       const m = new Mesh(g2, mat);
       m.name = "gv-patio-wood";
       m.castShadow = true;
@@ -55778,21 +55826,21 @@ void main() {
     }
     if (patioMetal.length) {
       const mat = new MeshStandardMaterial({ color: 3817026, roughness: 0.4, metalness: 0.55 });
-      const g2 = mergeGeometries(patioMetal, false);
+      const g2 = mergeDispose(patioMetal);
       const m = new Mesh(g2, mat);
       m.name = "gv-patio-metal";
       group.add(m);
     }
     if (patioPlant.length) {
       const mat = new MeshStandardMaterial({ color: 4156218, roughness: 0.9, metalness: 0 });
-      const g2 = mergeGeometries(patioPlant, false);
+      const g2 = mergeDispose(patioPlant);
       const m = new Mesh(g2, mat);
       m.name = "gv-patio-plant";
       group.add(m);
     }
     if (treeTrunk.length) {
       const mat = new MeshStandardMaterial({ color: 5913896, roughness: 0.88, metalness: 0.02 });
-      const g2 = mergeGeometries(treeTrunk, false);
+      const g2 = mergeDispose(treeTrunk);
       const m = new Mesh(g2, mat);
       m.name = "gv-tree-trunk";
       m.castShadow = true;
@@ -55801,7 +55849,7 @@ void main() {
     }
     if (treeCanopy.length) {
       const mat = new MeshStandardMaterial({ color: 4025144, roughness: 0.92, metalness: 0 });
-      const g2 = mergeGeometries(treeCanopy, false);
+      const g2 = mergeDispose(treeCanopy);
       const m = new Mesh(g2, mat);
       m.name = "gv-tree-canopy";
       m.castShadow = true;
@@ -55809,7 +55857,7 @@ void main() {
     }
     if (lampPole.length) {
       const mat = new MeshStandardMaterial({ color: 2763824, roughness: 0.55, metalness: 0.35 });
-      const g2 = mergeGeometries(lampPole, false);
+      const g2 = mergeDispose(lampPole);
       const m = new Mesh(g2, mat);
       m.name = "gv-lamp-pole";
       m.castShadow = true;
@@ -55824,14 +55872,14 @@ void main() {
         metalness: 0.15
       });
       registerNight(mat, 0.35, 1.6);
-      const g2 = mergeGeometries(lampFixture, false);
+      const g2 = mergeDispose(lampFixture);
       const m = new Mesh(g2, mat);
       m.name = "gv-lamp-fixture";
       group.add(m);
     }
     if (sidewalkPad.length) {
       const mat = new MeshStandardMaterial({ color: 12170408, roughness: 0.94, metalness: 0.02 });
-      const g2 = mergeGeometries(sidewalkPad, false);
+      const g2 = mergeDispose(sidewalkPad);
       const m = new Mesh(g2, mat);
       m.name = "gv-sidewalk-pad";
       m.receiveShadow = true;
@@ -55839,7 +55887,7 @@ void main() {
     }
     if (sidewalkEdge.length) {
       const mat = new MeshStandardMaterial({ color: 9341570, roughness: 0.9, metalness: 0.02 });
-      const g2 = mergeGeometries(sidewalkEdge, false);
+      const g2 = mergeDispose(sidewalkEdge);
       const m = new Mesh(g2, mat);
       m.name = "gv-sidewalk-edge";
       m.receiveShadow = true;
@@ -55913,7 +55961,7 @@ void main() {
     }
     if (xwPad.length) {
       const mat = new MeshStandardMaterial({ color: 3026994, roughness: 0.95, metalness: 0.02 });
-      const g2 = mergeGeometries(xwPad, false);
+      const g2 = mergeDispose(xwPad);
       const m = new Mesh(g2, mat);
       m.name = "gv-xw-pad";
       m.receiveShadow = true;
@@ -55921,14 +55969,14 @@ void main() {
     }
     if (xwStripe.length) {
       const mat = new MeshStandardMaterial({ color: 16052196, roughness: 0.82, metalness: 0 });
-      const g2 = mergeGeometries(xwStripe, false);
+      const g2 = mergeDispose(xwStripe);
       const m = new Mesh(g2, mat);
       m.name = "gv-xw-stripes";
       group.add(m);
     }
     if (curbCut.length) {
       const mat = new MeshStandardMaterial({ color: 9078400, roughness: 0.9, metalness: 0.02 });
-      const g2 = mergeGeometries(curbCut, false);
+      const g2 = mergeDispose(curbCut);
       const m = new Mesh(g2, mat);
       m.name = "gv-curbcut-merged";
       m.receiveShadow = true;
@@ -56002,40 +56050,42 @@ void main() {
         paintGeos.push(end2);
       }
       const bodyY = y0 + 0.38 + CAR_H / 2;
-      {
-        const g2 = new BoxGeometry(CAR_W, CAR_H, CAR_L);
-        g2.rotateY(heading2);
-        g2.translate(px2, bodyY, pz2);
-        bodyGeos.push(g2);
+      if (!touchBudget || i % 2 === 0) {
+        {
+          const g2 = new BoxGeometry(CAR_W, CAR_H, CAR_L);
+          g2.rotateY(heading2);
+          g2.translate(px2, bodyY, pz2);
+          bodyGeos.push(g2);
+        }
+        {
+          const g2 = new BoxGeometry(CAR_W * 0.88, CAB_H, CAR_L * 0.52);
+          g2.rotateY(heading2);
+          g2.translate(px2 + fx * 0.15, y0 + 0.38 + CAR_H + CAB_H / 2, pz2 + fz * 0.15);
+          cabinGeos.push(g2);
+        }
+        {
+          const g2 = new BoxGeometry(CAR_W * 0.82, CAB_H * 0.7, CAR_L * 0.42);
+          g2.rotateY(heading2);
+          g2.translate(px2 + fx * 0.12, y0 + 0.38 + CAR_H + CAB_H * 0.55, pz2 + fz * 0.12);
+          glassGeos.push(g2);
+        }
+        for (const [lon, lat] of [[-0.32, -0.78], [-0.32, 0.78], [0.32, -0.78], [0.32, 0.78]]) {
+          const wx = px2 + fx * (lon * CAR_L) + rx * (lat * CAR_W * 0.5);
+          const wz = pz2 + fz * (lon * CAR_L) + rz * (lat * CAR_W * 0.5);
+          const g2 = new CylinderGeometry(0.32, 0.32, 0.28, 8);
+          g2.rotateZ(Math.PI / 2);
+          g2.rotateY(heading2);
+          g2.translate(wx, y0 + 0.32, wz);
+          wheelGeos.push(g2);
+        }
+        addBox(px2, pz2, CAR_W * 0.55, CAR_L * 0.48, heading2, y0, y0 + 1.6, "greenville_curb");
+        const marker = new Object3D();
+        marker.name = `gv-curb-car-${i}`;
+        marker.position.set(px2, y0 + 0.5, pz2);
+        marker.userData.curbParking = true;
+        marker.userData.spotIndex = i;
+        group.add(marker);
       }
-      {
-        const g2 = new BoxGeometry(CAR_W * 0.88, CAB_H, CAR_L * 0.52);
-        g2.rotateY(heading2);
-        g2.translate(px2 + fx * 0.15, y0 + 0.38 + CAR_H + CAB_H / 2, pz2 + fz * 0.15);
-        cabinGeos.push(g2);
-      }
-      {
-        const g2 = new BoxGeometry(CAR_W * 0.82, CAB_H * 0.7, CAR_L * 0.42);
-        g2.rotateY(heading2);
-        g2.translate(px2 + fx * 0.12, y0 + 0.38 + CAR_H + CAB_H * 0.55, pz2 + fz * 0.12);
-        glassGeos.push(g2);
-      }
-      for (const [lon, lat] of [[-0.32, -0.78], [-0.32, 0.78], [0.32, -0.78], [0.32, 0.78]]) {
-        const wx = px2 + fx * (lon * CAR_L) + rx * (lat * CAR_W * 0.5);
-        const wz = pz2 + fz * (lon * CAR_L) + rz * (lat * CAR_W * 0.5);
-        const g2 = new CylinderGeometry(0.32, 0.32, 0.28, 8);
-        g2.rotateZ(Math.PI / 2);
-        g2.rotateY(heading2);
-        g2.translate(wx, y0 + 0.32, wz);
-        wheelGeos.push(g2);
-      }
-      addBox(px2, pz2, CAR_W * 0.55, CAR_L * 0.48, heading2, y0, y0 + 1.6, "greenville_curb");
-      const marker = new Object3D();
-      marker.name = `gv-curb-car-${i}`;
-      marker.position.set(px2, y0 + 0.5, pz2);
-      marker.userData.curbParking = true;
-      marker.userData.spotIndex = i;
-      group.add(marker);
     }
     const EMPTY_CUTOUTS = [
       { z: -175, side: -1 },
@@ -56080,17 +56130,21 @@ void main() {
       group.add(marker);
     }
     if (stallGeos.length) {
-      const g2 = mergeGeometries(stallGeos, false);
-      const m = new Mesh(g2, asphaltMat);
-      m.name = "gv-curb-asphalt";
-      m.receiveShadow = true;
-      group.add(m);
+      const g2 = mergeDispose(stallGeos);
+      if (g2) {
+        const m = new Mesh(g2, asphaltMat);
+        m.name = "gv-curb-asphalt";
+        m.receiveShadow = true;
+        group.add(m);
+      }
     }
     if (paintGeos.length) {
-      const g2 = mergeGeometries(paintGeos, false);
-      const m = new Mesh(g2, paintMat2);
-      m.name = "gv-curb-paint";
-      group.add(m);
+      const g2 = mergeDispose(paintGeos);
+      if (g2) {
+        const m = new Mesh(g2, paintMat2);
+        m.name = "gv-curb-paint";
+        group.add(m);
+      }
     }
     if (bodyGeos.length) {
       const buckets = /* @__PURE__ */ new Map();
@@ -56103,7 +56157,7 @@ void main() {
       let bi = 0;
       for (const [col3, geos] of buckets) {
         const mat = new MeshStandardMaterial({ color: col3, roughness: 0.55, metalness: 0.12 });
-        const g2 = mergeGeometries(geos, false);
+        const g2 = mergeDispose(geos);
         const m = new Mesh(g2, mat);
         m.name = `gv-curb-bodies-${bi++}`;
         m.castShadow = true;
@@ -56113,23 +56167,27 @@ void main() {
     }
     if (cabinGeos.length) {
       const cabinMat2 = new MeshStandardMaterial({ color: 1974822, roughness: 0.5, metalness: 0.15 });
-      const g2 = mergeGeometries(cabinGeos, false);
+      const g2 = mergeDispose(cabinGeos);
       const m = new Mesh(g2, cabinMat2);
       m.name = "gv-curb-cabins";
       m.castShadow = true;
       group.add(m);
     }
     if (glassGeos.length) {
-      const g2 = mergeGeometries(glassGeos, false);
-      const m = new Mesh(g2, glassCarMat);
-      m.name = "gv-curb-glass";
-      group.add(m);
+      const g2 = mergeDispose(glassGeos);
+      if (g2) {
+        const m = new Mesh(g2, glassCarMat);
+        m.name = "gv-curb-glass";
+        group.add(m);
+      }
     }
     if (wheelGeos.length) {
-      const g2 = mergeGeometries(wheelGeos, false);
-      const m = new Mesh(g2, wheelMat);
-      m.name = "gv-curb-wheels";
-      group.add(m);
+      const g2 = mergeDispose(wheelGeos);
+      if (g2) {
+        const m = new Mesh(g2, wheelMat);
+        m.name = "gv-curb-wheels";
+        group.add(m);
+      }
     }
     const P2 = PLACES.greenville;
     addTrigger({
@@ -56150,8 +56208,163 @@ void main() {
     disc3.rotation.x = -Math.PI / 2;
     disc3.position.set(P2.x, pinY + 0.08, P2.z);
     group.add(disc3);
+    if (touchBudget) {
+      const slots = SHOPS2.map((s, i) => {
+        const onBelmont = s.cross === "belmont";
+        let x, z;
+        if (onBelmont) {
+          x = s.x;
+          z = BELMONT_Z + s.side * (8 + s.d / 2);
+        } else {
+          x = CX + s.side * (9 + s.d / 2);
+          z = s.z;
+        }
+        return { i, x, z, s, onBelmont };
+      });
+      _gvTouch = { group, heavy, slots, loaded: false, mats: [] };
+      group.userData.gvTouch = true;
+      for (const slot of slots) {
+        if (!slot.s.interior) continue;
+        const y0 = terrainHeight(slot.x, slot.z);
+        const marker = new Object3D();
+        marker.name = `gv-interior-${slot.i}`;
+        marker.position.set(slot.x, y0 + 1.2, slot.z);
+        marker.userData.interior = true;
+        marker.userData.shopName = slot.s.name;
+        marker.userData.shopIndex = slot.i;
+        marker.userData.deferred = true;
+        group.add(marker);
+      }
+    }
     world2.scene.add(group);
     return group;
+  }
+  function updateGreenvilleStreaming(cx, cz) {
+    if (!_gvTouch) return;
+    const { heavy, slots, loaded } = _gvTouch;
+    let minD = Infinity;
+    for (const sl of slots) {
+      const d = Math.hypot(sl.x - cx, sl.z - cz);
+      if (d < minD) minD = d;
+    }
+    if (!loaded && minD <= TOUCH_LOAD_R) {
+      buildTouchHeavyDetail(_gvTouch);
+      _gvTouch.loaded = true;
+    } else if (loaded && minD >= TOUCH_UNLOAD_R) {
+      disposeTouchHeavyDetail(_gvTouch);
+      _gvTouch.loaded = false;
+    }
+  }
+  function disposeObject3D(root) {
+    root.traverse((o) => {
+      if (o.geometry) {
+        try {
+          o.geometry.dispose();
+        } catch {
+        }
+      }
+      const mats = o.material ? Array.isArray(o.material) ? o.material : [o.material] : [];
+      for (const m of mats) {
+        if (!m) continue;
+        if (m.userData?.gvShared) continue;
+        try {
+          m.dispose();
+        } catch {
+        }
+      }
+    });
+    while (root.children.length) root.remove(root.children[0]);
+  }
+  function disposeTouchHeavyDetail(state) {
+    disposeObject3D(state.heavy);
+    for (const m of state.mats) {
+      try {
+        m.dispose();
+      } catch {
+      }
+    }
+    state.mats.length = 0;
+  }
+  function buildTouchHeavyDetail(state) {
+    const { heavy, slots, mats } = state;
+    disposeTouchHeavyDetail(state);
+    const intFloor = [], intWood = [], intDark = [], intGlow = [], intMetal = [];
+    const patioWood = [], patioMetal = [], patioPlant = [];
+    const stride = 2;
+    for (const slot of slots) {
+      if (slot.i % stride !== 0) continue;
+      const s = slot.s;
+      const { x, z, onBelmont } = slot;
+      const y0 = terrainHeight(x, z);
+      const { nx, nz, ax, az } = faceBasis(onBelmont, s.side);
+      if (s.interior) {
+        const iw = s.w * 0.88, id7 = s.d * 0.78;
+        const g2 = new BoxGeometry(iw, 0.06, id7);
+        g2.translate(x, y0 + 0.04, z);
+        intFloor.push(g2);
+        const barX = x - nx * (s.d * 0.28), barZ = z - nz * (s.d * 0.28);
+        const bar3 = onBelmont ? new BoxGeometry(iw * 0.65, 1.05, 0.7) : new BoxGeometry(0.7, 1.05, iw * 0.65);
+        bar3.translate(barX, y0 + 0.52, barZ);
+        intWood.push(bar3);
+        const seat = new CylinderGeometry(0.22, 0.24, 0.08, 6);
+        seat.translate(barX + nx * 1.1, y0 + 0.72, barZ + nz * 1.1);
+        intWood.push(seat);
+        const glow2 = new BoxGeometry(0.35, 0.18, 0.35);
+        glow2.translate(x, y0 + s.h - 0.55, z);
+        intGlow.push(glow2);
+      }
+      if (s.patio) {
+        const patioOut = onBelmont ? 2.35 : 2.2;
+        const px2 = (onBelmont ? x : CX + s.side * 8.2) + (onBelmont ? 0 : nx * patioOut);
+        let faceX, faceZ;
+        if (onBelmont) {
+          faceX = x;
+          faceZ = BELMONT_Z + s.side * 7.6;
+        } else {
+          faceX = CX + s.side * 8.2;
+          faceZ = z;
+        }
+        const cx = faceX + nx * patioOut;
+        const cz = faceZ + nz * patioOut;
+        const deck = onBelmont ? new BoxGeometry(2.4, 0.05, 1.5) : new BoxGeometry(1.5, 0.05, 2.4);
+        deck.translate(cx, y0 + 0.03, cz);
+        patioWood.push(deck);
+        const top = new CylinderGeometry(0.4, 0.4, 0.06, 8);
+        top.translate(cx, y0 + 0.78, cz);
+        patioWood.push(top);
+      }
+    }
+    function addMerged(list, mat, name) {
+      if (!list.length) {
+        mat.dispose();
+        return;
+      }
+      mats.push(mat);
+      mat.userData.gvShared = true;
+      const g2 = mergeDispose(list);
+      if (!g2) {
+        mat.dispose();
+        return;
+      }
+      const m = new Mesh(g2, mat);
+      m.name = name;
+      m.castShadow = false;
+      m.receiveShadow = true;
+      heavy.add(m);
+    }
+    addMerged(intFloor, new MeshStandardMaterial({ color: 6968900, roughness: 0.92, metalness: 0.02 }), "gv-touch-int-floor");
+    addMerged(intWood, new MeshStandardMaterial({ color: 9069113, roughness: 0.78, metalness: 0.04 }), "gv-touch-int-wood");
+    addMerged(intDark, new MeshStandardMaterial({ color: 2761760, roughness: 0.55, metalness: 0.08 }), "gv-touch-int-dark");
+    addMerged(intMetal, new MeshStandardMaterial({ color: 4869714, roughness: 0.45, metalness: 0.55 }), "gv-touch-int-metal");
+    const glowMat = new MeshStandardMaterial({ color: 16761962, emissive: 16757594, emissiveIntensity: 0.45, roughness: 0.6, metalness: 0.05 });
+    try {
+      registerNight(glowMat, 0.45, 1.6);
+    } catch {
+    }
+    addMerged(intGlow, glowMat, "gv-touch-int-glow");
+    addMerged(patioWood, new MeshStandardMaterial({ color: 9136709, roughness: 0.82, metalness: 0.03 }), "gv-touch-patio-wood");
+    addMerged(patioMetal, new MeshStandardMaterial({ color: 3817026, roughness: 0.4, metalness: 0.55 }), "gv-touch-patio-metal");
+    addMerged(patioPlant, new MeshStandardMaterial({ color: 4156218, roughness: 0.9 }), "gv-touch-patio-plant");
   }
 
   // src/game/studioProgress.js
@@ -79855,7 +80068,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-65eb1a3deaf1", tipSha: false ? "" : "8c69588", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-298acaf5d7ab", tipSha: false ? "" : "6c9e336", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
@@ -79892,9 +80105,27 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     R.renderer.info.autoReset = false;
     canvas3.addEventListener("webglcontextlost", (e) => {
       e.preventDefault();
+      try {
+        if (g.state === "play") markPlaying();
+      } catch {
+      }
       const l = document.querySelector("#loading .lbl");
-      if (l) l.textContent = "Graphics context lost \u2014 reload the page (phone may be out of memory).";
+      if (l) l.textContent = "Graphics context lost \u2014 restoring\u2026 (phone may be low on memory)";
       document.getElementById("loading")?.classList.remove("hidden");
+      g._ctxLost = true;
+    });
+    canvas3.addEventListener("webglcontextrestored", () => {
+      g._ctxLost = false;
+      try {
+        g.R?.rebuild?.();
+        document.getElementById("loading")?.classList.add("hidden");
+        g.hud?.toast?.("Graphics restored \u2014 drive on.", 3);
+        if (g.state === "play") markPlaying();
+      } catch (err) {
+        console.warn("webgl restore failed", err);
+        const l = document.querySelector("#loading .lbl");
+        if (l) l.textContent = "Graphics restore failed \u2014 reload the page.";
+      }
     });
     const scene = new Scene();
     g.scene = scene;
@@ -80595,11 +80826,19 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         inCar: !!g.inCar,
         ...extra
       };
-      sessionStorage.setItem(PLAY_SESSION_KEY, JSON.stringify(payload));
+      localStorage.setItem(PLAY_SESSION_KEY, JSON.stringify(payload));
+      try {
+        sessionStorage.removeItem(PLAY_SESSION_KEY);
+      } catch {
+      }
     } catch {
     }
   }
   function clearPlaying() {
+    try {
+      localStorage.removeItem(PLAY_SESSION_KEY);
+    } catch {
+    }
     try {
       sessionStorage.removeItem(PLAY_SESSION_KEY);
     } catch {
@@ -80607,7 +80846,13 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   }
   function readPlaying() {
     try {
-      const raw = sessionStorage.getItem(PLAY_SESSION_KEY);
+      let raw = localStorage.getItem(PLAY_SESSION_KEY);
+      if (!raw) {
+        try {
+          raw = sessionStorage.getItem(PLAY_SESSION_KEY);
+        } catch {
+        }
+      }
       if (!raw) return null;
       const data = JSON.parse(raw);
       if (!data || !data.t || Date.now() - data.t > 30 * 60 * 1e3) return null;
@@ -81578,10 +81823,15 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       g._cullT = 0;
       const cx = viewActor.x, cz = viewActor.z;
       g.lighting.cullCasters(cx, cz);
+      try {
+        updateGreenvilleStreaming(cx, cz);
+      } catch {
+      }
       for (const pk of g.parked) {
         if (pk.taken) continue;
         const d = Math.hypot(pk.model.group.position.x - cx, pk.model.group.position.z - cz);
-        const show = d < 140, shadow = d < 45;
+        const parkR = g.touch?.isPhoneLike?.() || /(?:\?|&)(?:touch|phone)=1/.test(location.search) ? 90 : 140;
+        const show = d < parkR, shadow = d < 45;
         if (show !== pk.shown) {
           pk.model.group.visible = show;
           pk.shown = show;

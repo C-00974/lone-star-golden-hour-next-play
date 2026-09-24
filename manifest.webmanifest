@@ -1,7 +1,7 @@
 {
   "name": "Lone Star: Golden Hour",
   "short_name": "Golden Hour",
-  "start_url": "./index.html?touch=1&v=8c69588",
+  "start_url": "./index.html?touch=1&v=6c9e336",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
