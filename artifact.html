@@ -43082,7 +43082,7 @@ void main() {
     { id: "afterglow-main", name: "Afterglow on Main", kind: "Driving challenge \xB7 wagon or GTS", detail: "Stop in the blue starting bay with the wagon or GTS. Press Enter / A to start. Follow eight gates, hold the tracking speed, then stop on the mark." },
     { id: "lot42", name: "The Driver\u2019s Call \xB7 Lot 42", kind: "Dee \xB7 wagon or GTS", detail: "Choose your practice car, drive to the blue bay and press Enter / A to repair, line up and start. Six turquoise gates and one gold clockwise lap earn latest and best notes for that car. Read your notes, retry, or drive back to Dee." },
     { id: "kirk", name: "Ronald Kirk Bridge", kind: "Scenic stop \xB7 explore on foot", detail: "Walk out onto the pedestrian bridge for the arch and skyline. F / Y raises the scout camera; P / D-pad down opens free photo mode." },
-    { id: "greenville", name: "Greenville Ave \xB7 Lower", kind: "Dallas strip \xB7 drive and stroll", detail: "Cross the bridge on Woodall or take Howell east from Riverfront. Longer OSM-shaped Greenville with porch bars, Phase 8 inventable interiors (24 of 24 shops), Belmont cross, and curb parking \u2014 feel over survey accuracy; real storefronts later." }
+    { id: "greenville", name: "Greenville Ave \xB7 Lower", kind: "Dallas strip \xB7 drive and stroll", detail: "Cross the bridge on Woodall or take Howell east from Riverfront. Longer OSM-shaped Greenville with porch bars, Phase 8 inventable interiors (24 of 24 shops), Phase 10 outdoor patio seating on a subset of shops, Belmont cross, and curb parking \u2014 feel over survey accuracy; real storefronts later." }
   ];
   var chain = (labels, current) => labels.map((label, i) => ({ label, state: i < current ? "done" : i === current ? "now" : "later" }));
   var near = (p, q, r = 25) => !!p && !!q && Math.hypot(p.x - q.x, p.z - q.z) < r && (q.y == null || Math.abs(p.y - q.y) < 2.5);
@@ -43918,7 +43918,7 @@ void main() {
       { id: "studio-gallery", name: "Your studio exhibition", sub: "Hang your photographs and named cut cards \xB7 inside Second Unit", ...STUDIO.entrance },
       { id: "downtown", name: "Downtown \xB7 Main St", sub: "The city core", x: dt.x, z: dt.z, y: 8 },
       { id: "reunion", name: "Reunion Tower", sub: "Downtown landmark", x: 786, z: 552, y: 8 },
-      { id: "greenville", name: "Greenville Ave \xB7 Lower", sub: "East-side bar strip \xB7 Phase 8 interiors (24) \xB7 Belmont", x: PLACES.greenville.x, z: PLACES.greenville.z, y: PLACES.greenville.y }
+      { id: "greenville", name: "Greenville Ave \xB7 Lower", sub: "East-side bar strip \xB7 Phase 10 patio \xB7 interiors (24) \xB7 Belmont", x: PLACES.greenville.x, z: PLACES.greenville.z, y: PLACES.greenville.y }
     ];
   }
   function remaining(path, x, z, destination = null, actorY = null) {
@@ -54981,29 +54981,29 @@ void main() {
   var BELMONT_Z = 140;
   var SHOPS2 = [
     // Phase 5 north extend (N = −Z)
-    { z: -360, side: -1, name: "NORTH PORCH", interior: true, w: 13, d: 9, h: 4, color: 11838604, awn: ["#1d3557", "#f4efe4"], neon: 8042751, panes: 4, door: 0.3, neonSign: true },
+    { z: -360, side: -1, name: "NORTH PORCH", patio: true, interior: true, w: 13, d: 9, h: 4, color: 11838604, awn: ["#1d3557", "#f4efe4"], neon: 8042751, panes: 4, door: 0.3, neonSign: true },
     { z: -335, side: 1, name: "LANTERN ROW", interior: true, w: 12, d: 9, h: 3.8, color: 13155502, awn: ["#c9a227", "#1e1e22"], neon: 16767082, panes: 3, door: 0.65 },
     { z: -310, side: -1, name: "UPPER STRIP", interior: true, w: 14, d: 10, h: 4.3, color: 9071186, awn: ["#6e3a22", "#e8c89a"], neon: 16751162, panes: 4, door: 0.22 },
     { z: -280, side: -1, name: "PORCH LIGHT", interior: true, w: 12, d: 9, h: 3.8, color: 12167312, awn: ["#c45c48", "#f4efe4"], neon: 16747082, panes: 3, door: 0.25 },
     { z: -260, side: -1, name: "VELVET PORCH", interior: true, w: 14, d: 10, h: 4.2, color: 12891290, awn: ["#5b3d6e", "#e8d9f0"], neon: 13934847, panes: 4, door: 0.7 },
     { z: -220, side: 1, name: "NEON SPOON", interior: true, w: 12, d: 9, h: 3.8, color: 12109e3, awn: ["#1d6fa8", "#f4efe4"], neon: 6211839, panes: 3, door: 0.3, neonSign: true },
     { z: -190, side: -1, name: "MIDBLOCK MULE", interior: true, w: 13, d: 9, h: 4, color: 10123868, awn: ["#8a5a2a", "#f0e0c8"], neon: 16757578, panes: 4, door: 0.65 },
-    { z: -160, side: -1, name: "AMBER & RYE", interior: true, w: 16, d: 11, h: 5, color: 9071186, awn: ["#6e3a22", "#e8c89a"], neon: 16751162, panes: 5, door: 0.2, neonSign: true },
-    { z: -130, side: 1, name: "ORAM OUTDOOR", interior: true, w: 12, d: 9, h: 3.7, color: 13813944, awn: ["#2f5a3a", "#e8f0e4"], neon: 8257434, panes: 3, door: 0.75 },
-    { z: -100, side: 1, name: "PATIO RADIO", interior: true, w: 13, d: 10, h: 4, color: 14274496, awn: ["#1d3557", "#f4efe4"], neon: 6990079, panes: 4, door: 0.35 },
+    { z: -160, side: -1, name: "AMBER & RYE", patio: true, interior: true, w: 16, d: 11, h: 5, color: 9071186, awn: ["#6e3a22", "#e8c89a"], neon: 16751162, panes: 5, door: 0.2, neonSign: true },
+    { z: -130, side: 1, name: "ORAM OUTDOOR", patio: true, interior: true, w: 12, d: 9, h: 3.7, color: 13813944, awn: ["#2f5a3a", "#e8f0e4"], neon: 8257434, panes: 3, door: 0.75 },
+    { z: -100, side: 1, name: "PATIO RADIO", patio: true, interior: true, w: 13, d: 10, h: 4, color: 14274496, awn: ["#1d3557", "#f4efe4"], neon: 6990079, panes: 4, door: 0.35 },
     { z: -80, side: -1, name: "LOW GLOW", interior: true, w: 11, d: 8, h: 3.5, color: 11044976, awn: ["#c9a227", "#1e1e22"], neon: 16765514, panes: 3, door: 0.55, neonSign: true },
     { z: -50, side: -1, name: "LAST CALL ROOM", interior: true, w: 18, d: 12, h: 5.4, color: 7227962, awn: ["#3a2218", "#e8c8a0"], neon: 16742970, panes: 5, door: 0.15 },
-    { z: -50, side: 1, name: "SIDEWALK SOCIAL", interior: true, w: 15, d: 10, h: 4.4, color: 15261648, awn: ["#b5352c", "#fff3d6"], neon: 16738906, panes: 4, door: 0.8 },
-    { z: 20, side: -1, name: "GOLD HOUR TAP", interior: true, w: 14, d: 10, h: 4.6, color: 10910802, awn: ["#c9a227", "#f4efe4"], neon: 16760902, panes: 4, door: 0.28, neonSign: true },
+    { z: -50, side: 1, name: "SIDEWALK SOCIAL", patio: true, interior: true, w: 15, d: 10, h: 4.4, color: 15261648, awn: ["#b5352c", "#fff3d6"], neon: 16738906, panes: 4, door: 0.8 },
+    { z: 20, side: -1, name: "GOLD HOUR TAP", patio: true, interior: true, w: 14, d: 10, h: 4.6, color: 10910802, awn: ["#c9a227", "#f4efe4"], neon: 16760902, panes: 4, door: 0.28, neonSign: true },
     { z: 50, side: 1, name: "HALF BLOCK", interior: true, w: 12, d: 9, h: 3.9, color: 13154468, awn: ["#4a6a78", "#e8f0f4"], neon: 9098495, panes: 3, door: 0.6 },
-    { z: 80, side: 1, name: "BELMONT BOWL", interior: true, w: 12, d: 9, h: 3.6, color: 13616820, awn: ["#2f5a3a", "#f4efe4"], neon: 10158e3, panes: 3, door: 0.4 },
+    { z: 80, side: 1, name: "BELMONT BOWL", patio: true, interior: true, w: 12, d: 9, h: 3.6, color: 13616820, awn: ["#2f5a3a", "#f4efe4"], neon: 10158e3, panes: 3, door: 0.4 },
     { z: 110, side: -1, name: "CORNER CURB", interior: true, w: 13, d: 9, h: 4.1, color: 9203800, awn: ["#6e3a22", "#f0e0c8"], neon: 16756832, panes: 4, door: 0.7 },
-    { cross: "belmont", x: 1035, side: -1, name: "WEST BELMONT", interior: true, w: 14, d: 10, h: 4.3, color: 11571312, awn: ["#1d3557", "#f4efe4"], neon: 8042751, panes: 4, door: 0.3, neonSign: true },
-    { cross: "belmont", x: 1125, side: 1, name: "EAST BELMONT", interior: true, w: 13, d: 9, h: 4, color: 13945014, awn: ["#b5352c", "#fff3d6"], neon: 16743018, panes: 3, door: 0.65 },
+    { cross: "belmont", x: 1035, side: -1, name: "WEST BELMONT", patio: true, interior: true, w: 14, d: 10, h: 4.3, color: 11571312, awn: ["#1d3557", "#f4efe4"], neon: 8042751, panes: 4, door: 0.3, neonSign: true },
+    { cross: "belmont", x: 1125, side: 1, name: "EAST BELMONT", patio: true, interior: true, w: 13, d: 9, h: 4, color: 13945014, awn: ["#b5352c", "#fff3d6"], neon: 16743018, panes: 3, door: 0.65 },
     { z: 140, side: -1, name: "ALTA LANTERN", interior: true, w: 13, d: 10, h: 4.2, color: 10126704, awn: ["#c9a227", "#1e1e22"], neon: 16767082, panes: 4, door: 0.35, neonSign: true },
     { z: 180, side: 1, name: "CORRIDOR CLUB", interior: true, w: 16, d: 11, h: 5.2, color: 6048318, awn: ["#2c1a28", "#e8d0e0"], neon: 16744640, panes: 5, door: 0.2 },
     // Phase 5 south extend (+Z)
-    { z: 220, side: -1, name: "SOUTH GLOW", interior: true, w: 13, d: 9, h: 4, color: 11044976, awn: ["#b5352c", "#fff3d6"], neon: 16738906, panes: 4, door: 0.35, neonSign: true },
+    { z: 220, side: -1, name: "SOUTH GLOW", patio: true, interior: true, w: 13, d: 9, h: 4, color: 11044976, awn: ["#b5352c", "#fff3d6"], neon: 16738906, panes: 4, door: 0.35, neonSign: true },
     { z: 250, side: 1, name: "END BLOCK", interior: true, w: 15, d: 10, h: 4.6, color: 13813944, awn: ["#2f5a3a", "#e8f0e4"], neon: 8257434, panes: 4, door: 0.7 },
     { z: 275, side: -1, name: "LAST CURB", interior: true, w: 12, d: 9, h: 3.7, color: 10126704, awn: ["#4a6a78", "#e8f0f4"], neon: 9098495, panes: 3, door: 0.45 }
   ];
@@ -55101,6 +55101,8 @@ void main() {
     const glasses = [], roofs = [], mullions = [], sills = [];
     const intFloor = [], intWood = [], intDark = [], intGlow = [], intMetal = [];
     let interiorCount = 0;
+    const patioWood = [], patioMetal = [], patioPlant = [];
+    let patioCount = 0;
     for (let i = 0; i < SHOPS2.length; i++) {
       const s = SHOPS2[i];
       const onBelmont = s.cross === "belmont";
@@ -55544,6 +55546,60 @@ void main() {
         marker.userData.roomKind = roomKind;
         group.add(marker);
       }
+      if (s.patio) {
+        patioCount++;
+        const patioOut = onBelmont ? 2.35 : 2.2;
+        const px2 = faceX + nx * patioOut;
+        const pz2 = faceZ + nz * patioOut;
+        const py2 = terrainHeight(px2, pz2);
+        const doorBias = (s.door ?? 0.5) * 2 - 1;
+        const along = -doorBias * Math.min(s.w * 0.28, 2.4);
+        const cx = px2 + ax * along;
+        const cz = pz2 + az * along;
+        {
+          const g2 = onBelmont ? new BoxGeometry(2.6, 0.05, 1.7) : new BoxGeometry(1.7, 0.05, 2.6);
+          g2.translate(cx, py2 + 0.03, cz);
+          patioWood.push(g2);
+        }
+        {
+          const g2 = new CylinderGeometry(0.42, 0.42, 0.06, 10);
+          g2.translate(cx, py2 + 0.78, cz);
+          patioWood.push(g2);
+          const ped = new CylinderGeometry(0.07, 0.1, 0.72, 6);
+          ped.translate(cx, py2 + 0.4, cz);
+          patioMetal.push(ped);
+        }
+        for (const t of [-0.85, 0.85]) {
+          const sx = cx + ax * t;
+          const sz = cz + az * t;
+          const seat = new BoxGeometry(0.42, 0.06, 0.42);
+          seat.translate(sx, py2 + 0.48, sz);
+          patioWood.push(seat);
+          const back = onBelmont ? new BoxGeometry(0.42, 0.38, 0.06) : new BoxGeometry(0.06, 0.38, 0.42);
+          back.translate(sx + ax * (t > 0 ? 0.18 : -0.18), py2 + 0.68, sz + az * (t > 0 ? 0.18 : -0.18));
+          patioWood.push(back);
+          const leg = new CylinderGeometry(0.035, 0.04, 0.44, 5);
+          leg.translate(sx, py2 + 0.24, sz);
+          patioMetal.push(leg);
+        }
+        {
+          const ox = cx + nx * 0.75 + ax * 1.15;
+          const oz = cz + nz * 0.75 + az * 1.15;
+          const pot = new CylinderGeometry(0.18, 0.22, 0.32, 6);
+          pot.translate(ox, py2 + 0.2, oz);
+          patioPlant.push(pot);
+          const bush = new SphereGeometry(0.22, 6, 5);
+          bush.translate(ox, py2 + 0.42, oz);
+          patioPlant.push(bush);
+        }
+        const marker = new Object3D();
+        marker.name = `gv-patio-${i}`;
+        marker.position.set(cx, py2 + 0.5, cz);
+        marker.userData.patio = true;
+        marker.userData.shopName = s.name;
+        marker.userData.shopIndex = i;
+        group.add(marker);
+      }
     }
     if (glasses.length) {
       const g2 = mergeGeometries(glasses, false);
@@ -55615,6 +55671,29 @@ void main() {
       const g2 = mergeGeometries(intGlow, false);
       const m = new Mesh(g2, mat);
       m.name = "gv-interior-glow";
+      group.add(m);
+    }
+    if (patioWood.length) {
+      const mat = new MeshStandardMaterial({ color: 9136709, roughness: 0.82, metalness: 0.03 });
+      const g2 = mergeGeometries(patioWood, false);
+      const m = new Mesh(g2, mat);
+      m.name = "gv-patio-wood";
+      m.castShadow = true;
+      m.receiveShadow = true;
+      group.add(m);
+    }
+    if (patioMetal.length) {
+      const mat = new MeshStandardMaterial({ color: 3817026, roughness: 0.4, metalness: 0.55 });
+      const g2 = mergeGeometries(patioMetal, false);
+      const m = new Mesh(g2, mat);
+      m.name = "gv-patio-metal";
+      group.add(m);
+    }
+    if (patioPlant.length) {
+      const mat = new MeshStandardMaterial({ color: 4156218, roughness: 0.9, metalness: 0 });
+      const g2 = mergeGeometries(patioPlant, false);
+      const m = new Mesh(g2, mat);
+      m.name = "gv-patio-plant";
       group.add(m);
     }
     const poleMat = new MeshStandardMaterial({ color: 2895409, roughness: 0.7 });
@@ -55822,7 +55901,7 @@ void main() {
       r: 28,
       once: true,
       onEnter(g2) {
-        g2.hud?.banner?.("Greenville Ave \xB7 Lower", "Phase 8 interiors (24) \xB7 longer corridor \xB7 curb \xB7 neon", 3.5);
+        g2.hud?.banner?.("Greenville Ave \xB7 Lower", "Phase 10 patio seating \xB7 interiors (24) \xB7 curb \xB7 neon", 3.5);
       }
     });
     const pinY = eastY(P2.x);
@@ -79518,7 +79597,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-e1db68b71756", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-756483b5b90d", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
