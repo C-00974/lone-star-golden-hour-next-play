@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-bf1e82351b68">
+<meta name="lsgh-build" content="0.35.0-next.0-218bf0c9a7f2">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -33641,7 +33641,70 @@ void main() {
     { id: "levee_st", name: "Levee St", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: eastLine(560, -470, 560, 470) },
     { id: "howell", name: "Howell St", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: eastLine(400, 200, 840, 200) },
     { id: "payne", name: "Payne St", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: eastLine(400, -240, 840, -240) },
-    { id: "market_center", name: "Market Center Blvd", type: "street", surface: "concrete", width: 14, lanes: 2, speed: 30, pts: eastLine(700, -470, 700, 470) }
+    { id: "market_center", name: "Market Center Blvd", type: "street", surface: "concrete", width: 14, lanes: 2, speed: 30, pts: eastLine(700, -470, 700, 470) },
+    // --- Lower Greenville Phase 5 (OSM-informed centerline + Belmont + N/S corridor extend; feel over survey accuracy)
+    // Belmont→Alta-ish strip at x≈1080, east of Howell. Woodall crosses near z=0 for through traffic.
+    // Phase 5: modest N/S extend (~80m each) beyond Phase 1/2 OSM strip — feel over survey accuracy.
+    {
+      id: "greenville",
+      name: "Greenville Ave",
+      type: "street",
+      surface: "asphalt",
+      width: 14,
+      lanes: 2,
+      speed: 30,
+      pts: [
+        [1081.9, -380],
+        [1081.8, -350],
+        [1081.7, -325],
+        [1081.6, -299.3],
+        [1081.4, -262.4],
+        [1081.1, -239.8],
+        [1080.7, -202.3],
+        [1080.5, -182.4],
+        [1080.5, -137.4],
+        [1080.6, -124.9],
+        [1080.9, -72],
+        [1080.8, -67.5],
+        [1079.4, -9.8],
+        [1079.3, -4.7],
+        [1079.4, 19.1],
+        [1079.7, 63.5],
+        [1079.1, 131.8],
+        [1079.1, 139.8],
+        [1079.1, 148.1],
+        [1079.1, 159.4],
+        [1079.1, 163.2],
+        [1079.1, 171.4],
+        [1079.4, 200],
+        [1079.5, 230],
+        [1079.6, 255],
+        [1079.7, 280]
+      ].map(([x, z]) => ({ x, z, y: eastY(x) }))
+    },
+    // Howell terminus (840,200) → Greenville mid-south (still the primary approach; road continues past).
+    { id: "greenville_link", name: "Howell St", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: eastLine(840, 200, 1079.4, 200) },
+    {
+      id: "greenville_alta",
+      name: "Alta Ave",
+      type: "street",
+      surface: "asphalt",
+      width: 11,
+      lanes: 2,
+      speed: 25,
+      pts: join(eastLine(840, 0, 840, -50, 10), eastLine(840, -50, 1080, -50, 15))
+    },
+    // Belmont Ave (OSM lat≈32.81737 → game z≈140): Woodall east approach → past Greenville for cross-street rhythm.
+    {
+      id: "greenville_belmont",
+      name: "Belmont Ave",
+      type: "street",
+      surface: "asphalt",
+      width: 11,
+      lanes: 2,
+      speed: 25,
+      pts: eastLine(840, 140, 1260, 140)
+    }
   ];
   var DOWNTOWN = {
     enabled: true,
@@ -33704,7 +33767,8 @@ void main() {
     gatewayPlaza: { name: "Lozada Gateway", x: -365, z: -120, y: W },
     kirkEast: { name: "Continental landing \xB7 Design District", x: 350, z: -120, y: E },
     stagingLot: { name: "Staging \xB7 Riverfront", x: 355, z: 300, y: E, heading: 0 },
-    lot42: { name: "Lot 42", x: -820, z: 250, y: W }
+    lot42: { name: "Lot 42", x: -820, z: 250, y: W },
+    greenville: { name: "Greenville Ave \xB7 Lower", x: 1080, z: -50, y: eastY(1080) }
   };
   var SCOUT_SPOTS = [
     { id: "kirk", name: "Ronald Kirk Bridge \xB7 mid-span", x: -130, z: KIRK.z, y: KIRK.deckY, ideal: "perfect", hint: "Get up on the pedestrian bridge and look east." },

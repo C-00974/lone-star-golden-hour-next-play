@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-43dab5d3ea38">
+<meta name="lsgh-build" content="0.35.0-next.0-218bf0c9a7f2">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -36622,8 +36622,9 @@ void main() {
     { id: "howell", name: "Howell St", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: eastLine(400, 200, 840, 200) },
     { id: "payne", name: "Payne St", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: eastLine(400, -240, 840, -240) },
     { id: "market_center", name: "Market Center Blvd", type: "street", surface: "concrete", width: 14, lanes: 2, speed: 30, pts: eastLine(700, -470, 700, 470) },
-    // --- Lower Greenville Phase 2 (OSM-informed centerline + Belmont cross; feel over survey accuracy)
+    // --- Lower Greenville Phase 5 (OSM-informed centerline + Belmont + N/S corridor extend; feel over survey accuracy)
     // Belmont→Alta-ish strip at x≈1080, east of Howell. Woodall crosses near z=0 for through traffic.
+    // Phase 5: modest N/S extend (~80m each) beyond Phase 1/2 OSM strip — feel over survey accuracy.
     {
       id: "greenville",
       name: "Greenville Ave",
@@ -36633,6 +36634,9 @@ void main() {
       lanes: 2,
       speed: 30,
       pts: [
+        [1081.9, -380],
+        [1081.8, -350],
+        [1081.7, -325],
         [1081.6, -299.3],
         [1081.4, -262.4],
         [1081.1, -239.8],
@@ -36652,10 +36656,13 @@ void main() {
         [1079.1, 159.4],
         [1079.1, 163.2],
         [1079.1, 171.4],
-        [1079.4, 200]
+        [1079.4, 200],
+        [1079.5, 230],
+        [1079.6, 255],
+        [1079.7, 280]
       ].map(([x, z]) => ({ x, z, y: eastY(x) }))
     },
-    // Howell terminus (840,200) → Greenville south end. Mid-strip Alta stub also ties Woodall→Greenville.
+    // Howell terminus (840,200) → Greenville mid-south (still the primary approach; road continues past).
     { id: "greenville_link", name: "Howell St", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: eastLine(840, 200, 1079.4, 200) },
     {
       id: "greenville_alta",
@@ -43085,7 +43092,7 @@ void main() {
     { id: "afterglow-main", name: "Afterglow on Main", kind: "Driving challenge \xB7 wagon or GTS", detail: "Stop in the blue starting bay with the wagon or GTS. Press Enter / A to start. Follow eight gates, hold the tracking speed, then stop on the mark." },
     { id: "lot42", name: "The Driver\u2019s Call \xB7 Lot 42", kind: "Dee \xB7 wagon or GTS", detail: "Choose your practice car, drive to the blue bay and press Enter / A to repair, line up and start. Six turquoise gates and one gold clockwise lap earn latest and best notes for that car. Read your notes, retry, or drive back to Dee." },
     { id: "kirk", name: "Ronald Kirk Bridge", kind: "Scenic stop \xB7 explore on foot", detail: "Walk out onto the pedestrian bridge for the arch and skyline. F / Y raises the scout camera; P / D-pad down opens free photo mode." },
-    { id: "greenville", name: "Greenville Ave \xB7 Lower", kind: "Dallas strip \xB7 drive and stroll", detail: "Cross the bridge on Woodall or take Howell east from Riverfront. OSM-shaped Greenville with porch bars, Belmont cross, and curb parking \u2014 feel over survey accuracy; real storefronts later." }
+    { id: "greenville", name: "Greenville Ave \xB7 Lower", kind: "Dallas strip \xB7 drive and stroll", detail: "Cross the bridge on Woodall or take Howell east from Riverfront. Longer OSM-shaped Greenville with porch bars, Belmont cross, and curb parking \u2014 feel over survey accuracy; real storefronts later." }
   ];
   var chain = (labels, current) => labels.map((label, i) => ({ label, state: i < current ? "done" : i === current ? "now" : "later" }));
   var near = (p, q, r = 25) => !!p && !!q && Math.hypot(p.x - q.x, p.z - q.z) < r && (q.y == null || Math.abs(p.y - q.y) < 2.5);
@@ -43921,7 +43928,7 @@ void main() {
       { id: "studio-gallery", name: "Your studio exhibition", sub: "Hang your photographs and named cut cards \xB7 inside Second Unit", ...STUDIO.entrance },
       { id: "downtown", name: "Downtown \xB7 Main St", sub: "The city core", x: dt.x, z: dt.z, y: 8 },
       { id: "reunion", name: "Reunion Tower", sub: "Downtown landmark", x: 786, z: 552, y: 8 },
-      { id: "greenville", name: "Greenville Ave \xB7 Lower", sub: "East-side bar strip \xB7 curb parking \xB7 Belmont", x: PLACES.greenville.x, z: PLACES.greenville.z, y: PLACES.greenville.y }
+      { id: "greenville", name: "Greenville Ave \xB7 Lower", sub: "East-side bar strip \xB7 longer corridor \xB7 Belmont", x: PLACES.greenville.x, z: PLACES.greenville.z, y: PLACES.greenville.y }
     ];
   }
   function remaining(path, x, z, destination = null, actorY = null) {
@@ -54983,6 +54990,10 @@ void main() {
   var CX = 1080;
   var BELMONT_Z = 140;
   var SHOPS2 = [
+    // Phase 5 north extend (N = −Z)
+    { z: -360, side: -1, name: "NORTH PORCH", w: 13, d: 9, h: 4, color: 11838604, awn: ["#1d3557", "#f4efe4"], neon: 8042751, panes: 4, door: 0.3, neonSign: true },
+    { z: -335, side: 1, name: "LANTERN ROW", w: 12, d: 9, h: 3.8, color: 13155502, awn: ["#c9a227", "#1e1e22"], neon: 16767082, panes: 3, door: 0.65 },
+    { z: -310, side: -1, name: "UPPER STRIP", w: 14, d: 10, h: 4.3, color: 9071186, awn: ["#6e3a22", "#e8c89a"], neon: 16751162, panes: 4, door: 0.22 },
     { z: -280, side: -1, name: "PORCH LIGHT", w: 12, d: 9, h: 3.8, color: 12167312, awn: ["#c45c48", "#f4efe4"], neon: 16747082, panes: 3, door: 0.25 },
     { z: -260, side: -1, name: "VELVET PORCH", w: 14, d: 10, h: 4.2, color: 12891290, awn: ["#5b3d6e", "#e8d9f0"], neon: 13934847, panes: 4, door: 0.7 },
     { z: -220, side: 1, name: "NEON SPOON", w: 12, d: 9, h: 3.8, color: 12109e3, awn: ["#1d6fa8", "#f4efe4"], neon: 6211839, panes: 3, door: 0.3, neonSign: true },
@@ -55000,9 +55011,15 @@ void main() {
     { cross: "belmont", x: 1035, side: -1, name: "WEST BELMONT", w: 14, d: 10, h: 4.3, color: 11571312, awn: ["#1d3557", "#f4efe4"], neon: 8042751, panes: 4, door: 0.3, neonSign: true },
     { cross: "belmont", x: 1125, side: 1, name: "EAST BELMONT", w: 13, d: 9, h: 4, color: 13945014, awn: ["#b5352c", "#fff3d6"], neon: 16743018, panes: 3, door: 0.65 },
     { z: 140, side: -1, name: "ALTA LANTERN", w: 13, d: 10, h: 4.2, color: 10126704, awn: ["#c9a227", "#1e1e22"], neon: 16767082, panes: 4, door: 0.35, neonSign: true },
-    { z: 180, side: 1, name: "CORRIDOR CLUB", w: 16, d: 11, h: 5.2, color: 6048318, awn: ["#2c1a28", "#e8d0e0"], neon: 16744640, panes: 5, door: 0.2 }
+    { z: 180, side: 1, name: "CORRIDOR CLUB", w: 16, d: 11, h: 5.2, color: 6048318, awn: ["#2c1a28", "#e8d0e0"], neon: 16744640, panes: 5, door: 0.2 },
+    // Phase 5 south extend (+Z)
+    { z: 220, side: -1, name: "SOUTH GLOW", w: 13, d: 9, h: 4, color: 11044976, awn: ["#b5352c", "#fff3d6"], neon: 16738906, panes: 4, door: 0.35, neonSign: true },
+    { z: 250, side: 1, name: "END BLOCK", w: 15, d: 10, h: 4.6, color: 13813944, awn: ["#2f5a3a", "#e8f0e4"], neon: 8257434, panes: 4, door: 0.7 },
+    { z: 275, side: -1, name: "LAST CURB", w: 12, d: 9, h: 3.7, color: 10126704, awn: ["#4a6a78", "#e8f0f4"], neon: 9098495, panes: 3, door: 0.45 }
   ];
   var CURB_SPOTS = [
+    { z: -340, side: 1, color: 1914199 },
+    // Phase 5 north
     { z: -245, side: -1, color: 2771566 },
     { z: -205, side: 1, color: 12868680 },
     { z: -145, side: -1, color: 3816768 },
@@ -55011,6 +55028,8 @@ void main() {
     { z: 35, side: 1, color: 7223842 },
     { z: 95, side: -1, color: 3103290 },
     { z: 165, side: 1, color: 5979502 },
+    { z: 235, side: -1, color: 4876920 },
+    // Phase 5 south
     { cross: "belmont", x: 1060, side: -1, color: 11875628 },
     { cross: "belmont", x: 1105, side: 1, color: 13214247 }
   ];
@@ -55341,7 +55360,7 @@ void main() {
     }
     const poleMat = new MeshStandardMaterial({ color: 2895409, roughness: 0.7 });
     const poleGeo = new CylinderGeometry(0.07, 0.09, 3.2, 6);
-    for (let z = -280; z <= 190; z += 35) {
+    for (let z = -370; z <= 275; z += 35) {
       for (const side2 of [-1, 1]) {
         const px2 = CX + side2 * 8.6, y2 = terrainHeight(px2, z);
         const mesh2 = new Mesh(poleGeo, poleMat);
@@ -55544,7 +55563,7 @@ void main() {
       r: 28,
       once: true,
       onEnter(g2) {
-        g2.hud?.banner?.("Greenville Ave \xB7 Lower", "Phase 4 curb parking \xB7 facades \xB7 neon \xB7 inspired storefronts", 3.5);
+        g2.hud?.banner?.("Greenville Ave \xB7 Lower", "Phase 5 longer corridor \xB7 curb \xB7 neon \xB7 inspired storefronts", 3.5);
       }
     });
     const pinY = eastY(P2.x);
@@ -79240,7 +79259,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-43dab5d3ea38", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-218bf0c9a7f2", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
