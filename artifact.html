@@ -243,6 +243,9 @@ kbd.k{font-family:var(--font-head);font-size:11px;border:1px solid rgba(255,255,
 .gallery-slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:24px 0 16px}.gallery-slot,.gallery-choice{cursor:pointer;text-align:left;background:#0b202b;border:1px solid #7896a180;color:var(--text);border-radius:4px;padding:12px;font:14px/1.4 var(--font-body);min-width:0}.gallery-slot[aria-pressed=true]{border:2px solid var(--gold);padding:11px;background:#153440}.gallery-slot>span:first-child{display:block;letter-spacing:.12em;color:var(--gold2);margin-bottom:8px}.gallery-slot img,.gallery-empty-image{display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:16/10;object-fit:contain;background:#07121b}.gallery-empty-image{font-size:40px;color:#77959c}.gallery-slot b,.gallery-choice b{display:block;margin-top:10px;overflow-wrap:anywhere}.gallery-notice{padding:14px 16px;background:#173743;border-left:3px solid var(--gold);min-height:48px}.gallery-save-actions{margin:14px 0 28px}.gallery-picker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.gallery-choice img{width:100%;aspect-ratio:16/10;object-fit:contain;background:#07121b}.gallery-choice span{display:block;color:#b9d0d3;margin-top:4px}.gallery-choice:disabled{opacity:.55}.gallery-storage-note{color:#bfd0d5;border-top:1px solid #ffffff25;padding-top:20px}.gallery-empty{border:1px dashed #89a8b370;padding:18px;margin-top:18px}.gallery-empty h3{color:var(--gold2)}
 @media(max-width:650px){.gallery-slots{gap:7px}.gallery-slot{padding:7px}.gallery-slot[aria-pressed=true]{padding:6px}.gallery-picker{grid-template-columns:repeat(2,minmax(0,1fr))}#title{justify-content:center;padding-bottom:5vh}#title h1{font-size:64px}#title .menu{gap:8px}#title .btn{padding:10px 14px;font-size:14px;letter-spacing:.06em}#title .foot{display:none}}
 .wallet-total{padding:20px 0;border-bottom:1px solid #8ad6a055}.wallet-total strong{display:block;font:700 52px var(--font-head);color:#b8edbd}.wallet-total p{margin:5px 0}.wallet-card{padding:16px 18px;margin:16px 0;border:1px solid #8ad6a044;border-radius:7px;background:#17342b55}.wallet-card h3,.wallet-card h4{margin:0 0 8px}.wallet-card button{margin:5px 8px 3px 0}.wallet-earned{border-color:#d6c17a;background:linear-gradient(130deg,#344332,#253830)}.wallet-earned h3{font-size:30px;color:#f0dc94;margin-top:8px}.wallet-earned .crew-eyebrow{color:#e6d493}.wallet-item{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:10px 0;border-bottom:1px solid #8ad6a030}.wallet-save{font-size:13px;color:#bdccd0}.wallet-receipts{margin-top:22px}.wallet-receipts p{font-size:14px;border-top:1px solid #ffffff20;padding-top:8px}.crew-wallet{pointer-events:auto;color:#c4efb8;background:#25432e;border:1px solid #8ac589;border-radius:4px;padding:4px 7px;font-weight:700;cursor:pointer}.crew-wallet:focus-visible{outline:2px solid #fff}
+/* Map above #touch-controls (z40) so M / Map button stays clickable on phone + desktop */
+#mapview{z-index:85}
+#mapview:not(.hidden){pointer-events:auto}
 .map-panel{width:min(1040px,96vw);min-width:0!important;max-width:96vw!important}.map-columns{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(220px,1fr);gap:18px}.map-canvas-wrap{min-width:0}#bigmap{width:100%;height:auto;aspect-ratio:620/560;border:1px solid var(--line);border-radius:8px;background:#1d2732;display:block}#mapview [aria-pressed="true"]{border-color:var(--gold);background:rgba(242,177,52,.12)}@media(max-width:760px){.map-columns{grid-template-columns:minmax(0,1fr)}#map-dests{max-height:260px!important}}
 
 /* --- Touch controls (additive; desktop unchanged when #touch-controls.hidden) --- */
@@ -335,7 +338,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 6c9e336 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 8534a78 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -55010,8 +55013,8 @@ void main() {
     disposeGeos(list);
     return merged;
   }
-  var TOUCH_LOAD_R = 110;
-  var TOUCH_UNLOAD_R = 160;
+  var TOUCH_LOAD_R = 95;
+  var TOUCH_UNLOAD_R = 145;
   var _gvTouch = null;
   var SHOPS2 = [
     // Phase 5 north extend (N = −Z)
@@ -55685,7 +55688,7 @@ void main() {
         marker.userData.shopIndex = i;
         group.add(marker);
       }
-      if (!touchBudget || i % 2 === 0) {
+      if (!touchBudget || i % 3 === 0) {
         streetFurnitureCount++;
         const furnOut = onBelmont ? 3.55 : 3.45;
         const edgeSign = i % 2 === 0 ? 1 : -1;
@@ -56050,7 +56053,7 @@ void main() {
         paintGeos.push(end2);
       }
       const bodyY = y0 + 0.38 + CAR_H / 2;
-      if (!touchBudget || i % 2 === 0) {
+      if (!touchBudget || i % 3 === 0) {
         {
           const g2 = new BoxGeometry(CAR_W, CAR_H, CAR_L);
           g2.rotateY(heading2);
@@ -56290,7 +56293,7 @@ void main() {
     disposeTouchHeavyDetail(state);
     const intFloor = [], intWood = [], intDark = [], intGlow = [], intMetal = [];
     const patioWood = [], patioMetal = [], patioPlant = [];
-    const stride = 2;
+    const stride = 3;
     for (const slot of slots) {
       if (slot.i % stride !== 0) continue;
       const s = slot.s;
@@ -73176,9 +73179,9 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     slideMu: 0.72,
     slideMuF: 0.94,
     driveSplitR: 1,
-    assist: 0.34,
+    assist: 0.26,
     drift: 1.02,
-    powerSlide: 0.82,
+    powerSlide: 0.98,
     loftPitch: 35e-4,
     plantPower: 0.18,
     steerRate: 7.6,
@@ -80068,7 +80071,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-298acaf5d7ab", tipSha: false ? "" : "6c9e336", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-01cbb17acfd5", tipSha: false ? "" : "8534a78", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
@@ -81051,13 +81054,29 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   function showMap(v) {
     const panel2 = g.menus.panels.mapview;
     if (v) mapPreviousFocus = document.activeElement;
+    if (v) {
+      try {
+        panel2.inert = false;
+        panel2.removeAttribute("aria-hidden");
+      } catch {
+      }
+    }
     g.menus.show("mapview", v);
     clearInput();
     g.look.dx = g.look.dy = g.look.wheel = 0;
+    syncTouchControls();
     if (v) {
       drawBigMap();
       releaseLock();
-      (panel2.querySelector("#map-dests .sel:not(:disabled)") || mapControls()[0])?.focus();
+      const focusEl = panel2.querySelector("#map-dests .sel:not(:disabled)") || mapControls()[0] || panel2.querySelector("#map-close");
+      focusEl?.focus?.();
+      if (!g._greenvilleMapHint) {
+        g._greenvilleMapHint = true;
+        try {
+          g.hud?.toast?.("Greenville \u2192 east of the fleet lot (Lower Greenville / Belmont)", 4);
+        } catch {
+        }
+      }
     } else {
       if (mapPreviousFocus?.isConnected && !mapPreviousFocus.closest(".hidden")) mapPreviousFocus.focus();
       if (g.state === "play" && !g.paused && !g.menus.anyOpen()) requestLock();
