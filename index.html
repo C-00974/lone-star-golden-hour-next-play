@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-711386304138">
+<meta name="lsgh-build" content="0.35.0-next.0-8e7a8c220296">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -43092,7 +43092,7 @@ void main() {
     { id: "afterglow-main", name: "Afterglow on Main", kind: "Driving challenge \xB7 wagon or GTS", detail: "Stop in the blue starting bay with the wagon or GTS. Press Enter / A to start. Follow eight gates, hold the tracking speed, then stop on the mark." },
     { id: "lot42", name: "The Driver\u2019s Call \xB7 Lot 42", kind: "Dee \xB7 wagon or GTS", detail: "Choose your practice car, drive to the blue bay and press Enter / A to repair, line up and start. Six turquoise gates and one gold clockwise lap earn latest and best notes for that car. Read your notes, retry, or drive back to Dee." },
     { id: "kirk", name: "Ronald Kirk Bridge", kind: "Scenic stop \xB7 explore on foot", detail: "Walk out onto the pedestrian bridge for the arch and skyline. F / Y raises the scout camera; P / D-pad down opens free photo mode." },
-    { id: "greenville", name: "Greenville Ave \xB7 Lower", kind: "Dallas strip \xB7 drive and stroll", detail: "Cross the bridge on Woodall or take Howell east from Riverfront. Longer OSM-shaped Greenville with porch bars, Phase 8 inventable interiors (24 of 24 shops), Phase 12 outdoor patio seating on 24 of 24 shops, Belmont cross, and curb parking \u2014 feel over survey accuracy; real storefronts later." }
+    { id: "greenville", name: "Greenville Ave \xB7 Lower", kind: "Dallas strip \xB7 drive and stroll", detail: "Cross the bridge on Woodall or take Howell east from Riverfront. Longer OSM-shaped Greenville with porch bars, Phase 8 inventable interiors (24 of 24 shops), Phase 12 outdoor patio seating on 24 of 24 shops, Phase 13 street trees and lamp posts on about half the curb spans, Belmont cross, and curb parking \u2014 feel over survey accuracy; real storefronts later." }
   ];
   var chain = (labels, current) => labels.map((label, i) => ({ label, state: i < current ? "done" : i === current ? "now" : "later" }));
   var near = (p, q, r = 25) => !!p && !!q && Math.hypot(p.x - q.x, p.z - q.z) < r && (q.y == null || Math.abs(p.y - q.y) < 2.5);
@@ -43928,7 +43928,7 @@ void main() {
       { id: "studio-gallery", name: "Your studio exhibition", sub: "Hang your photographs and named cut cards \xB7 inside Second Unit", ...STUDIO.entrance },
       { id: "downtown", name: "Downtown \xB7 Main St", sub: "The city core", x: dt.x, z: dt.z, y: 8 },
       { id: "reunion", name: "Reunion Tower", sub: "Downtown landmark", x: 786, z: 552, y: 8 },
-      { id: "greenville", name: "Greenville Ave \xB7 Lower", sub: "East-side bar strip \xB7 Phase 12 patio (24) \xB7 interiors (24) \xB7 Belmont", x: PLACES.greenville.x, z: PLACES.greenville.z, y: PLACES.greenville.y }
+      { id: "greenville", name: "Greenville Ave \xB7 Lower", sub: "East-side bar strip \xB7 Phase 13 trees/lamps (~12) \xB7 patio (24) \xB7 interiors (24)", x: PLACES.greenville.x, z: PLACES.greenville.z, y: PLACES.greenville.y }
     ];
   }
   function remaining(path, x, z, destination = null, actorY = null) {
@@ -55113,6 +55113,8 @@ void main() {
     let interiorCount = 0;
     const patioWood = [], patioMetal = [], patioPlant = [];
     let patioCount = 0;
+    const treeTrunk = [], treeCanopy = [], lampPole = [], lampFixture = [];
+    let streetFurnitureCount = 0;
     for (let i = 0; i < SHOPS2.length; i++) {
       const s = SHOPS2[i];
       const onBelmont = s.cross === "belmont";
@@ -55610,6 +55612,55 @@ void main() {
         marker.userData.shopIndex = i;
         group.add(marker);
       }
+      if (i % 2 === 0) {
+        streetFurnitureCount++;
+        const furnOut = onBelmont ? 3.55 : 3.45;
+        const edgeSign = i % 4 === 0 ? 1 : -1;
+        const alongEdge = edgeSign * Math.min(s.w * 0.42, 3.2);
+        const fx = faceX + nx * furnOut + ax * alongEdge;
+        const fz = faceZ + nz * furnOut + az * alongEdge;
+        const fy = terrainHeight(fx, fz);
+        const wantTree = i % 4 === 0;
+        if (wantTree) {
+          const trunkH = 2.15 + i % 3 * 0.12;
+          const trunk = new CylinderGeometry(0.11, 0.16, trunkH, 6);
+          trunk.translate(fx, fy + trunkH / 2, fz);
+          treeTrunk.push(trunk);
+          const canopyR = 1.05 + i % 3 * 0.08;
+          const canopy = new SphereGeometry(canopyR, 8, 6);
+          canopy.translate(fx, fy + trunkH + canopyR * 0.55, fz);
+          treeCanopy.push(canopy);
+          const tMark = new Object3D();
+          tMark.name = `gv-tree-${i}`;
+          tMark.position.set(fx, fy + trunkH * 0.6, fz);
+          tMark.userData.streetFurniture = "tree";
+          tMark.userData.shopName = s.name;
+          tMark.userData.shopIndex = i;
+          group.add(tMark);
+        } else {
+          const poleH = 3.35;
+          const pole = new CylinderGeometry(0.05, 0.07, poleH, 6);
+          pole.translate(fx, fy + poleH / 2, fz);
+          lampPole.push(pole);
+          const armLen = 0.55;
+          const arm = new BoxGeometry(onBelmont ? 0.08 : armLen, 0.06, onBelmont ? armLen : 0.08);
+          arm.translate(fx + nx * (armLen * 0.45), fy + poleH - 0.12, fz + nz * (armLen * 0.45));
+          lampPole.push(arm);
+          const head = new BoxGeometry(0.28, 0.14, 0.28);
+          head.translate(fx + nx * armLen * 0.85, fy + poleH - 0.22, fz + nz * armLen * 0.85);
+          lampFixture.push(head);
+          const bulb = new SphereGeometry(0.1, 6, 5);
+          bulb.translate(fx + nx * armLen * 0.85, fy + poleH - 0.34, fz + nz * armLen * 0.85);
+          lampFixture.push(bulb);
+          const lMark = new Object3D();
+          lMark.name = `gv-lamp-${i}`;
+          lMark.position.set(fx, fy + poleH * 0.5, fz);
+          lMark.userData.streetFurniture = "lamp";
+          lMark.userData.shopName = s.name;
+          lMark.userData.shopIndex = i;
+          group.add(lMark);
+        }
+      }
     }
     if (glasses.length) {
       const g2 = mergeGeometries(glasses, false);
@@ -55704,6 +55755,45 @@ void main() {
       const g2 = mergeGeometries(patioPlant, false);
       const m = new Mesh(g2, mat);
       m.name = "gv-patio-plant";
+      group.add(m);
+    }
+    if (treeTrunk.length) {
+      const mat = new MeshStandardMaterial({ color: 5913896, roughness: 0.88, metalness: 0.02 });
+      const g2 = mergeGeometries(treeTrunk, false);
+      const m = new Mesh(g2, mat);
+      m.name = "gv-tree-trunk";
+      m.castShadow = true;
+      m.receiveShadow = true;
+      group.add(m);
+    }
+    if (treeCanopy.length) {
+      const mat = new MeshStandardMaterial({ color: 4025144, roughness: 0.92, metalness: 0 });
+      const g2 = mergeGeometries(treeCanopy, false);
+      const m = new Mesh(g2, mat);
+      m.name = "gv-tree-canopy";
+      m.castShadow = true;
+      group.add(m);
+    }
+    if (lampPole.length) {
+      const mat = new MeshStandardMaterial({ color: 2763824, roughness: 0.55, metalness: 0.35 });
+      const g2 = mergeGeometries(lampPole, false);
+      const m = new Mesh(g2, mat);
+      m.name = "gv-lamp-pole";
+      m.castShadow = true;
+      group.add(m);
+    }
+    if (lampFixture.length) {
+      const mat = new MeshStandardMaterial({
+        color: 15786168,
+        emissive: 16761962,
+        emissiveIntensity: 0.35,
+        roughness: 0.45,
+        metalness: 0.15
+      });
+      registerNight(mat, 0.35, 1.6);
+      const g2 = mergeGeometries(lampFixture, false);
+      const m = new Mesh(g2, mat);
+      m.name = "gv-lamp-fixture";
       group.add(m);
     }
     const poleMat = new MeshStandardMaterial({ color: 2895409, roughness: 0.7 });
@@ -55911,7 +56001,7 @@ void main() {
       r: 28,
       once: true,
       onEnter(g2) {
-        g2.hud?.banner?.("Greenville Ave \xB7 Lower", "Phase 12 patio seating (24) \xB7 interiors (24) \xB7 curb \xB7 neon", 3.5);
+        g2.hud?.banner?.("Greenville Ave \xB7 Lower", "Phase 13 trees/lamps (~12) \xB7 patio (24) \xB7 interiors (24)", 3.5);
       }
     });
     const pinY = eastY(P2.x);
@@ -79607,7 +79697,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-711386304138", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-8e7a8c220296", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
