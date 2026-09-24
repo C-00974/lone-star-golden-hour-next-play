@@ -26,7 +26,7 @@ button{font-family:var(--font-body)}
 .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
 .overlay > *{pointer-events:auto}
 #title{background:radial-gradient(120% 90% at 50% 100%,rgba(242,177,52,.18),transparent 60%),linear-gradient(180deg,rgba(6,9,16,.35),rgba(6,9,16,.85));flex-direction:column;justify-content:flex-end;padding-bottom:7vh;text-align:center}
-#title .kicker{font-family:var(--font-head);letter-spacing:.42em;text-transform:uppercase;font-size:clamp(11px,1.2vw,14px);color:var(--gold2);opacity:.9}
+#title .kicker{font-family:var(--font-head);letter-spacing:.28em;text-transform:uppercase;font-size:clamp(12px,1.35vw,15px);color:var(--gold2);opacity:.95}
 #title h1{font-family:var(--font-head);font-weight:800;font-size:clamp(48px,8.6vw,120px);line-height:.9;margin:.1em 0 .05em;letter-spacing:.01em;text-transform:uppercase;text-shadow:0 8px 40px rgba(0,0,0,.6);text-wrap:balance}
 #title h1 span{display:block;font-weight:600;font-size:.4em;letter-spacing:.36em;color:var(--gold);margin-top:.22em}
 #title .sub{color:var(--muted);font-size:clamp(12px,1.1vw,15px);max-width:56ch;margin:0 auto 18px}
@@ -335,7 +335,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 9c87413 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -79787,7 +79787,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-2590cf9196cc", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-2b75eaf29c2d", tipSha: false ? "" : "9c87413", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
@@ -79797,6 +79797,17 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     window.__ls_keys[e.code] = false;
   });
   async function boot() {
+    try {
+      const baked = g.tipSha || "";
+      const v = new URLSearchParams(location.search).get("v") || "";
+      const tip = baked || (/^[0-9a-f]{7,12}$/i.test(v) ? v : "");
+      if (tip) {
+        g.tipSha = tip;
+        const kicker = document.querySelector("#title .kicker");
+        if (kicker) kicker.textContent = "0.35 \xB7 tip " + tip + " \xB7 The Forecourt Call";
+      }
+    } catch {
+    }
     try {
       const touchish = (navigator.maxTouchPoints || 0) > 0 || "ontouchstart" in window;
       const coarse = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
