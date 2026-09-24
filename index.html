@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-218bf0c9a7f2">
+<meta name="lsgh-build" content="0.35.0-next.0-eea9ad9e5444">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -43092,7 +43092,7 @@ void main() {
     { id: "afterglow-main", name: "Afterglow on Main", kind: "Driving challenge \xB7 wagon or GTS", detail: "Stop in the blue starting bay with the wagon or GTS. Press Enter / A to start. Follow eight gates, hold the tracking speed, then stop on the mark." },
     { id: "lot42", name: "The Driver\u2019s Call \xB7 Lot 42", kind: "Dee \xB7 wagon or GTS", detail: "Choose your practice car, drive to the blue bay and press Enter / A to repair, line up and start. Six turquoise gates and one gold clockwise lap earn latest and best notes for that car. Read your notes, retry, or drive back to Dee." },
     { id: "kirk", name: "Ronald Kirk Bridge", kind: "Scenic stop \xB7 explore on foot", detail: "Walk out onto the pedestrian bridge for the arch and skyline. F / Y raises the scout camera; P / D-pad down opens free photo mode." },
-    { id: "greenville", name: "Greenville Ave \xB7 Lower", kind: "Dallas strip \xB7 drive and stroll", detail: "Cross the bridge on Woodall or take Howell east from Riverfront. Longer OSM-shaped Greenville with porch bars, Belmont cross, and curb parking \u2014 feel over survey accuracy; real storefronts later." }
+    { id: "greenville", name: "Greenville Ave \xB7 Lower", kind: "Dallas strip \xB7 drive and stroll", detail: "Cross the bridge on Woodall or take Howell east from Riverfront. Longer OSM-shaped Greenville with porch bars, a few inventable interiors, Belmont cross, and curb parking \u2014 feel over survey accuracy; real storefronts later." }
   ];
   var chain = (labels, current) => labels.map((label, i) => ({ label, state: i < current ? "done" : i === current ? "now" : "later" }));
   var near = (p, q, r = 25) => !!p && !!q && Math.hypot(p.x - q.x, p.z - q.z) < r && (q.y == null || Math.abs(p.y - q.y) < 2.5);
@@ -43928,7 +43928,7 @@ void main() {
       { id: "studio-gallery", name: "Your studio exhibition", sub: "Hang your photographs and named cut cards \xB7 inside Second Unit", ...STUDIO.entrance },
       { id: "downtown", name: "Downtown \xB7 Main St", sub: "The city core", x: dt.x, z: dt.z, y: 8 },
       { id: "reunion", name: "Reunion Tower", sub: "Downtown landmark", x: 786, z: 552, y: 8 },
-      { id: "greenville", name: "Greenville Ave \xB7 Lower", sub: "East-side bar strip \xB7 longer corridor \xB7 Belmont", x: PLACES.greenville.x, z: PLACES.greenville.z, y: PLACES.greenville.y }
+      { id: "greenville", name: "Greenville Ave \xB7 Lower", sub: "East-side bar strip \xB7 inventable interiors \xB7 Belmont", x: PLACES.greenville.x, z: PLACES.greenville.z, y: PLACES.greenville.y }
     ];
   }
   function remaining(path, x, z, destination = null, actorY = null) {
@@ -54996,24 +54996,24 @@ void main() {
     { z: -310, side: -1, name: "UPPER STRIP", w: 14, d: 10, h: 4.3, color: 9071186, awn: ["#6e3a22", "#e8c89a"], neon: 16751162, panes: 4, door: 0.22 },
     { z: -280, side: -1, name: "PORCH LIGHT", w: 12, d: 9, h: 3.8, color: 12167312, awn: ["#c45c48", "#f4efe4"], neon: 16747082, panes: 3, door: 0.25 },
     { z: -260, side: -1, name: "VELVET PORCH", w: 14, d: 10, h: 4.2, color: 12891290, awn: ["#5b3d6e", "#e8d9f0"], neon: 13934847, panes: 4, door: 0.7 },
-    { z: -220, side: 1, name: "NEON SPOON", w: 12, d: 9, h: 3.8, color: 12109e3, awn: ["#1d6fa8", "#f4efe4"], neon: 6211839, panes: 3, door: 0.3, neonSign: true },
+    { z: -220, side: 1, name: "NEON SPOON", interior: true, w: 12, d: 9, h: 3.8, color: 12109e3, awn: ["#1d6fa8", "#f4efe4"], neon: 6211839, panes: 3, door: 0.3, neonSign: true },
     { z: -190, side: -1, name: "MIDBLOCK MULE", w: 13, d: 9, h: 4, color: 10123868, awn: ["#8a5a2a", "#f0e0c8"], neon: 16757578, panes: 4, door: 0.65 },
-    { z: -160, side: -1, name: "AMBER & RYE", w: 16, d: 11, h: 5, color: 9071186, awn: ["#6e3a22", "#e8c89a"], neon: 16751162, panes: 5, door: 0.2, neonSign: true },
+    { z: -160, side: -1, name: "AMBER & RYE", interior: true, w: 16, d: 11, h: 5, color: 9071186, awn: ["#6e3a22", "#e8c89a"], neon: 16751162, panes: 5, door: 0.2, neonSign: true },
     { z: -130, side: 1, name: "ORAM OUTDOOR", w: 12, d: 9, h: 3.7, color: 13813944, awn: ["#2f5a3a", "#e8f0e4"], neon: 8257434, panes: 3, door: 0.75 },
     { z: -100, side: 1, name: "PATIO RADIO", w: 13, d: 10, h: 4, color: 14274496, awn: ["#1d3557", "#f4efe4"], neon: 6990079, panes: 4, door: 0.35 },
     { z: -80, side: -1, name: "LOW GLOW", w: 11, d: 8, h: 3.5, color: 11044976, awn: ["#c9a227", "#1e1e22"], neon: 16765514, panes: 3, door: 0.55, neonSign: true },
-    { z: -50, side: -1, name: "LAST CALL ROOM", w: 18, d: 12, h: 5.4, color: 7227962, awn: ["#3a2218", "#e8c8a0"], neon: 16742970, panes: 5, door: 0.15 },
+    { z: -50, side: -1, name: "LAST CALL ROOM", interior: true, w: 18, d: 12, h: 5.4, color: 7227962, awn: ["#3a2218", "#e8c8a0"], neon: 16742970, panes: 5, door: 0.15 },
     { z: -50, side: 1, name: "SIDEWALK SOCIAL", w: 15, d: 10, h: 4.4, color: 15261648, awn: ["#b5352c", "#fff3d6"], neon: 16738906, panes: 4, door: 0.8 },
-    { z: 20, side: -1, name: "GOLD HOUR TAP", w: 14, d: 10, h: 4.6, color: 10910802, awn: ["#c9a227", "#f4efe4"], neon: 16760902, panes: 4, door: 0.28, neonSign: true },
+    { z: 20, side: -1, name: "GOLD HOUR TAP", interior: true, w: 14, d: 10, h: 4.6, color: 10910802, awn: ["#c9a227", "#f4efe4"], neon: 16760902, panes: 4, door: 0.28, neonSign: true },
     { z: 50, side: 1, name: "HALF BLOCK", w: 12, d: 9, h: 3.9, color: 13154468, awn: ["#4a6a78", "#e8f0f4"], neon: 9098495, panes: 3, door: 0.6 },
     { z: 80, side: 1, name: "BELMONT BOWL", w: 12, d: 9, h: 3.6, color: 13616820, awn: ["#2f5a3a", "#f4efe4"], neon: 10158e3, panes: 3, door: 0.4 },
     { z: 110, side: -1, name: "CORNER CURB", w: 13, d: 9, h: 4.1, color: 9203800, awn: ["#6e3a22", "#f0e0c8"], neon: 16756832, panes: 4, door: 0.7 },
-    { cross: "belmont", x: 1035, side: -1, name: "WEST BELMONT", w: 14, d: 10, h: 4.3, color: 11571312, awn: ["#1d3557", "#f4efe4"], neon: 8042751, panes: 4, door: 0.3, neonSign: true },
+    { cross: "belmont", x: 1035, side: -1, name: "WEST BELMONT", interior: true, w: 14, d: 10, h: 4.3, color: 11571312, awn: ["#1d3557", "#f4efe4"], neon: 8042751, panes: 4, door: 0.3, neonSign: true },
     { cross: "belmont", x: 1125, side: 1, name: "EAST BELMONT", w: 13, d: 9, h: 4, color: 13945014, awn: ["#b5352c", "#fff3d6"], neon: 16743018, panes: 3, door: 0.65 },
     { z: 140, side: -1, name: "ALTA LANTERN", w: 13, d: 10, h: 4.2, color: 10126704, awn: ["#c9a227", "#1e1e22"], neon: 16767082, panes: 4, door: 0.35, neonSign: true },
-    { z: 180, side: 1, name: "CORRIDOR CLUB", w: 16, d: 11, h: 5.2, color: 6048318, awn: ["#2c1a28", "#e8d0e0"], neon: 16744640, panes: 5, door: 0.2 },
+    { z: 180, side: 1, name: "CORRIDOR CLUB", interior: true, w: 16, d: 11, h: 5.2, color: 6048318, awn: ["#2c1a28", "#e8d0e0"], neon: 16744640, panes: 5, door: 0.2 },
     // Phase 5 south extend (+Z)
-    { z: 220, side: -1, name: "SOUTH GLOW", w: 13, d: 9, h: 4, color: 11044976, awn: ["#b5352c", "#fff3d6"], neon: 16738906, panes: 4, door: 0.35, neonSign: true },
+    { z: 220, side: -1, name: "SOUTH GLOW", interior: true, w: 13, d: 9, h: 4, color: 11044976, awn: ["#b5352c", "#fff3d6"], neon: 16738906, panes: 4, door: 0.35, neonSign: true },
     { z: 250, side: 1, name: "END BLOCK", w: 15, d: 10, h: 4.6, color: 13813944, awn: ["#2f5a3a", "#e8f0e4"], neon: 8257434, panes: 4, door: 0.7 },
     { z: 275, side: -1, name: "LAST CURB", w: 12, d: 9, h: 3.7, color: 10126704, awn: ["#4a6a78", "#e8f0f4"], neon: 9098495, panes: 3, door: 0.45 }
   ];
@@ -55109,6 +55109,8 @@ void main() {
     const sillMat = new MeshStandardMaterial({ color: 14209220, roughness: 0.85 });
     const doorMat = new MeshStandardMaterial({ color: 3811874, roughness: 0.7, metalness: 0.05 });
     const glasses = [], roofs = [], mullions = [], sills = [];
+    const intFloor = [], intWood = [], intDark = [], intGlow = [], intMetal = [];
+    let interiorCount = 0;
     for (let i = 0; i < SHOPS2.length; i++) {
       const s = SHOPS2[i];
       const onBelmont = s.cross === "belmont";
@@ -55130,14 +55132,140 @@ void main() {
       const y0 = terrainHeight(x, z);
       const mat = i % 2 ? stucco.clone() : brick.clone();
       mat.color = new Color(s.color);
-      const body = new BoxGeometry(s.w, s.h, s.d);
-      body.translate(x, y0 + s.h / 2, z);
-      const mesh2 = new Mesh(body, mat);
-      mesh2.name = `gv-body-${i}`;
-      mesh2.castShadow = true;
-      mesh2.receiveShadow = true;
-      group.add(mesh2);
-      addBox(x, z, s.w * 0.48, s.d * 0.48, 0, y0, y0 + s.h, tag);
+      let mesh2;
+      if (s.interior) {
+        let wallPanel = function(x0, z0, x1, z1) {
+          const cx = (x0 + x1) / 2, cz = (z0 + z1) / 2;
+          const len = Math.hypot(x1 - x0, z1 - z0) || 0.1;
+          const geo = new BoxGeometry(len, s.h, wallTh);
+          const wmesh = new Mesh(geo, mat);
+          wmesh.position.set(cx, y0 + s.h / 2, cz);
+          wmesh.rotation.y = -Math.atan2(z1 - z0, x1 - x0);
+          wmesh.castShadow = true;
+          wmesh.receiveShadow = true;
+          shell.add(wmesh);
+        };
+        const wallTh = 0.32;
+        const { nx: fnx, nz: fnz, ax: fax, az: faz } = faceBasis(onBelmont, s.side);
+        const halfFace = s.w / 2, halfDepth = s.d / 2;
+        const shell = new Group();
+        shell.name = `gv-body-${i}`;
+        wallPanel(
+          x - fax * halfFace - fnx * halfDepth,
+          z - faz * halfFace - fnz * halfDepth,
+          x + fax * halfFace - fnx * halfDepth,
+          z + faz * halfFace - fnz * halfDepth
+        );
+        wallPanel(
+          x - fax * halfFace - fnx * halfDepth,
+          z - faz * halfFace - fnz * halfDepth,
+          x - fax * halfFace + fnx * halfDepth,
+          z - faz * halfFace + fnz * halfDepth
+        );
+        wallPanel(
+          x + fax * halfFace - fnx * halfDepth,
+          z + faz * halfFace - fnz * halfDepth,
+          x + fax * halfFace + fnx * halfDepth,
+          z + faz * halfFace + fnz * halfDepth
+        );
+        const doorT2 = (s.door ?? 0.5) * 2 - 1;
+        const doorC = doorT2 * (halfFace * 0.7);
+        const gap = 0.65;
+        const leftEnd = doorC - gap, rightStart = doorC + gap;
+        if (leftEnd > -halfFace + 0.3) {
+          wallPanel(
+            x - fax * halfFace + fnx * halfDepth,
+            z - faz * halfFace + fnz * halfDepth,
+            x + fax * leftEnd + fnx * halfDepth,
+            z + faz * leftEnd + fnz * halfDepth
+          );
+        }
+        if (rightStart < halfFace - 0.3) {
+          wallPanel(
+            x + fax * rightStart + fnx * halfDepth,
+            z + faz * rightStart + fnz * halfDepth,
+            x + fax * halfFace + fnx * halfDepth,
+            z + faz * halfFace + fnz * halfDepth
+          );
+        }
+        group.add(shell);
+        mesh2 = shell;
+      } else {
+        const body = new BoxGeometry(s.w, s.h, s.d);
+        body.translate(x, y0 + s.h / 2, z);
+        mesh2 = new Mesh(body, mat);
+        mesh2.name = `gv-body-${i}`;
+        mesh2.castShadow = true;
+        mesh2.receiveShadow = true;
+        group.add(mesh2);
+      }
+      if (s.interior) {
+        const wallTh = 0.28;
+        const { nx: fnx, nz: fnz, ax: fax, az: faz } = faceBasis(onBelmont, s.side);
+        const halfFace = s.w * 0.48;
+        const halfDepth = s.d * 0.48;
+        addWall(
+          x - fax * halfFace - fnx * halfDepth,
+          z - faz * halfFace - fnz * halfDepth,
+          x + fax * halfFace - fnx * halfDepth,
+          z + faz * halfFace - fnz * halfDepth,
+          y0,
+          y0 + s.h,
+          wallTh,
+          tag
+        );
+        addWall(
+          x - fax * halfFace - fnx * halfDepth,
+          z - faz * halfFace - fnz * halfDepth,
+          x - fax * halfFace + fnx * halfDepth,
+          z - faz * halfFace + fnz * halfDepth,
+          y0,
+          y0 + s.h,
+          wallTh,
+          tag
+        );
+        addWall(
+          x + fax * halfFace - fnx * halfDepth,
+          z + faz * halfFace - fnz * halfDepth,
+          x + fax * halfFace + fnx * halfDepth,
+          z + faz * halfFace + fnz * halfDepth,
+          y0,
+          y0 + s.h,
+          wallTh,
+          tag
+        );
+        const doorT2 = (s.door ?? 0.5) * 2 - 1;
+        const doorC = doorT2 * (halfFace * 0.7);
+        const gap = 0.62;
+        const leftEnd = doorC - gap;
+        const rightStart = doorC + gap;
+        if (leftEnd > -halfFace + 0.25) {
+          addWall(
+            x - fax * halfFace + fnx * halfDepth,
+            z - faz * halfFace + fnz * halfDepth,
+            x + fax * leftEnd + fnx * halfDepth,
+            z + faz * leftEnd + fnz * halfDepth,
+            y0,
+            y0 + s.h,
+            wallTh,
+            tag
+          );
+        }
+        if (rightStart < halfFace - 0.25) {
+          addWall(
+            x + fax * rightStart + fnx * halfDepth,
+            z + faz * rightStart + fnz * halfDepth,
+            x + fax * halfFace + fnx * halfDepth,
+            z + faz * halfFace + fnz * halfDepth,
+            y0,
+            y0 + s.h,
+            wallTh,
+            tag
+          );
+        }
+      } else {
+        addBox(x, z, s.w * 0.48, s.d * 0.48, 0, y0, y0 + s.h, tag);
+      }
       const glassH = Math.min(2.9, s.h - 1);
       const glassY = y0 + 0.42 + glassH / 2;
       const doorW = 1.15;
@@ -55208,6 +55336,12 @@ void main() {
         door.position.set(dx, y0 + doorH / 2 + 0.05, dz2);
         door.name = `gv-door-${i}`;
         door.castShadow = true;
+        if (s.interior) {
+          door.rotation.y = rotY + (s.side > 0 ? -1.05 : 1.05);
+          door.position.x += nx * 0.35;
+          door.position.z += nz * 0.35;
+          door.userData.openInterior = true;
+        }
         group.add(door);
         const frameParts = [];
         if (onBelmont) {
@@ -55331,6 +55465,63 @@ void main() {
         tube4.name = `gv-neon-tube-${i}`;
         group.add(tube4);
       }
+      if (s.interior) {
+        interiorCount++;
+        const iw = s.w * 0.88, id7 = s.d * 0.78;
+        {
+          const g2 = new BoxGeometry(iw, 0.06, id7);
+          g2.translate(x, y0 + 0.04, z);
+          intFloor.push(g2);
+        }
+        const barDepth = 0.7;
+        const barW = iw * 0.72;
+        const barX = x - nx * (s.d * 0.28);
+        const barZ = z - nz * (s.d * 0.28);
+        {
+          const g2 = onBelmont ? new BoxGeometry(barW, 1.05, barDepth) : new BoxGeometry(barDepth, 1.05, barW);
+          g2.translate(barX, y0 + 0.55, barZ);
+          intWood.push(g2);
+        }
+        {
+          const g2 = onBelmont ? new BoxGeometry(barW + 0.15, 0.08, barDepth + 0.12) : new BoxGeometry(barDepth + 0.12, 0.08, barW + 0.15);
+          g2.translate(barX, y0 + 1.1, barZ);
+          intDark.push(g2);
+        }
+        for (const t of [-0.55, 0, 0.55]) {
+          const sx = barX + nx * 1.15 + ax * (t * barW * 0.35);
+          const sz = barZ + nz * 1.15 + az * (t * barW * 0.35);
+          const seat = new CylinderGeometry(0.22, 0.24, 0.08, 8);
+          seat.translate(sx, y0 + 0.72, sz);
+          intWood.push(seat);
+          const leg = new CylinderGeometry(0.04, 0.05, 0.7, 6);
+          leg.translate(sx, y0 + 0.35, sz);
+          intMetal.push(leg);
+        }
+        {
+          const g2 = new BoxGeometry(0.35, 0.18, 0.35);
+          g2.translate(x, y0 + s.h - 0.55, z);
+          intGlow.push(g2);
+        }
+        {
+          const g2 = new BoxGeometry(iw * 0.7, 0.04, id7 * 0.7);
+          g2.translate(x, y0 + s.h - 0.35, z);
+          intGlow.push(g2);
+        }
+        {
+          const bx2 = x + ax * (iw * 0.32) - nx * (s.d * 0.05);
+          const bz2 = z + az * (iw * 0.32) - nz * (s.d * 0.05);
+          const g2 = onBelmont ? new BoxGeometry(1.6, 0.55, 0.55) : new BoxGeometry(0.55, 0.55, 1.6);
+          g2.translate(bx2, y0 + 0.35, bz2);
+          intWood.push(g2);
+        }
+        const marker = new Object3D();
+        marker.name = `gv-interior-${i}`;
+        marker.position.set(x, y0 + 1.2, z);
+        marker.userData.interior = true;
+        marker.userData.shopName = s.name;
+        marker.userData.shopIndex = i;
+        group.add(marker);
+      }
     }
     if (glasses.length) {
       const g2 = mergeGeometries(glasses, false);
@@ -55356,6 +55547,52 @@ void main() {
       const g2 = mergeGeometries(roofs, false);
       const m = new Mesh(g2, roof);
       m.castShadow = true;
+      group.add(m);
+    }
+    if (intFloor.length) {
+      const mat = new MeshStandardMaterial({ color: 6968900, roughness: 0.92, metalness: 0.02 });
+      const g2 = mergeGeometries(intFloor, false);
+      const m = new Mesh(g2, mat);
+      m.name = "gv-interior-floors";
+      m.receiveShadow = true;
+      group.add(m);
+    }
+    if (intWood.length) {
+      const mat = new MeshStandardMaterial({ color: 9069113, roughness: 0.78, metalness: 0.04 });
+      const g2 = mergeGeometries(intWood, false);
+      const m = new Mesh(g2, mat);
+      m.name = "gv-interior-wood";
+      m.castShadow = true;
+      m.receiveShadow = true;
+      group.add(m);
+    }
+    if (intDark.length) {
+      const mat = new MeshStandardMaterial({ color: 2761760, roughness: 0.55, metalness: 0.08 });
+      const g2 = mergeGeometries(intDark, false);
+      const m = new Mesh(g2, mat);
+      m.name = "gv-interior-dark";
+      m.castShadow = true;
+      group.add(m);
+    }
+    if (intMetal.length) {
+      const mat = new MeshStandardMaterial({ color: 4869714, roughness: 0.45, metalness: 0.55 });
+      const g2 = mergeGeometries(intMetal, false);
+      const m = new Mesh(g2, mat);
+      m.name = "gv-interior-metal";
+      group.add(m);
+    }
+    if (intGlow.length) {
+      const mat = new MeshStandardMaterial({
+        color: 16761962,
+        emissive: 16757594,
+        emissiveIntensity: 0.55,
+        roughness: 0.6,
+        metalness: 0.05
+      });
+      registerNight(mat, 0.55, 1.8);
+      const g2 = mergeGeometries(intGlow, false);
+      const m = new Mesh(g2, mat);
+      m.name = "gv-interior-glow";
       group.add(m);
     }
     const poleMat = new MeshStandardMaterial({ color: 2895409, roughness: 0.7 });
@@ -55563,7 +55800,7 @@ void main() {
       r: 28,
       once: true,
       onEnter(g2) {
-        g2.hud?.banner?.("Greenville Ave \xB7 Lower", "Phase 5 longer corridor \xB7 curb \xB7 neon \xB7 inspired storefronts", 3.5);
+        g2.hud?.banner?.("Greenville Ave \xB7 Lower", "Phase 6 interiors \xB7 longer corridor \xB7 curb \xB7 neon", 3.5);
       }
     });
     const pinY = eastY(P2.x);
@@ -79259,7 +79496,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-218bf0c9a7f2", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-eea9ad9e5444", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
