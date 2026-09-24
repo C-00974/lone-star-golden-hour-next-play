@@ -338,7 +338,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip cc7fc6d · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip fa87bd5 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -73794,7 +73794,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       const fDrag = -S4.cdA * 0.6 * v.vf * vfAbs - (supported ? S4.roll : 0) * signV * turfRoll - (inWater ? 900 * v.vf : 0);
       const serviceBrake = -signV * fBrake;
       const rearHandbrake = v.handbrake ? -signV * S4.handbrakeF : 0;
-      const kin = smoothstep2(0.8, 5.5, vfAbs);
+      const planarSpeed = Math.hypot(v.vf, v.vl);
+      const kin = smoothstep2(0.8, 5.5, planarSpeed);
       const hL = 0.19;
       const fzF = suspension ? Math.max(0, v.support.frontLoad) : clamp3(fzTotal * S4.b / (S4.a + S4.b) - mass * v.ax * hL, 0, fzTotal);
       const fzR = suspension ? Math.max(0, v.support.rearLoad) : fzTotal - fzF;
@@ -73821,13 +73822,17 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         requestFxF *= 1 - cut * (1 - S4.driveSplitR) * 0.35;
         requestFxR *= 1 - cut * S4.driveSplitR;
       }
-      let fFt = capF > 0 ? satur(S4.cF, alphaF, capF, S4.slideMuF ?? 0.92) * kin : 0;
-      let fRt = capR > 0 ? satur(S4.cR, alphaR, capR, S4.slideMu) * kin : 0;
-      const scaleF = Math.min(1, capF / Math.max(1, Math.hypot(requestFxF, fFt)));
-      const scaleR = Math.min(1, capR / Math.max(1, Math.hypot(requestFxR, fRt)));
+      const fFtPure = capF > 0 ? satur(S4.cF, alphaF, capF, S4.slideMuF ?? 0.92) : 0;
+      const fRtPure = capR > 0 ? satur(S4.cR, alphaR, capR, S4.slideMu) : 0;
+      const latForCircleF = fFtPure * kin;
+      const latForCircleR = fRtPure * kin;
+      const scaleF = Math.min(1, capF / Math.max(1e-3, Math.hypot(requestFxF, latForCircleF)));
+      const scaleR = Math.min(1, capR / Math.max(1e-3, Math.hypot(requestFxR, latForCircleR)));
       const fxF = requestFxF * scaleF, fxR = requestFxR * scaleR;
-      fFt *= scaleF;
-      fRt *= scaleR;
+      let fFt = fFtPure * scaleF * kin;
+      let fRt = fRtPure * scaleR * kin;
+      v.gripScaleF = scaleF;
+      v.gripScaleR = scaleR;
       const limF = Math.sqrt(Math.max(0, capF * capF - fxF * fxF));
       const limR = Math.sqrt(Math.max(0, capR * capR - fxR * fxR));
       const relax = 1 - Math.exp(-dt * Math.max(vfAbs, 2) / 0.45);
@@ -80375,7 +80380,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-67ac135399b1", tipSha: false ? "" : "cc7fc6d", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-225e2b63bf78", tipSha: false ? "" : "fa87bd5", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
