@@ -338,7 +338,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 2f33299 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip fc34956 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -55045,10 +55045,11 @@ void main() {
   var CIRCUIT = buildCircuit();
   FACILITY.circuit = CIRCUIT;
   FACILITY.startFinish = {
+    // Vehicle fwd = (-sin h, -cos h): heading π faces +Z (south). Circuit densifies south-first (clockwise).
     x: CIRCUIT.pts[0].x,
     z: CIRCUIT.pts[0].z,
     y: CIRCUIT.pts[0].y,
-    heading: 0,
+    heading: Math.PI,
     w: 6
   };
   function projectCircuit(x, z) {
@@ -55487,7 +55488,7 @@ void main() {
   };
   var MODE_HINT = {
     idle: "Free drive Lot 32 asphalt",
-    lap: "Cross the teal SF line \xB7 full clockwise lap",
+    lap: "Cross the teal SF line \xB7 full clockwise lap (follow chevrons south)",
     drag: "Stage at the teal line \xB7 launch north to the red finish",
     brake: "Hit the gold gate at speed \xB7 brake to a stop",
     cones: "Circle the gold ring once \xB7 leave the cones standing"
@@ -55634,19 +55635,24 @@ void main() {
           state.lapRunning = true;
           state.lapT = 0;
           state.lastT = 0.02;
+          state.crossedSF = false;
           g2.hud.banner("Lap live", "Stay on the asphalt \xB7 corkscrew ahead", 2);
           g2.audio.play?.("slate");
         }
-        g2.hud.challenge(state.lapBest ?? 0, 1, 1, state.lapArmed ? "ARMED \xB7 ROLL NORTH" : "LINE UP AT TEAL SF");
+        g2.hud.challenge(state.lapBest ?? 0, 1, 1, state.lapArmed ? "ARMED \xB7 FOLLOW CHEVRONS" : "LINE UP AT TEAL SF");
         return;
       }
       state.lapT += dt;
-      if (onTrack && p) state.lastT = p.t;
+      if (onTrack && p) {
+        state.lastT = p.t;
+        if (p.t > 0.22 && p.t < 0.88) state.crossedSF = true;
+      }
       g2.hud.challenge(state.lapT, Math.max(0.15, state.lastT), 1, `LAP \xB7 ${Math.round(state.lastT * 100)}%`);
-      if (state.lastT > 0.92 && atSF && v.speed > 2) finishLap(state.lapT);
+      if (state.crossedSF && state.lastT > 0.92 && atSF && v.speed > 2 && state.lapT > 8) finishLap(state.lapT);
       if (!onTrack && p && p.d > CIRCUIT.width / 2 + 8) {
         state.lapRunning = false;
         state.lapArmed = false;
+        state.crossedSF = false;
         g2.hud.toast("Lap cancelled \xB7 back on the circuit to retry", 2.5);
       }
     }
@@ -81294,7 +81300,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-9efa325c2759", tipSha: false ? "" : "2f33299", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-6e883364ad39", tipSha: false ? "" : "fc34956", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
