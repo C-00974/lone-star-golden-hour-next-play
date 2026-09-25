@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-161fbb429d03">
-<meta name="lsgh-tip" content="586ee53">
+<meta name="lsgh-build" content="0.35.0-next.0-b18526f4e3cb">
+<meta name="lsgh-tip" content="6d36bbb">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -349,7 +349,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 586ee53 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 6d36bbb · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -55010,7 +55010,9 @@ void main() {
       z1: 150,
       start: { x: -756, z: 142, heading: 0 },
       finish: { x: -756, z: 12 },
-      length: 130
+      length: 130,
+      // Distance from start toward finish (m) — painted + labeled for accel feel reads
+      markers: [30, 60, 90, 120]
     },
     brake: {
       x0: -742,
@@ -55174,6 +55176,28 @@ void main() {
       { x: FACILITY.stand.x + 4, z: FACILITY.stand.z }
     ]
   };
+  function distanceMarks() {
+    const drag = (FACILITY.drag.markers || []).map((m) => ({
+      id: `drag-${m}`,
+      zone: "drag",
+      meters: m,
+      text: `${m} m`,
+      x: FACILITY.drag.start.x,
+      z: FACILITY.drag.start.z - m,
+      heading: 0
+    })).filter((d) => d.z > FACILITY.drag.finish.z + 2);
+    const brake = (FACILITY.brake.markers || []).map((m) => ({
+      id: `brake-${m}`,
+      zone: "brake",
+      meters: m,
+      text: `${m} m`,
+      x: FACILITY.brake.gate.x,
+      z: FACILITY.brake.gate.z - m,
+      heading: 0
+    })).filter((d) => d.z > FACILITY.brake.z0 + 2);
+    return { drag, brake };
+  }
+  FACILITY.distanceMarks = distanceMarks();
   function projectCircuit(x, z) {
     const { pts, tan, length: length2 } = CIRCUIT;
     let best = null;
@@ -55416,6 +55440,47 @@ void main() {
     group.add(face);
     return face;
   }
+  function makeMeterLabel(text3) {
+    const c = document.createElement("canvas");
+    c.width = 512;
+    c.height = 192;
+    const ctx2 = c.getContext("2d");
+    ctx2.clearRect(0, 0, 512, 192);
+    ctx2.fillStyle = "rgba(14, 22, 30, 0.62)";
+    ctx2.fillRect(16, 28, 480, 136);
+    ctx2.strokeStyle = "#79ddd8";
+    ctx2.lineWidth = 6;
+    ctx2.strokeRect(22, 34, 468, 124);
+    ctx2.textAlign = "center";
+    ctx2.textBaseline = "middle";
+    ctx2.fillStyle = "#f4efe6";
+    ctx2.font = "bold 88px sans-serif";
+    ctx2.fillText(text3, 256, 96);
+    const texture = new CanvasTexture(c);
+    texture.colorSpace = SRGBColorSpace;
+    texture.anisotropy = 4;
+    return texture;
+  }
+  function placeMeterLabel(group, mark, w = 2.4, h = 1) {
+    const tex2 = makeMeterLabel(mark.text);
+    const face = new Mesh(
+      new PlaneGeometry(w, h),
+      new MeshBasicMaterial({
+        map: tex2,
+        transparent: true,
+        depthWrite: false,
+        side: DoubleSide,
+        toneMapped: false
+      })
+    );
+    face.rotation.x = -Math.PI / 2;
+    face.rotation.z = -(mark.heading || 0);
+    const side2 = mark.zone === "drag" ? 3.6 : 3.2;
+    face.position.set(mark.x + side2, padY(mark.x + side2, mark.z) + 0.045, mark.z);
+    face.name = `lot32-meter-${mark.id}`;
+    group.add(face);
+    return face;
+  }
   function buildTestFacility(world2) {
     const group = new Group();
     group.name = "Lot 32 Test Facility";
@@ -55525,6 +55590,10 @@ void main() {
     for (let z = D.finish.z + 8; z < D.start.z - 4; z += 8) {
       stripe(group, { x: D.start.x, z }, { x: D.start.x, z: z + 3.5 }, 0.18, white);
     }
+    for (const m of FACILITY.distanceMarks?.drag || []) {
+      stripe(group, { x: D.x0 + 0.35, z: m.z }, { x: D.x1 - 0.35, z: m.z }, 0.28, white);
+      placeMeterLabel(group, m, 2.4, 1);
+    }
     const railMat = new MeshStandardMaterial({ color: 12104614, roughness: 0.7 });
     barrierRail(group, railMat, D.x0 - 0.15, D.z0, D.x0 - 0.15, D.z1, padY(D.x0, (D.z0 + D.z1) / 2));
     barrierRail(group, railMat, D.x1 + 0.15, D.z0, D.x1 + 0.15, D.z1, padY(D.x1, (D.z0 + D.z1) / 2));
@@ -55536,6 +55605,9 @@ void main() {
       const z = B2.gate.z - m;
       if (z < B2.z0 + 2) continue;
       stripe(group, { x: B2.x0 + 0.4, z }, { x: B2.x1 - 0.4, z }, 0.22, white);
+    }
+    for (const m of FACILITY.distanceMarks?.brake || []) {
+      placeMeterLabel(group, m, 2.1, 0.9);
     }
     ribbonMesh(group, asphalt, CIRCUIT.pts, CIRCUIT.tan, CIRCUIT.width, 0.01);
     const sf = FACILITY.startFinish;
@@ -81525,7 +81597,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-161fbb429d03", tipSha: false ? "" : "586ee53", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-b18526f4e3cb", tipSha: false ? "" : "6d36bbb", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
