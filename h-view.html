@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-4b0179175143">
-<meta name="lsgh-tip" content="e053634">
-<meta name="lsgh-mode" content="golden-hour">
+<meta name="lsgh-build" content="0.35.0-next.0-f36117a42eff">
+<meta name="lsgh-tip" content="3066c99">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0b0f16">
 <link rel="manifest" href="./manifest.webmanifest">
-<title>Lone Star: Red County</title>
+<title>Lone Star: Golden Hour</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
 <style>
@@ -27,74 +26,6 @@
   --text:#f4efe6; --muted:#b9b2a6; --ok:#7ddc8a; --warn:#ffcf5c; --bad:#ff6b6b; --line:rgba(244,239,230,.14);
   --font-head:'Barlow Condensed','Oswald','Arial Narrow',Impact,sans-serif; --font-body:'Barlow',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
 }
-
-/* ---------- Red County / Soft Open identity (html.red-county entry) ---------- */
-html.red-county{
-  --gold:#c43c2b; --gold2:#e8dcc8; --ink:#080505; --panel:rgba(12,6,6,.9); --panel2:rgba(18,8,8,.96);
-  --text:#f2ebe3; --muted:#9a9088; --ok:#8fd99a; --warn:#d4a574; --bad:#ff5a4a; --line:rgba(232,220,200,.14);
-  --rc-blood:#8b1e1a; --rc-rust:#a8482f; --rc-bone:#e8dcc8; --rc-asphalt:#1c1c1e;
-}
-html.red-county,html.red-county body,html.red-county #app{background:#080505!important;color:var(--text)}
-html.red-county .btn:focus-visible,html.red-county select:focus-visible,html.red-county input:focus-visible{outline-color:var(--rc-rust)}
-html.red-county #title{
-  background:
-    linear-gradient(185deg,rgba(8,5,5,.97) 0%,rgba(14,6,6,.94) 38%,rgba(48,12,10,.97) 100%),
-    repeating-linear-gradient(-14deg,transparent 0 10px,rgba(139,30,26,.07) 10px 11px);
-  justify-content:flex-end;padding-bottom:8vh;
-}
-html.red-county #title .kicker{
-  color:var(--rc-rust);letter-spacing:.42em;font-size:clamp(11px,1.2vw,14px);opacity:1;
-  border:1px solid rgba(168,72,47,.45);display:inline-block;padding:6px 14px;margin:0 auto;
-  background:rgba(0,0,0,.35);
-}
-html.red-county #title h1{
-  color:var(--rc-bone);font-weight:800;letter-spacing:.06em;
-  text-shadow:3px 3px 0 #3a0c0a,0 12px 40px rgba(0,0,0,.85);
-  font-size:clamp(52px,10vw,132px);
-}
-html.red-county #title h1 span{
-  display:block;font-weight:600;font-size:.26em;letter-spacing:.32em;color:var(--rc-blood);
-  margin-top:.4em;padding-top:.32em;border-top:3px solid var(--rc-rust);
-  text-shadow:none;
-}
-html.red-county #title .sub{
-  color:#b7aea4;max-width:48ch;font-size:clamp(13px,1.15vw,16px);line-height:1.45;
-  border-left:3px solid var(--rc-blood);padding:8px 0 8px 14px;text-align:left;margin:8px auto 22px;
-}
-html.red-county .btn{
-  border-radius:0;border:2px solid rgba(232,220,200,.32);background:#121014;
-  letter-spacing:.2em;backdrop-filter:none;box-shadow:3px 3px 0 #000;
-}
-html.red-county .btn:hover{background:rgba(139,30,26,.4);border-color:var(--rc-rust);transform:none}
-html.red-county .btn.primary{
-  background:var(--rc-blood);color:var(--rc-bone);border-color:#5c1210;
-  box-shadow:4px 4px 0 #1a0808;font-weight:700;
-}
-html.red-county .btn.primary:hover{background:#a82822;border-color:#7a1814}
-html.red-county #gh-chapters,
-html.red-county #btn-gh-toggle,
-html.red-county #btn-continue,
-html.red-county #btn-play{display:none!important}
-html.red-county #loading{color:var(--muted)}
-html.red-county #loading .bar{background:rgba(255,255,255,.08)}
-html.red-county #loading .bar i{background:linear-gradient(90deg,var(--rc-blood),var(--rc-rust))}
-html.red-county #title .foot{color:#6e6660;letter-spacing:.14em}
-html.red-county #persistence-status{background:#1a0c0c;color:#f0d4c8;border-color:#8b1e1a}
-
-/* Soft Open live HUD chrome (works with or without red-county entry) */
-html.rc-heist #objective{border-radius:0;border:1px solid rgba(196,60,43,.45);border-left:4px solid #8b1e1a;background:rgba(12,6,6,.88)}
-html.rc-heist #objective .lab{color:#c43c2b}
-html.rc-heist #objective .dist{color:#e8dcc8}
-html.rc-heist #toast{color:#e8dcc8;letter-spacing:.18em}
-html.rc-heist #banner .sm{color:#a8482f}
-html.rc-heist #banner .big{color:#f2ebe3;text-shadow:0 4px 24px rgba(80,10,8,.8)}
-html.rc-heist #challenge{border-radius:0;border-color:rgba(196,60,43,.4)}
-html.rc-heist #challenge .set{color:#ff8d6b}
-html.rc-heist #gps .lab{color:#c43c2b}
-html.rc-heist #gps .far{color:#e8dcc8}
-html.rc-heist #speedo .g{color:#c43c2b}
-html.rc-heist #speedo .rpm i{background:linear-gradient(90deg,#8b1e1a,#c43c2b)}
-
 html,body{height:100%;margin:0;background:#0b0f16;color:var(--text);font-family:var(--font-body);overflow:hidden;color-scheme:dark}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .btn:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
@@ -117,9 +48,6 @@ button{font-family:var(--font-body)}
 .btn.primary:hover{background:var(--gold2)}
 .btn:disabled{opacity:.45;cursor:default;transform:none}
 .btn.small{padding:8px 14px;font-size:13px}
-#gh-chapters{max-width:1000px;margin:8px auto 0;padding:0 24px;opacity:.88}
-#gh-chapters.hidden{display:none!important}
-#btn-gh-toggle{opacity:.9;border-style:dashed}
 #loading{position:absolute;left:50%;bottom:3vh;transform:translateX(-50%);width:min(520px,80vw);text-align:center;font-size:12px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase}
 #loading .bar{height:3px;background:rgba(255,255,255,.12);border-radius:2px;margin-top:8px;overflow:hidden}
 #loading .bar i{display:block;height:100%;width:0;background:var(--gold);transition:width .2s}
@@ -421,11 +349,10 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">Red County · Soft Open · tip e053634</div>
-    <h1>Lone Star<span>Red County</span></h1>
-    <p class="sub">Outlaw heist vertical slice on Greenville. Soft Open · Quiet — you are the car; no camera wincon. Golden Hour film-crew chapters stay available below.</p>
-    <div class="menu" id="title-menu"><button class="btn primary" id="btn-soft-open" disabled>Red County · Soft Open</button><button class="btn" id="btn-continue" disabled>Take a drive · Crew stable</button><button class="btn" id="btn-gh-toggle" type="button" aria-expanded="false" aria-controls="gh-chapters">Golden Hour chapters</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
-    <div id="gh-chapters" class="menu gh-chapters hidden" hidden><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button></div>
+    <div class="kicker">0.35 · tip 3066c99 · The Forecourt Call</div>
+    <h1>Lone Star<span>Golden Hour</span></h1>
+    <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
+    <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
     <div id="loading"><span class="lbl">Building West Dallas…</span><div class="bar"><i></i></div></div>
     <div class="foot">WASD · Move    E · Interact    G · Crew Guide    T · Director</div>
   </div>
@@ -52788,7 +52715,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     interceptor: { mass: 1850, power: 235e3, fMax: 10200, brakeF: 19500, handbrakeF: 8e3, cdA: 0.75, roll: 260, cF: 9e4, cR: 1e5, muF: 1.04, muR: 1.08, a: 1.38, b: 1.5, iz: 3200, steerMax: 0.58, steerMin: 0.055, steerRate: 6, steerReturn: 9, steerSpeedK: 10, driveSplitR: 0.85, assist: 0.75, slideMu: 0.82, slideMuF: 0.93, drift: 0.65, powerSlide: 0.85, gears: [3.4, 2.1, 1.5, 1.15, 0.92], final: 3.7, idle: 760, redline: 6400, wheelR: 0.36 },
     boxtruck: { mass: 4200, power: 21e4, fMax: 11e3, brakeF: 22e3, handbrakeF: 8e3, cdA: 1.9, roll: 520, cF: 96e3, cR: 112e3, muF: 0.86, muR: 0.9, a: 1.9, b: 2.3, iz: 12e3, steerMax: 0.5, steerMin: 0.045, steerRate: 3.8, steerReturn: 6, steerSpeedK: 12, driveSplitR: 1, assist: 1, slideMu: 0.8, slideMuF: 0.88, drift: 0.35, powerSlide: 0.4, gears: [4.2, 2.5, 1.6, 1.15, 0.9], final: 4.3, idle: 650, redline: 4600, wheelR: 0.46 }
   };
-  VEHICLE_SPECS.evora = { ...VEHICLE_SPECS.gts, mass: 1395, power: 298e3, fMax: 8600, brakeF: 18e3, a: 1.43, b: 1.145, iz: 2050, cF: 86e3, cR: 106e3, muF: 1.1, muR: 1.18, slideMu: 0.9, slideMuF: 0.95, assist: 0.8, drift: 0.42, powerSlide: 0.14, plantPower: 0.9, steerRate: 8.8, steerReturn: 12.5, steerSpeedK: 7.4, steerMax: 0.72, wheelR: 0.3395, cdA: 0.63, idle: 850, redline: 7e3, gears: [3.54, 1.91, 1.41, 1.09, 0.97, 0.86], final: 3.78, rollGain: 0.42 };
+  VEHICLE_SPECS.evora = { ...VEHICLE_SPECS.gts, mass: 1395, power: 31e4, fMax: 9800, brakeF: 18e3, a: 1.43, b: 1.145, iz: 2050, cF: 86e3, cR: 1e5, muF: 1.1, muR: 1.12, slideMu: 0.85, slideMuF: 0.94, assist: 0.48, drift: 0.58, powerSlide: 0.58, plantPower: 0.18, steerRate: 8.2, steerReturn: 12, steerSpeedK: 7.8, steerMax: 0.72, wheelR: 0.3395, cdA: 0.63, idle: 850, redline: 7e3, gears: [3.54, 1.91, 1.41, 1.09, 0.97, 0.86], final: 3.78, rollGain: 0.42 };
   VEHICLE_SPECS.sprinter = { ...VEHICLE_SPECS.van, downshiftRpm: 1400, mass: 2580, power: 22e4, fMax: 12e3, brakeF: 19e3, a: 1.84, b: 1.825, iz: 6500, cF: 96e3, cR: 105e3, muF: 1, muR: 1.04, driveSplitR: 0.65, steerRate: 6.2, steerReturn: 9, steerSpeedK: 10, assist: 1, slideMu: 0.9, wheelR: 0.38, idle: 680, redline: 3200, gears: [4.38, 2.86, 1.92, 1.37, 1, 0.82, 0.73], final: 3.92 };
   VEHICLE_SPECS.defender = { ...VEHICLE_SPECS.offroad, downshiftRpm: 1300, mass: 2125, power: 145e3, fMax: 1e4, brakeF: 16500, a: 1.36, b: 1.434, iz: 3950, cF: 78e3, cR: 86e3, driveSplitR: 0.5, steerRate: 5.2, steerReturn: 7.5, wheelR: 0.4, idle: 700, redline: 3400, gears: [5.44, 2.84, 1.72, 1.22, 1, 0.74], final: 3.54 };
   VEHICLE_SPECS.camaro1le = {
