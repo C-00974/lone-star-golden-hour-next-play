@@ -2,8 +2,8 @@
 <html lang="en" class="red-county">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-fc37046dcd1b">
-<meta name="lsgh-tip" content="8744b2c">
+<meta name="lsgh-build" content="0.35.0-next.0-136c056d97aa">
+<meta name="lsgh-tip" content="3457c8a">
 <meta name="lsgh-mode" content="red-county">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -421,7 +421,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">Soft Open · Quiet · tip 8744b2c</div>
+    <div class="kicker">Soft Open · Quiet · tip 3457c8a</div>
     <h1>LONE STAR<span>RED COUNTY</span></h1>
     <p class="sub">Outlaw western Soft Open. Ride for Rae — horses, hitch heist, creek drop. Quiet approach.</p>
     <div class="menu" id="title-menu"><button class="btn primary" id="btn-soft-open" disabled>Start Soft Open</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -621,7 +621,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
     return out;
   }
 
-  // ../LoneStar-Next/node_modules/three/build/three.module.js
+  // node_modules/three/build/three.module.js
   var three_module_exports = {};
   __export(three_module_exports, {
     ACESFilmicToneMapping: () => ACESFilmicToneMapping,
@@ -33857,7 +33857,7 @@ void main() {
     });
   }
 
-  // ../LoneStar-Next/node_modules/three/examples/jsm/utils/BufferGeometryUtils.js
+  // node_modules/three/examples/jsm/utils/BufferGeometryUtils.js
   function mergeGeometries(geometries, useGroups = false) {
     const isIndexed = geometries[0].index !== null;
     const attributesUsed = new Set(Object.keys(geometries[0].attributes));
@@ -43285,8 +43285,6 @@ void main() {
       const recovery = crewRecovery(g2);
       return make("Car disabled", "Recovery", recovery.label + ".", key2("R", "X"), recovery.detail);
     }
-    if (g2.softOpen?.active) return g2.softOpen.describe();
-    if (g2.redCounty) return g2.softOpen?.describeTitle?.() || { title: "Red County", phase: "Soft Open", action: "Start Soft Open from the title.", control: "", tip: "Horses only. No Greenville freeroam.", steps: [], target: null, distance: "", urgent: false };
     if (g2.forecourt?.active) return g2.forecourt.describe();
     if (g2.workingSet?.active) return g2.workingSet.describe();
     if (g2.economy?.active) return g2.economy.describe();
@@ -53668,7 +53666,7 @@ void main() {
   }
   var softOpenStore = createSoftOpenStore();
 
-  // ../LoneStar-Next/node_modules/three/examples/jsm/loaders/GLTFLoader.js
+  // node_modules/three/examples/jsm/loaders/GLTFLoader.js
   var GLTFLoader = class extends Loader {
     constructor(manager) {
       super(manager);
@@ -56574,25 +56572,6 @@ void main() {
     const local2 = new Group();
     root.add(local2);
     const kit = createWesternMaterials();
-    const key2 = new DirectionalLight(16760976, 1.35);
-    key2.name = "rc-key-dusk";
-    key2.position.set(18, 22, -8);
-    key2.castShadow = true;
-    key2.shadow.mapSize.set(2048, 2048);
-    key2.shadow.camera.left = -40;
-    key2.shadow.camera.right = 40;
-    key2.shadow.camera.top = 50;
-    key2.shadow.camera.bottom = -40;
-    key2.shadow.bias = -2e-4;
-    local2.add(key2);
-    const fill2 = new DirectionalLight(6324416, 0.35);
-    fill2.position.set(-20, 12, 16);
-    local2.add(fill2);
-    const hemi = new HemisphereLight(16765088, 2758672, 0.45);
-    local2.add(hemi);
-    const porchGlow = new PointLight(12875840, 0.55, 28, 1.8);
-    porchGlow.position.set(-8, 3.2, 6);
-    local2.add(porchGlow);
     const groundMat = kit.matWithRepeat(kit.dirt, { wu: 90, wv: 130, tile: 4.5 });
     const ground = new Mesh(new PlaneGeometry(90, 130), groundMat);
     ground.rotation.x = -Math.PI / 2;
@@ -56997,7 +56976,7 @@ void main() {
     return Math.hypot((a2?.x || 0) - (b?.x || 0), (a2?.z || 0) - (b?.z || 0));
   }
 
-  // ../LoneStar-Next/node_modules/three/examples/jsm/utils/SkeletonUtils.js
+  // node_modules/three/examples/jsm/utils/SkeletonUtils.js
   function clone(source) {
     const sourceLookup = /* @__PURE__ */ new Map();
     const cloneLookup = /* @__PURE__ */ new Map();
@@ -57585,28 +57564,12 @@ void main() {
       try {
         g2.inCar = false;
         g2.character.setVisible(true);
-      } catch {
-      }
-      g2.guide?.refresh();
-      g2.updateSoftOpenTitle?.();
-      if (g2.redCounty) {
-        hideGhWorld(true);
-        g2.hud.setObjective(clean ? "Soft Open Quiet \xB7 done" : "Soft Open \xB7 botched", "Start Soft Open again when ready.");
-        g2.hud.banner(clean ? "Clean Soft Open" : "Botched Soft Open", clean ? "Glass County teased" : "Hitch reset", 3.2);
-        g2.audio.play?.(clean ? "gateGood" : "cone");
-        setTimeout(() => {
-          try {
-            g2.exitToTitle?.();
-          } catch {
-          }
-        }, 400);
-        return;
-      }
-      try {
         const sp = g2.cars?.[0]?.stableSpawn;
         if (sp) g2.player.place(sp.x + 3, sp.z, sp.heading || 0);
       } catch {
       }
+      g2.guide?.refresh();
+      g2.updateSoftOpenTitle?.();
       g2.hud.setObjective(clean ? "Soft Open Quiet \xB7 done" : "Soft Open \xB7 botched", "Title \u2192 Soft Open. Ride again when ready.");
       g2.hud.banner(clean ? "Clean Soft Open" : "Botched Soft Open", clean ? "Glass County teased" : "Hitch reset", 3.2);
       g2.audio.play?.(clean ? "gateGood" : "cone");
@@ -57728,7 +57691,6 @@ void main() {
       } catch {
         g2.hud.toast("Could not load horse model. Check assets/models/horse.glb.", 5);
         suspend();
-        if (g2.redCounty) g2.exitToTitle?.();
         return false;
       }
       strip = ensureRedCountyStrip(g2.scene);
@@ -57756,52 +57718,6 @@ void main() {
       windowLeft = STANDBY_SEC;
       routeForStage();
       hudPhase();
-      return true;
-    }
-    function talkDoor() {
-      if (!canSimulate(g2) || g2.player.anim) return false;
-      if (active) {
-        g2.hud.toast("Soft Open is live. G shows the next beat; R recovers to the hitch.", 3);
-        return true;
-      }
-      if (!eligible()) {
-        g2.hud.toast("Finish or pause your current activity before Soft Open.", 3);
-        return false;
-      }
-      ensureAssets().catch(() => {
-      });
-      hideGhWorld(true);
-      try {
-        g2.lighting?.setPhase?.(0.55);
-      } catch {
-      }
-      if (!active && !acquire()) {
-        g2.hud.toast("Another crew call owns the board.", 3);
-        return false;
-      }
-      state.stage = "prep";
-      state.approach = "quiet";
-      checkpoint();
-      hudPhase();
-      g2.conversation.show({
-        name: "Soft Open \xB7 Quiet",
-        place: "LONE STAR \u2014 RED COUNTY",
-        text: "Rae on the wire. Poker case in the saloon alley. Soft wash at the creek. Quiet only \u2014 pick your horse and go.",
-        choices: [
-          ...state.started && !["complete", "brief", "prep"].includes(state.stage) ? [{ label: "Resume Soft Open \xB7 saved run", action: () => api.resume() }] : [],
-          { label: "Ride Dun \xB7 steady", action: () => {
-            api.start("dun");
-          } },
-          { label: "Ride Bay \xB7 mean", action: () => {
-            api.start("bay");
-          } },
-          { label: "Not tonight", action: () => {
-            suspend();
-            if (g2.redCounty) g2.exitToTitle?.();
-            else g2.hud.toast("Soft Open stayed on the board.", 2.5);
-          } }
-        ]
-      });
       return true;
     }
     function talkBrief() {
@@ -57935,88 +57851,6 @@ void main() {
       g2.hud.banner("Soft Open checkpoint", "Back at the hitch", 2.8);
       return true;
     }
-    function describe() {
-      const hitch = strip?.points?.hitch;
-      const alley = strip?.points?.alleyCase;
-      const drop = strip?.points?.drop;
-      const mount = mountLabel();
-      if (state.stage === "prep" || state.stage === "brief") {
-        return {
-          title: HEIST_TITLE,
-          phase: "Prep \xB7 Quiet",
-          action: "Confirm Dun or Bay, then ride to the hitch.",
-          control: "Conversation",
-          tip: "Quiet only. Cars stay dark.",
-          steps: [],
-          target: hitch,
-          distance: "",
-          urgent: false
-        };
-      }
-      if (state.stage === "window" && standby) {
-        return {
-          title: HEIST_TITLE,
-          phase: "Stand by \xB7 hitch",
-          action: `Hold at the hitch on ${mount}. Rae calls the alley window.`,
-          control: "W A S D \xB7 ride",
-          tip: "E dismounts near hitch. R recovers to hitch.",
-          steps: ["Stand by", "Alley case", "Creek drop"],
-          target: hitch,
-          distance: "",
-          urgent: false
-        };
-      }
-      if (state.stage === "window") {
-        return {
-          title: HEIST_TITLE,
-          phase: "Alley pinch \xB7 window open",
-          action: "Ride quiet to the alley behind the saloon. Grab the poker case.",
-          control: "W A S D \xB7 E dismount",
-          tip: "Heat rises if you cook the street at a gallop.",
-          steps: ["Stand by", "Alley case", "Creek drop"],
-          target: alley,
-          distance: "",
-          urgent: true
-        };
-      }
-      if (state.stage === "escape") {
-        return {
-          title: HEIST_TITLE,
-          phase: state.hasCase ? "Creek soft wash" : "Abort \xB7 creek drop",
-          action: state.hasCase ? "Take the soft wash at the creek. Keep street speed down." : "Empty-handed \u2014 still hit the creek to reset.",
-          control: "W A S D",
-          tip: "R recovers to the hitch.",
-          steps: ["Stand by", "Alley case", "Creek drop"],
-          target: drop,
-          distance: "",
-          urgent: !state.hasCase
-        };
-      }
-      return {
-        title: HEIST_TITLE,
-        phase: state.stage || "Soft Open",
-        action: "Follow Rae on the wire.",
-        control: "",
-        tip: "Quiet Soft Open.",
-        steps: [],
-        target: hitch,
-        distance: "",
-        urgent: false
-      };
-    }
-    function describeTitle() {
-      return {
-        title: "LONE STAR \u2014 RED COUNTY",
-        phase: "Soft Open",
-        action: "Start Soft Open from the title screen.",
-        control: "",
-        tip: "One product. Horses only. Phone and desktop share this page.",
-        steps: [],
-        target: null,
-        distance: "",
-        urgent: false
-      };
-    }
     function tryMountToggle() {
       if (!active || !horse || !strip || endingOpen) return false;
       const hitch = strip.points.hitch;
@@ -58133,9 +57967,6 @@ void main() {
       get strip() {
         return strip;
       },
-      describe,
-      describeTitle,
-      talkDoor,
       talkBrief,
       talkPrep,
       start: start3,
@@ -63103,7 +62934,7 @@ void main() {
     maxReconcilePenetration: 0.5
   });
 
-  // ../LoneStar-Next/node_modules/three/examples/jsm/shaders/CopyShader.js
+  // node_modules/three/examples/jsm/shaders/CopyShader.js
   var CopyShader = {
     name: "CopyShader",
     uniforms: {
@@ -63143,7 +62974,7 @@ void main() {
     )
   };
 
-  // ../LoneStar-Next/node_modules/three/examples/jsm/postprocessing/Pass.js
+  // node_modules/three/examples/jsm/postprocessing/Pass.js
   var Pass = class {
     constructor() {
       this.isPass = true;
@@ -63187,7 +63018,7 @@ void main() {
     }
   };
 
-  // ../LoneStar-Next/node_modules/three/examples/jsm/postprocessing/ShaderPass.js
+  // node_modules/three/examples/jsm/postprocessing/ShaderPass.js
   var ShaderPass = class extends Pass {
     constructor(shader, textureID) {
       super();
@@ -63227,7 +63058,7 @@ void main() {
     }
   };
 
-  // ../LoneStar-Next/node_modules/three/examples/jsm/postprocessing/MaskPass.js
+  // node_modules/three/examples/jsm/postprocessing/MaskPass.js
   var MaskPass = class extends Pass {
     constructor(scene, camera) {
       super();
@@ -63284,7 +63115,7 @@ void main() {
     }
   };
 
-  // ../LoneStar-Next/node_modules/three/examples/jsm/postprocessing/EffectComposer.js
+  // node_modules/three/examples/jsm/postprocessing/EffectComposer.js
   var EffectComposer = class {
     constructor(renderer, renderTarget) {
       this.renderer = renderer;
@@ -63406,7 +63237,7 @@ void main() {
     }
   };
 
-  // ../LoneStar-Next/node_modules/three/examples/jsm/postprocessing/RenderPass.js
+  // node_modules/three/examples/jsm/postprocessing/RenderPass.js
   var RenderPass = class extends Pass {
     constructor(scene, camera, overrideMaterial = null, clearColor = null, clearAlpha = null) {
       super();
@@ -63457,7 +63288,7 @@ void main() {
     }
   };
 
-  // ../LoneStar-Next/node_modules/three/examples/jsm/shaders/LuminosityHighPassShader.js
+  // node_modules/three/examples/jsm/shaders/LuminosityHighPassShader.js
   var LuminosityHighPassShader = {
     name: "LuminosityHighPassShader",
     shaderID: "luminosityHighPass",
@@ -63510,7 +63341,7 @@ void main() {
     )
   };
 
-  // ../LoneStar-Next/node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js
+  // node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js
   var UnrealBloomPass = class _UnrealBloomPass extends Pass {
     constructor(resolution, strength, radius2, threshold) {
       super();
@@ -63766,7 +63597,7 @@ void main() {
   UnrealBloomPass.BlurDirectionX = new Vector2(1, 0);
   UnrealBloomPass.BlurDirectionY = new Vector2(0, 1);
 
-  // ../LoneStar-Next/node_modules/three/examples/jsm/shaders/OutputShader.js
+  // node_modules/three/examples/jsm/shaders/OutputShader.js
   var OutputShader = {
     name: "OutputShader",
     uniforms: {
@@ -63850,7 +63681,7 @@ void main() {
     )
   };
 
-  // ../LoneStar-Next/node_modules/three/examples/jsm/postprocessing/OutputPass.js
+  // node_modules/three/examples/jsm/postprocessing/OutputPass.js
   var OutputPass = class extends Pass {
     constructor() {
       super();
@@ -63959,7 +63790,7 @@ void main() {
     return output;
   }
 
-  // ../LoneStar-Next/node_modules/three/examples/jsm/shaders/FXAAShader.js
+  // node_modules/three/examples/jsm/shaders/FXAAShader.js
   var FXAAShader = {
     name: "FXAAShader",
     uniforms: {
@@ -85167,7 +84998,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-fc37046dcd1b", tipSha: false ? "" : "8744b2c", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-136c056d97aa", tipSha: false ? "" : "3457c8a", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
@@ -85194,7 +85025,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     try {
       document.documentElement.classList.add("red-county");
       document.title = "Red County \xB7 Soft Open";
-      const tip = g2.tipSha || (true ? "8744b2c" : "") || "";
+      const tip = g2.tipSha || (true ? "3457c8a" : "") || "";
       const kicker = document.querySelector("#title .kicker");
       if (kicker) kicker.textContent = tip ? "Soft Open \xB7 Quiet \xB7 tip " + tip : "Soft Open \xB7 Quiet";
       const h1 = document.querySelector("#title h1");
@@ -85515,23 +85346,6 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     });
     g.afterDark = createAfterDark(g, world, buildAfterDarkSet(scene));
     g.softOpen = createSoftOpen(g);
-    g.exitToTitle = () => {
-      try {
-        toTitle();
-      } catch (e) {
-        console.warn("exitToTitle", e);
-      }
-    };
-    if (g.redCounty) {
-      try {
-        if (g.traffic?.group) g.traffic.group.visible = false;
-        for (const c of g.cars || []) {
-          c.controlled = false;
-          if (c?.model?.group) c.model.group.visible = false;
-        }
-      } catch {
-      }
-    }
     const propRoom = buildPropHouse(world);
     g.propJob = createPropJob(g, world, propRoom, buildPropDressing(scene));
     g.dinerPickup = installDinerPickup(g, world, propRoom);
@@ -85793,10 +85607,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       startGame(true);
       const s = softOpenStore.value;
       if (s.started && s.stage !== "complete") g.softOpen.resume();
-      else if (g.redCounty) g.softOpen.talkDoor();
       else g.softOpen.talkBrief();
     };
-    ;
     const ghToggle = document.getElementById("btn-gh-toggle");
     const ghChapters = document.getElementById("gh-chapters");
     if (g.redCounty) {
@@ -85818,20 +85630,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       };
       ghToggle.textContent = "Golden Hour chapters \u25BE";
     }
-    g.menus.onPlay(() => {
-      if (g.redCounty) {
-        document.getElementById("btn-soft-open")?.click();
-        return;
-      }
-      startGame(false);
-    });
-    g.menus.onContinue(() => {
-      if (g.redCounty) {
-        document.getElementById("btn-soft-open")?.click();
-        return;
-      }
-      startGame(true);
-    });
+    g.menus.onPlay(() => startGame(false));
+    g.menus.onContinue(() => startGame(true));
     g.performCrewAction = (id7) => performCrewAction(g, id7, () => setPaused(false));
     g.menus.onPause({ resume: () => setPaused(false), checkpoint: () => {
       const recovery = crewRecovery(g);
@@ -86011,27 +85811,23 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     g.updateDriverTitle();
     g.updateInvitationTitle();
     try {
-      if (g.redCounty) {
-        clearPlaying();
-      } else {
-        const prior = readPlaying();
-        const touchResume = !!(g.touch?.wantsTouchUi?.() || /(?:\?|&)(?:touch|phone)=1/.test(location.search));
-        if (touchResume && prior && (prior.tip === (g.tipSha || "") || !g.tipSha)) {
-          const freeroam = prior.freeroam !== false;
-          startGame(freeroam);
-          if (Number.isFinite(prior.x) && Number.isFinite(prior.z)) {
-            g.vehicle.place(prior.x, prior.z, Number.isFinite(prior.h) ? prior.h : 0, Number.isFinite(prior.y) ? prior.y : null);
-            if (prior.inCar && !g.inCar) {
-              try {
-                g.debug?.enterCar?.();
-              } catch {
-              }
+      const prior = readPlaying();
+      const touchResume = !!(g.touch?.wantsTouchUi?.() || /(?:\?|&)(?:touch|phone)=1/.test(location.search));
+      if (touchResume && prior && (prior.tip === (g.tipSha || "") || !g.tipSha)) {
+        const freeroam = prior.freeroam !== false;
+        startGame(freeroam);
+        if (Number.isFinite(prior.x) && Number.isFinite(prior.z)) {
+          g.vehicle.place(prior.x, prior.z, Number.isFinite(prior.h) ? prior.h : 0, Number.isFinite(prior.y) ? prior.y : null);
+          if (prior.inCar && !g.inCar) {
+            try {
+              g.debug?.enterCar?.();
+            } catch {
             }
-            g.cameraSnap = true;
-            g.hud?.toast?.("Restored your drive after a phone reload.", 3.5);
           }
-          markPlaying({ freeroam });
+          g.cameraSnap = true;
+          g.hud?.toast?.("Restored your drive after a phone reload.", 3.5);
         }
+        markPlaying({ freeroam });
       }
     } catch (err) {
       console.warn("play-session restore failed", err);
@@ -86113,44 +85909,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     g.menus.hideAll();
     g.hud.show(true);
     g.state = "play";
-    g._titleCarPlaced = false;
-    if (g.redCounty) {
-      audio.setMusic?.("none");
-      try {
-        g.vehicleModel?.setLights?.({ head: false, brake: false, reverse: false });
-      } catch {
-      }
-      g.inCar = false;
-      g.inMount = false;
-      try {
-        if (g.traffic?.group) g.traffic.group.visible = false;
-        for (const c of g.cars || []) {
-          c.controlled = false;
-          try {
-            c.stopEngine?.();
-          } catch {
-          }
-          if (c?.model?.group) c.model.group.visible = false;
-        }
-      } catch {
-      }
-      g.mission.state = "none";
-      try {
-        g.mission.freeRoam?.();
-        g.mission.timeOfDay = 0.55;
-      } catch {
-      }
-      try {
-        g.lighting?.setPhase?.(0.55);
-      } catch {
-      }
-      fadeIn();
-      requestLock();
-      syncTouchControls();
-      clearPlaying();
-      return true;
-    }
     audio.setMusic?.("roam");
+    g._titleCarPlaced = false;
     g.vehicleModel.setLights({ head: false, brake: false, reverse: false });
     g.resetToBase();
     if (continueRoam) {
@@ -86550,8 +86310,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     return vehicleEntryCandidate(g.player, g.cars, { raycast, collideCircle });
   }
   function tryEnterVehicle() {
-    if (g.redCounty || g.softOpen?.active) {
-      g.hud.toast(g.redCounty ? "Red County \u2014 horses only." : "Soft Open \u2014 horses only. E mounts at the hitch.", 2.5);
+    if (g.softOpen?.active) {
+      g.hud.toast("Soft Open \u2014 horses only. E mounts at the hitch.", 2.5);
       return false;
     }
     const p = g.player;

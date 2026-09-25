@@ -1,7 +1,7 @@
 {
-  "name": "Red County · Soft Open",
-  "short_name": "Red County",
-  "start_url": "./?v=8744b2c",
+  "name": "Lone Star: Golden Hour",
+  "short_name": "Golden Hour",
+  "start_url": "./index.html?touch=1&v=2f33299",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
