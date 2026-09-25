@@ -2,8 +2,8 @@
 <html lang="en" class="red-county">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-136c056d97aa">
-<meta name="lsgh-tip" content="3457c8a">
+<meta name="lsgh-build" content="0.35.0-next.0-0ba395ecd7d4">
+<meta name="lsgh-tip" content="12d9b89">
 <meta name="lsgh-mode" content="red-county">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -250,6 +250,7 @@ kbd.k{font-family:var(--font-head);font-size:11px;border:1px solid rgba(255,255,
 @media (max-width:680px){#challenge{gap:10px;padding:8px 10px}#challenge .set{display:none}#challenge .m{min-width:60px}#challenge .t{min-width:72px;font-size:26px}#challenge .gate{min-width:70px;font-size:11px}}
 @media (max-width:820px){#minimap{width:150px;height:150px}#speedo .v{font-size:30px}#objective{max-width:60vw}}
 
+#conversation{z-index:90;pointer-events:auto}
 .conversation-panel{width:min(560px,90vw);min-width:0;border-top:4px solid #e9b86f}
 .conversation-place{font-size:14px;letter-spacing:.12em;color:#e9b86f;margin-bottom:12px;text-transform:uppercase}
 .panel.conversation-panel h2{font-size:26px;letter-spacing:.04em;text-transform:none}
@@ -421,7 +422,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">Soft Open · Quiet · tip 3457c8a</div>
+    <div class="kicker">Soft Open · Quiet · tip 12d9b89</div>
     <h1>LONE STAR<span>RED COUNTY</span></h1>
     <p class="sub">Outlaw western Soft Open. Ride for Rae — horses, hitch heist, creek drop. Quiet approach.</p>
     <div class="menu" id="title-menu"><button class="btn primary" id="btn-soft-open" disabled>Start Soft Open</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -621,7 +622,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
     return out;
   }
 
-  // node_modules/three/build/three.module.js
+  // ../LoneStar-Next/node_modules/three/build/three.module.js
   var three_module_exports = {};
   __export(three_module_exports, {
     ACESFilmicToneMapping: () => ACESFilmicToneMapping,
@@ -33857,7 +33858,7 @@ void main() {
     });
   }
 
-  // node_modules/three/examples/jsm/utils/BufferGeometryUtils.js
+  // ../LoneStar-Next/node_modules/three/examples/jsm/utils/BufferGeometryUtils.js
   function mergeGeometries(geometries, useGroups = false) {
     const isIndexed = geometries[0].index !== null;
     const attributesUsed = new Set(Object.keys(geometries[0].attributes));
@@ -43285,6 +43286,8 @@ void main() {
       const recovery = crewRecovery(g2);
       return make("Car disabled", "Recovery", recovery.label + ".", key2("R", "X"), recovery.detail);
     }
+    if (g2.softOpen?.active) return g2.softOpen.describe();
+    if (g2.redCounty) return g2.softOpen?.describeTitle?.() || { title: "Red County", phase: "Soft Open", action: "Start Soft Open from the title.", control: "", tip: "Horses only. No Greenville freeroam.", steps: [], target: null, distance: "", urgent: false };
     if (g2.forecourt?.active) return g2.forecourt.describe();
     if (g2.workingSet?.active) return g2.workingSet.describe();
     if (g2.economy?.active) return g2.economy.describe();
@@ -53666,7 +53669,7 @@ void main() {
   }
   var softOpenStore = createSoftOpenStore();
 
-  // node_modules/three/examples/jsm/loaders/GLTFLoader.js
+  // ../LoneStar-Next/node_modules/three/examples/jsm/loaders/GLTFLoader.js
   var GLTFLoader = class extends Loader {
     constructor(manager) {
       super(manager);
@@ -56153,24 +56156,90 @@ void main() {
   // src/game/softOpenAssets.js
   var HORSE_URL = "./assets/models/horse.glb";
   var STABLE_URL = "./assets/models/stable.glb";
+  var WESTERN_DIR = "./assets/models/western/";
+  var WESTERN_KEYS = [
+    "barn",
+    "big-barn",
+    "farmhouse",
+    "silo",
+    "silo-house",
+    "storage-shed",
+    "hut",
+    "mill",
+    "sawmill",
+    "blacksmith",
+    "tower",
+    "watchtower",
+    "fence",
+    "crate",
+    "barrel",
+    "barrel-alt",
+    "wagon",
+    "cactus"
+  ];
+  var WESTERN_KEYS_PHONE = [
+    "farmhouse",
+    "hut",
+    "blacksmith",
+    "barn",
+    "mill",
+    "storage-shed",
+    "fence",
+    "crate",
+    "barrel",
+    "wagon",
+    "cactus"
+  ];
   var horseGltf = null;
   var stableGltf = null;
+  var westernGltfs = /* @__PURE__ */ Object.create(null);
   var loadPromise = null;
   function loadOne(loader, url) {
     return new Promise((resolve2, reject) => {
       loader.load(url, resolve2, void 0, reject);
     });
   }
-  function preloadSoftOpenAssets({ stable = true } = {}) {
+  function isPhoneSoftOpen() {
+    try {
+      const q = new URLSearchParams(location.search);
+      if (q.get("phone") === "1" || q.get("touch") === "1") return true;
+    } catch {
+    }
+    const touch = (navigator.maxTouchPoints || 0) > 0 || "ontouchstart" in window;
+    const coarse = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
+    return !!(touch && (coarse || Math.min(screen.width, screen.height) <= 920));
+  }
+  function preloadSoftOpenAssets({ stable = true, western = true } = {}) {
     if (loadPromise) return loadPromise;
     const loader = new GLTFLoader();
-    const jobs = [loadOne(loader, HORSE_URL)];
-    if (stable) jobs.push(loadOne(loader, STABLE_URL).catch(() => null));
-    loadPromise = Promise.all(jobs).then(([horse, stab]) => {
-      horseGltf = horse;
-      stableGltf = stab || null;
-      return { horseGltf, stableGltf };
-    });
+    const jobs = [loadOne(loader, HORSE_URL).then((g2) => {
+      horseGltf = g2;
+    })];
+    const phone = isPhoneSoftOpen();
+    if (stable && !phone) {
+      jobs.push(loadOne(loader, STABLE_URL).then((g2) => {
+        stableGltf = g2;
+      }).catch(() => {
+        stableGltf = null;
+      }));
+    } else if (stable && phone) {
+      stableGltf = null;
+    }
+    if (western) {
+      const keys2 = phone ? WESTERN_KEYS_PHONE : WESTERN_KEYS;
+      for (const key2 of keys2) {
+        const url = WESTERN_DIR + key2 + ".glb";
+        jobs.push(
+          loadOne(loader, url).then((g2) => {
+            westernGltfs[key2] = g2;
+          }).catch((e) => {
+            console.warn("[RED COUNTY] western asset skip", key2, e?.message || e);
+            westernGltfs[key2] = null;
+          })
+        );
+      }
+    }
+    loadPromise = Promise.all(jobs).then(() => ({ horseGltf, stableGltf, westernGltfs }));
     return loadPromise;
   }
   function getHorseGltf() {
@@ -56180,12 +56249,15 @@ void main() {
   function getStableGltf() {
     return stableGltf;
   }
+  function getWesternGltf(key2) {
+    return westernGltfs[key2] || null;
+  }
 
   // src/world/redCountyTextures.js
   function clamp014(x) {
     return Math.max(0, Math.min(1, x));
   }
-  function woodPlankTex(size = 512, { tint: tint2 = [84, 58, 34], aniso = 0 } = {}) {
+  function woodPlankTex(size = 512, { tint: tint2 = [118, 82, 48], aniso = 0 } = {}) {
     const S4 = texRes(size, 128, 1024);
     const an = aniso || defaultAniso();
     return cached("rc-wood|" + S4 + "|" + tint2.join(), () => {
@@ -56212,7 +56284,7 @@ void main() {
       return { map };
     });
   }
-  function woodSidingTex(size = 512, { tint: tint2 = [72, 48, 28], aniso = 0 } = {}) {
+  function woodSidingTex(size = 512, { tint: tint2 = [102, 70, 42], aniso = 0 } = {}) {
     const S4 = texRes(size, 128, 1024);
     const an = aniso || defaultAniso();
     return cached("rc-siding|" + S4 + "|" + tint2.join(), () => {
@@ -56237,13 +56309,13 @@ void main() {
   function dirtYardTex(size = 512, { aniso = 0 } = {}) {
     const S4 = texRes(size, 128, 1024);
     const an = aniso || defaultAniso();
-    return cached("rc-dirt|" + S4, () => {
+    return cached("rc-dirt|v2|" + S4, () => {
       const c = generate(S4, S4, (x, y2, u, v) => {
-        const base = [106, 74, 46];
+        const base = [178, 132, 86];
         const mott = (pfbm(u, v, 6, 4, 0.5, 9) - 0.5) * 0.42;
         const grit = (thash(x, y2, 3) - 0.5) * 0.12;
         const rut = Math.abs(u - 0.32) < 0.02 || Math.abs(u - 0.68) < 0.02 ? -0.12 - pfbm(u * 2, v, 20, 2, 0.5, 5) * 0.08 : 0;
-        let l = 0.78 + mott + grit + rut;
+        let l = 0.88 + mott + grit + rut;
         const pebble = thash(x, y2, 88) > 0.985 ? 0.2 : 0;
         l = clamp014(l + pebble);
         return [base[0] * l, base[1] * l, base[2] * l];
@@ -56254,13 +56326,13 @@ void main() {
   function streetBedTex(size = 512, { aniso = 0 } = {}) {
     const S4 = texRes(size, 128, 1024);
     const an = aniso || defaultAniso();
-    return cached("rc-street|" + S4, () => {
+    return cached("rc-street|v2|" + S4, () => {
       const c = generate(S4, S4, (x, y2, u, v) => {
-        const base = [58, 38, 24];
+        const base = [128, 92, 58];
         const mott = (pfbm(u, v, 8, 3, 0.5, 21) - 0.5) * 0.28;
         const rutL = Math.exp(-(((u - 0.28) * 18) ** 2)) * 0.22;
         const rutR = Math.exp(-(((u - 0.72) * 18) ** 2)) * 0.22;
-        let l = 0.7 + mott - rutL - rutR;
+        let l = 0.82 + mott - rutL - rutR;
         l += (thash(x, y2, 7) - 0.5) * 0.1;
         l = clamp014(l);
         return [base[0] * l, base[1] * l, base[2] * l];
@@ -56351,10 +56423,10 @@ void main() {
       creekMap: creek.map,
       barkMap: bark.map,
       gravelMap: gravel.map,
-      wood: new MeshStandardMaterial({ map: wood.map, roughness: 0.9, metalness: 0.02, color: 16777215 }),
+      wood: new MeshStandardMaterial({ map: wood.map, roughness: 0.9, metalness: 0.02, color: 15786184 }),
       siding: new MeshStandardMaterial({ map: siding.map, roughness: 0.92, metalness: 0.02, color: 16777215 }),
-      dirt: new MeshStandardMaterial({ map: dirt.map, roughness: 0.97, metalness: 0, color: 16777215 }),
-      street: new MeshStandardMaterial({ map: street.map, roughness: 1, metalness: 0, color: 16777215 }),
+      dirt: new MeshStandardMaterial({ map: dirt.map, roughness: 0.97, metalness: 0, color: 16771264 }),
+      street: new MeshStandardMaterial({ map: street.map, roughness: 1, metalness: 0, color: 15782048 }),
       adobe: new MeshStandardMaterial({ map: adobe.map, roughness: 0.94, metalness: 0.01, color: 16777215 }),
       adobeDark: new MeshStandardMaterial({ map: adobeDark.map, roughness: 0.94, metalness: 0.01, color: 16777215 }),
       tin: new MeshStandardMaterial({ map: tin.map, roughness: 0.55, metalness: 0.35, color: 16777215 }),
@@ -56364,11 +56436,99 @@ void main() {
       rust: solid(10111012, 0.7, 0.15),
       blood: solid(12855336, 0.55, 0.05),
       rope: solid(9072720, 0.95),
-      falseFront: new MeshStandardMaterial({ map: siding.map, roughness: 0.9, metalness: 0.02, color: 12097648 }),
+      falseFront: new MeshStandardMaterial({ map: siding.map, roughness: 0.92, metalness: 0.02, color: 9070656 }),
       solid,
       matWithRepeat,
       westernSign
     };
+  }
+
+  // src/world/westernProps.js
+  var _box2 = new Box3();
+  var _size = new Vector3();
+  var _center2 = new Vector3();
+  function westernizeMaterials(root) {
+    const seen = /* @__PURE__ */ new Map();
+    root.traverse((o) => {
+      if (!o.isMesh || !o.material) return;
+      o.castShadow = true;
+      o.receiveShadow = true;
+      const list = Array.isArray(o.material) ? o.material : [o.material];
+      const next = list.map((m) => {
+        if (!seen.has(m.uuid)) {
+          const c = m.clone();
+          seen.set(m.uuid, c);
+          if (c.color) {
+            const hsl = { h: 0, s: 0, l: 0 };
+            c.color.getHSL(hsl);
+            const warm = hsl.h < 0.15 || hsl.h > 0.85 || hsl.h > 0.05 && hsl.h < 0.2;
+            const isBright = hsl.l > 0.58 || hsl.s < 0.18 && hsl.l > 0.42;
+            if (isBright) {
+              c.color.setHSL(0.078, 0.32, 0.32);
+            } else {
+              c.color.setHSL(
+                warm ? 0.07 + hsl.h * 0.04 : 0.065,
+                Math.min(0.42, hsl.s * 0.4 + 0.16),
+                Math.min(0.42, Math.max(0.14, hsl.l * 0.62 + 0.03))
+              );
+            }
+          }
+          if ("roughness" in c) c.roughness = Math.max(0.72, c.roughness ?? 0.85);
+          if ("metalness" in c) c.metalness = Math.min(0.25, (c.metalness ?? 0.05) * 0.4);
+          if (c.emissive) c.emissive.setHex(0);
+        }
+        return seen.get(m.uuid);
+      });
+      o.material = Array.isArray(o.material) ? next : next[0];
+    });
+    return root;
+  }
+  function placeWesternGltf(gltf, {
+    x = 0,
+    z = 0,
+    y: y2 = 0,
+    yaw = 0,
+    targetWidth = null,
+    targetHeight = null,
+    maxDim = null,
+    westernize = true,
+    name = "westernProp"
+  } = {}) {
+    if (!gltf?.scene) return null;
+    const model = gltf.scene.clone(true);
+    if (westernize) westernizeMaterials(model);
+    _box2.setFromObject(model);
+    _box2.getSize(_size);
+    const sx = Math.max(_size.x, 0.01), sy = Math.max(_size.y, 0.01), sz = Math.max(_size.z, 0.01);
+    let s = 1;
+    if (targetWidth != null) s = targetWidth / sx;
+    else if (targetHeight != null) s = targetHeight / sy;
+    else if (maxDim != null) s = maxDim / Math.max(sx, sy, sz);
+    model.scale.setScalar(s);
+    model.updateMatrixWorld(true);
+    _box2.setFromObject(model);
+    _box2.getCenter(_center2);
+    _box2.getSize(_size);
+    model.position.x -= _center2.x;
+    model.position.z -= _center2.z;
+    model.position.y -= _box2.min.y;
+    const wrap2 = new Group();
+    wrap2.name = name;
+    wrap2.add(model);
+    wrap2.position.set(x, y2, z);
+    wrap2.rotation.y = yaw;
+    return {
+      root: wrap2,
+      width: _size.x,
+      height: _size.y,
+      depth: _size.z
+    };
+  }
+  function stampWesternProp(group, gltf, opts) {
+    const placed = placeWesternGltf(gltf, opts);
+    if (!placed) return null;
+    group.add(placed.root);
+    return placed;
   }
 
   // src/world/redCountyStrip.js
@@ -56377,13 +56537,27 @@ void main() {
   var DOOR_W = 1.05;
   var HITCH_RAIL_Y = 1.08;
   var STORY_H = 3.7;
-  var FALSE_EXTRA = 1.35;
+  var FALSE_EXTRA = 1.75;
   function boxMesh(w, h, d, mat2, x, y2, z) {
     const mesh2 = new Mesh(new BoxGeometry(w, h, d), mat2);
     mesh2.position.set(x, y2, z);
     mesh2.castShadow = true;
     mesh2.receiveShadow = true;
     return mesh2;
+  }
+  function contactShadow(group, x, z, r = 1.2, opacity = 0.42) {
+    const mat2 = new MeshBasicMaterial({
+      color: 656900,
+      transparent: true,
+      opacity,
+      depthWrite: false
+    });
+    const disc3 = new Mesh(new CircleGeometry(r, 18), mat2);
+    disc3.rotation.x = -Math.PI / 2;
+    disc3.position.set(x, 0.035, z);
+    disc3.renderOrder = 1;
+    group.add(disc3);
+    return disc3;
   }
   function faceMat(kit, kind, wu, wv, tile = 2.2) {
     const base = kit[kind];
@@ -56572,6 +56746,36 @@ void main() {
     const local2 = new Group();
     root.add(local2);
     const kit = createWesternMaterials();
+    const key2 = new DirectionalLight(16760976, 1.35);
+    key2.name = "rc-key-dusk";
+    key2.position.set(14, 20, -10);
+    key2.castShadow = true;
+    key2.shadow.mapSize.set(2048, 2048);
+    key2.shadow.camera.left = -42;
+    key2.shadow.camera.right = 42;
+    key2.shadow.camera.top = 52;
+    key2.shadow.camera.bottom = -42;
+    key2.shadow.bias = -15e-5;
+    key2.shadow.normalBias = 0.04;
+    key2.shadow.radius = 2.5;
+    local2.add(key2);
+    const fill2 = new DirectionalLight(10533080, 0.75);
+    fill2.position.set(-18, 14, 14);
+    local2.add(fill2);
+    const rim = new DirectionalLight(16744512, 0.28);
+    rim.position.set(4, 6, 28);
+    local2.add(rim);
+    const hemi = new HemisphereLight(16771272, 4861984, 1.05);
+    local2.add(hemi);
+    const porchGlow = new PointLight(14719048, 1.35, 36, 1.5);
+    porchGlow.position.set(-8, 3.4, 7);
+    local2.add(porchGlow);
+    const streetLamp = new PointLight(14190656, 0.95, 28, 1.6);
+    streetLamp.position.set(2, 3.6, -2);
+    local2.add(streetLamp);
+    const amb = new AmbientLight(13150328, 0.42);
+    amb.name = "rc-amb-dusk";
+    local2.add(amb);
     const groundMat = kit.matWithRepeat(kit.dirt, { wu: 90, wv: 130, tile: 4.5 });
     const ground = new Mesh(new PlaneGeometry(90, 130), groundMat);
     ground.rotation.x = -Math.PI / 2;
@@ -56587,108 +56791,155 @@ void main() {
       patch2.receiveShadow = true;
       local2.add(patch2);
     }
-    const streetMat = kit.matWithRepeat(kit.street, { wu: 10, wv: 90, tile: 3.5 });
-    const street = new Mesh(new PlaneGeometry(10, 90), streetMat);
+    const streetMat = kit.matWithRepeat(kit.street, { wu: 11, wv: 92, tile: 2.8 });
+    const street = new Mesh(new PlaneGeometry(11, 92), streetMat);
     street.rotation.x = -Math.PI / 2;
     street.position.set(0, 0.02, 10);
     street.receiveShadow = true;
     local2.add(street);
-    const plankMat = kit.matWithRepeat(kit.wood, { wu: 2.3, wv: 1.5, tile: 1.2 });
+    for (const side2 of [-1, 1]) {
+      const shoulder = new Mesh(
+        new PlaneGeometry(2.4, 88),
+        kit.matWithRepeat(kit.dirt, { wu: 2.4, wv: 88, tile: 2.2, color: 12886128 })
+      );
+      shoulder.rotation.x = -Math.PI / 2;
+      shoulder.position.set(side2 * 6.2, 0.028, 8);
+      shoulder.receiveShadow = true;
+      local2.add(shoulder);
+    }
+    for (const [pz2, s, col3] of [[-8, 2.4, 12097640], [4, 3, 11044952], [18, 2.6, 11571296], [32, 3.2, 10518608]]) {
+      const worn = new Mesh(
+        new CircleGeometry(s, 14),
+        kit.matWithRepeat(kit.dirt, { wu: s * 2, wv: s * 2, tile: 2.5, color: col3 })
+      );
+      worn.rotation.x = -Math.PI / 2;
+      worn.position.set(pz2 * 0.03 % 1.2, 0.032, pz2);
+      worn.receiveShadow = true;
+      local2.add(worn);
+    }
+    const plankMat = kit.matWithRepeat(kit.wood, { wu: 2.3, wv: 1.5, tile: 1.2, color: 14205072 });
+    const wornPlank = kit.matWithRepeat(kit.wood, { wu: 2.3, wv: 1.5, tile: 1.4, color: 9070656 });
     for (const side2 of [-1, 1]) {
       local2.add(boxMesh(2.4, 0.14, 54, faceMat(kit, "wood", 2.4, 54, 3), side2 * 6.2, 0.08, 5));
       local2.add(boxMesh(0.12, 0.28, 54, faceMat(kit, "wood", 0.12, 54, 2), side2 * 5.05, 0.16, 5));
       for (let i = 0; i < 34; i++) {
         const pz2 = -20 + i * 1.55;
-        const plank = boxMesh(2.25, 0.05, 1.4, plankMat, side2 * 6.2, 0.17, pz2);
+        const mat2 = i % 5 === 0 || i % 7 === 3 ? wornPlank : plankMat;
+        const plank = boxMesh(2.25, 0.05, 1.4, mat2, side2 * 6.2, 0.17, pz2);
         plank.rotation.y = (i % 3 - 1) * 0.012;
+        if (i % 4 === 1) plank.position.y = 0.155;
         local2.add(plank);
         if (i % 2 === 0) {
           local2.add(boxMesh(0.035, 0.015, 0.035, kit.bone, side2 * 5.35, 0.2, pz2));
           local2.add(boxMesh(0.035, 0.015, 0.035, kit.bone, side2 * 7, 0.2, pz2));
         }
+        if (i % 6 === 0) contactShadow(local2, side2 * 6.2, pz2, 1.1, 0.28);
       }
     }
     const saloonSign = kit.westernSign("SALOON", { bg: "#6a2818", fg: "#e8dcc8" });
     const hotelSign = kit.westernSign("HOTEL", { bg: "#4a3020", fg: "#d0c0a0" });
     const liverySign = kit.westernSign("LIVERY", { bg: "#3a2010", fg: "#d0c0a0" });
+    const smithSign = kit.westernSign("SMITH", { bg: "#3a2818", fg: "#d0c0a0" });
     const buildings = [];
-    buildings.push(building(local2, kit, {
-      w: 8.2,
-      h: 4,
-      d: 7.2,
-      x: -10.6,
-      z: 8,
-      wall: "adobe",
-      sign: saloonSign,
-      porch: true
-    }));
-    buildings.push(building(local2, kit, {
-      w: 6,
-      h: 3.5,
-      d: 5.8,
-      x: -10,
-      z: -4,
-      wall: "adobeDark",
-      porch: true
-    }));
-    buildings.push(building(local2, kit, {
-      w: 5.2,
-      h: 3.4,
-      d: 5,
-      x: -9.6,
-      z: 20,
-      wall: "adobe",
-      porch: true
-    }));
-    buildings.push(building(local2, kit, {
-      w: 7,
-      h: 4.2,
-      d: 7.5,
-      x: 10.8,
-      z: 6,
-      wall: "adobe",
-      sign: hotelSign,
-      porch: true,
-      brickAccent: true
-    }));
-    buildings.push(building(local2, kit, {
-      w: 5.4,
-      h: 3.5,
-      d: 5.4,
-      x: 10.4,
-      z: -6,
-      wall: "adobeDark",
-      porch: true
-    }));
-    buildings.push(building(local2, kit, {
-      w: 4.8,
-      h: 3.2,
-      d: 4.2,
-      x: 10,
-      z: -17,
-      wall: "siding",
-      porch: false
-    }));
-    buildings.push(building(local2, kit, {
-      w: 6.4,
-      h: 3.6,
-      d: 5.8,
-      x: -10.4,
-      z: -15.5,
-      wall: "adobeDark",
-      porch: true
-    }));
-    const ls = new Mesh(
-      new PlaneGeometry(3, 0.75),
-      new MeshStandardMaterial({
-        map: liverySign,
-        roughness: 0.7,
-        emissive: 2758672,
-        emissiveIntensity: 0.15
-      })
-    );
-    ls.position.set(-10.4, 3.9, -15.5 + 2.9 + 0.28);
-    local2.add(ls);
+    const addHero = (key3, opts, colliderPad = 0.35) => {
+      const gltf = getWesternGltf(key3);
+      if (!gltf) {
+        const b = building(local2, kit, {
+          w: opts.targetWidth || 6,
+          h: 3.6,
+          d: (opts.targetWidth || 6) * 0.85,
+          x: opts.x,
+          z: opts.z,
+          wall: "adobe",
+          porch: true,
+          sign: opts.sign || null
+        });
+        buildings.push(b);
+        return b;
+      }
+      const placed = stampWesternProp(local2, gltf, {
+        name: "hero-" + key3,
+        x: opts.x,
+        z: opts.z,
+        yaw: opts.yaw ?? 0,
+        targetWidth: opts.targetWidth,
+        targetHeight: opts.targetHeight,
+        maxDim: opts.maxDim
+      });
+      if (!placed) return null;
+      const w = placed.width, d = placed.depth, h = placed.height;
+      buildings.push({ w: w + colliderPad, h, d: d + colliderPad, x: opts.x, z: opts.z });
+      if (opts.sign) {
+        const front = opts.yaw != null ? opts.yaw : 0;
+        const signMesh = new Mesh(
+          new PlaneGeometry(Math.min(w * 0.55, 3.6), 0.8),
+          new MeshStandardMaterial({
+            map: opts.sign,
+            roughness: 0.7,
+            metalness: 0.05,
+            emissive: 2757648,
+            emissiveIntensity: 0.22
+          })
+        );
+        const faceZ = opts.signZ != null ? opts.signZ : opts.x < 0 ? opts.z : opts.z;
+        const faceX = opts.signX != null ? opts.signX : opts.x + (opts.x < 0 ? w * 0.15 : -w * 0.15);
+        signMesh.position.set(opts.signX ?? opts.x, Math.min(h * 0.72, 4.2), opts.signZ ?? opts.z + (opts.x < 0 ? d * 0.42 : -d * 0.05));
+        if (opts.x > 0) signMesh.rotation.y = Math.PI;
+        signMesh.castShadow = true;
+        local2.add(signMesh);
+      }
+      return placed;
+    };
+    {
+      const saloon = building(local2, kit, {
+        w: 9.4,
+        h: 4.15,
+        d: 8,
+        x: -11,
+        z: 8,
+        wall: "adobe",
+        sign: saloonSign,
+        porch: true,
+        brickAccent: true
+      });
+      buildings.push(saloon);
+      contactShadow(local2, -11, 8, 5.5, 0.38);
+      const frontZ = 8 + 8 / 2;
+      for (const sx of [-2.6, 2.6]) {
+        const glass = kit.solid(1708040, 0.35, 0.05);
+        glass.emissive = new Color(9062936);
+        glass.emissiveIntensity = 0.7;
+        local2.add(boxMesh(0.85, 0.95, 0.08, glass, -11 + sx, 3.15, frontZ + 0.1));
+        local2.add(boxMesh(0.95, 0.08, 0.1, faceMat(kit, "wood", 1, 0.1, 1), -11 + sx, 3.15 + 0.52, frontZ + 0.12));
+      }
+      local2.add(boxMesh(8.6, 0.1, 1.4, faceMat(kit, "wood", 8.6, 1.4, 1.4), -11, 2.55, frontZ + 1.1));
+      for (const sx of [-3.6, 3.6]) {
+        local2.add(boxMesh(0.12, 2.5, 0.12, faceMat(kit, "wood", 0.12, 2.5, 1), -11 + sx, 1.35, frontZ + 1.55));
+      }
+    }
+    addHero("farmhouse", { x: -11, z: -5.5, yaw: Math.PI / 2, targetWidth: 7.2 });
+    contactShadow(local2, -11, -5.5, 4.2, 0.35);
+    addHero("blacksmith", { x: -10.6, z: 20.5, yaw: Math.PI / 2, targetWidth: 7, sign: smithSign, signX: -7.4, signZ: 20.5 });
+    contactShadow(local2, -10.6, 20.5, 4, 0.34);
+    addHero("hut", { x: -10.2, z: -16, yaw: Math.PI / 2, targetWidth: 5.5, sign: liverySign, signX: -7.8, signZ: -16 });
+    contactShadow(local2, -10.2, -16, 3.2, 0.32);
+    addHero("mill", { x: 11.4, z: 7, yaw: -Math.PI / 2, targetWidth: 8.5, sign: hotelSign, signX: 7.8, signZ: 7 });
+    contactShadow(local2, 11.4, 7, 4.8, 0.36);
+    addHero("silo-house", { x: 10.8, z: -6, yaw: -Math.PI / 2, targetWidth: 6.8 });
+    contactShadow(local2, 10.8, -6, 3.8, 0.34);
+    addHero("barn", { x: 11, z: -17, yaw: -Math.PI / 2, targetWidth: 7.2 });
+    contactShadow(local2, 11, -17, 4, 0.34);
+    addHero("storage-shed", { x: 10.6, z: 20, yaw: -Math.PI / 2, targetWidth: 6.2 });
+    contactShadow(local2, 10.6, 20, 3.5, 0.32);
+    addHero("tower", { x: 16.5, z: 28, yaw: 0.4, targetHeight: 9.5 });
+    contactShadow(local2, 16.5, 28, 2.4, 0.4);
+    addHero("silo", { x: -16, z: 26, yaw: 0.2, targetHeight: 7.5 });
+    contactShadow(local2, -16, 26, 2.2, 0.4);
+    addHero("big-barn", { x: 14.5, z: -24, yaw: -0.3, targetWidth: 10 });
+    contactShadow(local2, 14.5, -24, 5, 0.36);
+    addHero("watchtower", { x: -15.5, z: -22, yaw: 0.5, targetHeight: 6.5 });
+    contactShadow(local2, -15.5, -22, 2, 0.38);
+    addHero("sawmill", { x: 17.5, z: 12, yaw: -0.6, targetWidth: 5.8 });
     const alleyZ = 2.2, alleyX = -7;
     const alleyFill = new PointLight(12875840, 0.75, 16, 1.8);
     alleyFill.position.set(-5, 2.4, alleyZ);
@@ -56699,19 +56950,16 @@ void main() {
     local2.add(boxMesh(0.16, 2.4, 0.16, faceMat(kit, "wood", 0.16, 2.4, 1), -5.3, 1.2, alleyZ + 1.5));
     local2.add(boxMesh(0.16, 2.4, 0.16, faceMat(kit, "wood", 0.16, 2.4, 1), -5.3, 1.2, alleyZ - 1.5));
     local2.add(boxMesh(0.12, 0.12, 3.2, kit.bone, -5.3, 2.35, alleyZ));
-    const crateMat = faceMat(kit, "wood", 1, 1, 1);
-    local2.add(boxMesh(0.9, 0.9, 0.9, crateMat, alleyX - 1.15, 0.45, alleyZ));
-    local2.add(boxMesh(0.7, 1.05, 0.7, crateMat, alleyX - 0.25, 0.52, alleyZ - 1));
-    local2.add(boxMesh(0.65, 0.65, 0.65, crateMat, alleyX - 1.4, 0.32, alleyZ + 1.1));
-    local2.add(boxMesh(0.6, 0.5, 0.6, crateMat, alleyX - 1.15, 1.15, alleyZ));
-    const barrelMat = kit.solid(9062440, 0.72, 0.12);
-    for (const [bx2, bz2, r, hh] of [[alleyX + 0.45, alleyZ + 0.75, 0.38, 0.85], [alleyX + 0.85, alleyZ - 0.55, 0.34, 0.75]]) {
-      const barrel = new Mesh(new CylinderGeometry(r, r, hh, 14), barrelMat);
-      barrel.position.set(bx2, hh / 2, bz2);
-      barrel.castShadow = true;
-      barrel.receiveShadow = true;
-      local2.add(barrel);
-    }
+    const placeProp = (key3, x, z, yaw, tw) => {
+      const g2 = getWesternGltf(key3);
+      if (g2) stampWesternProp(local2, g2, { name: key3, x, z, yaw, targetWidth: tw });
+    };
+    placeProp("crate", alleyX - 1.15, alleyZ, 0.2, 0.95);
+    placeProp("crate", alleyX - 0.25, alleyZ - 1, -0.4, 0.8);
+    placeProp("crate", alleyX - 1.35, alleyZ + 1.05, 0.7, 0.7);
+    placeProp("barrel", alleyX + 0.45, alleyZ + 0.75, 0, 0.7);
+    placeProp("barrel-alt", alleyX + 0.85, alleyZ - 0.55, 0.3, 0.65);
+    placeProp("barrel", alleyX - 0.6, alleyZ + 1.4, -0.2, 0.6);
     const caseMesh = boxMesh(0.62, 0.28, 0.42, kit.solid(3809300, 0.8), alleyX, 0.42, alleyZ + 0.15);
     caseMesh.name = "case";
     local2.add(caseMesh);
@@ -56746,10 +56994,31 @@ void main() {
     feed.castShadow = true;
     hitch.add(feed);
     local2.add(hitch);
+    contactShadow(local2, -4.4, -2, 2.4, 0.45);
+    contactShadow(local2, -3.2, -2.6, 1.1, 0.35);
     for (let z = -24; z < 38; z += 4) {
       for (const x of [-5.1, 5.1]) {
         local2.add(boxMesh(0.1, 1, 0.1, faceMat(kit, "wood", 0.1, 1, 1), x, 0.5, z));
         if (z % 8 === 0) local2.add(boxMesh(0.05, 0.05, 3.6, faceMat(kit, "wood", 0.05, 3.6, 2), x, 0.82, z + 1.8));
+      }
+    }
+    {
+      const g2 = getWesternGltf("wagon");
+      if (g2) stampWesternProp(local2, g2, { name: "wagon", x: 3.8, z: 12, yaw: -0.55, targetWidth: 3.4 });
+    }
+    {
+      const g2 = getWesternGltf("cactus");
+      if (g2) {
+        for (const [x, z, s] of [[-18, 4, 1.4], [17, -8, 1.6], [-14, 40, 1.8], [12, 42, 1.5], [18, 14, 1.3]]) {
+          stampWesternProp(local2, g2, { name: "cactus", x, z, yaw: x * 0.1, targetHeight: s + 1.2 });
+        }
+      }
+    }
+    {
+      const g2 = getWesternGltf("crate");
+      if (g2) {
+        stampWesternProp(local2, g2, { name: "crate", x: 4.8, z: -1.2, yaw: 0.3, targetWidth: 0.85 });
+        stampWesternProp(local2, g2, { name: "crate", x: -3.2, z: 14, yaw: -0.5, targetWidth: 0.9 });
       }
     }
     local2.add(boxMesh(2.1, 0.48, 0.65, faceMat(kit, "wood", 2.1, 0.48, 1), 4.4, 0.24, -2));
@@ -56976,7 +57245,7 @@ void main() {
     return Math.hypot((a2?.x || 0) - (b?.x || 0), (a2?.z || 0) - (b?.z || 0));
   }
 
-  // node_modules/three/examples/jsm/utils/SkeletonUtils.js
+  // ../LoneStar-Next/node_modules/three/examples/jsm/utils/SkeletonUtils.js
   function clone(source) {
     const sourceLookup = /* @__PURE__ */ new Map();
     const cloneLookup = /* @__PURE__ */ new Map();
@@ -57184,8 +57453,8 @@ void main() {
     body.add(model);
     root.add(body);
     const dark = mat(1708040, { roughness: 0.75 });
-    const coatMat = mat(2758672, { roughness: 0.85 });
-    const denimMat = mat(2762808, { roughness: 0.9 });
+    const coatMat = mat(1971212, { roughness: 0.88 });
+    const denimMat = mat(1710102, { roughness: 0.92 });
     const rider = makeRider(dark, coatMat, denimMat);
     rider.position.set(0, TARGET_HEIGHT * 0.7, BIND_LENGTH * scale3 * 0.02);
     rider.scale.setScalar(0.95);
@@ -57340,7 +57609,9 @@ void main() {
   var HITCH_MOUNT_R = 3.2;
   var HORSE_MOUNT_R = 2.8;
   function horseInputFromGame(input2) {
-    const forward = input2.moveY || 0 || (input2.throttle || 0) - (input2.brake || 0);
+    const stick = input2.moveY || 0;
+    const pedals = (input2.throttle || 0) - (input2.brake || 0);
+    const forward = Math.abs(stick) >= Math.abs(pedals) ? stick : pedals;
     const steer = input2.moveX || input2.steer || 0;
     const sprint = !!(input2.run || input2.handbrake);
     return { forward, steer, sprint };
@@ -57527,9 +57798,9 @@ void main() {
           if (c?.model?.group) c.model.group.visible = !hide;
         }
         g2.scene?.traverse?.((o) => {
-          if (o.name === "greenville" || typeof o.name === "string" && o.name.startsWith("gv-")) {
-            o.visible = !hide;
-          }
+          const n = typeof o.name === "string" ? o.name : "";
+          if (!n) return;
+          if (n === "greenville" || n.startsWith("gv-") || n === "skyline" || n.startsWith("bridge") || n.startsWith("kirk") || n.includes("filmset") || n.includes("Film") || n === "district" || n.startsWith("district") || n === "props" || n.startsWith("props")) o.visible = !hide;
         });
       } catch {
       }
@@ -57543,6 +57814,7 @@ void main() {
       g2.inMount = false;
       try {
         g2.touch?.setMode?.(false);
+        g2.syncTouchControls?.();
       } catch {
       }
     }
@@ -57564,12 +57836,28 @@ void main() {
       try {
         g2.inCar = false;
         g2.character.setVisible(true);
-        const sp = g2.cars?.[0]?.stableSpawn;
-        if (sp) g2.player.place(sp.x + 3, sp.z, sp.heading || 0);
       } catch {
       }
       g2.guide?.refresh();
       g2.updateSoftOpenTitle?.();
+      if (g2.redCounty) {
+        hideGhWorld(true);
+        g2.hud.setObjective(clean ? "Soft Open Quiet \xB7 done" : "Soft Open \xB7 botched", "Start Soft Open again when ready.");
+        g2.hud.banner(clean ? "Clean Soft Open" : "Botched Soft Open", clean ? "Glass County teased" : "Hitch reset", 3.2);
+        g2.audio.play?.(clean ? "gateGood" : "cone");
+        setTimeout(() => {
+          try {
+            g2.exitToTitle?.();
+          } catch {
+          }
+        }, 400);
+        return;
+      }
+      try {
+        const sp = g2.cars?.[0]?.stableSpawn;
+        if (sp) g2.player.place(sp.x + 3, sp.z, sp.heading || 0);
+      } catch {
+      }
       g2.hud.setObjective(clean ? "Soft Open Quiet \xB7 done" : "Soft Open \xB7 botched", "Title \u2192 Soft Open. Ride again when ready.");
       g2.hud.banner(clean ? "Clean Soft Open" : "Botched Soft Open", clean ? "Glass County teased" : "Hitch reset", 3.2);
       g2.audio.play?.(clean ? "gateGood" : "cone");
@@ -57599,7 +57887,7 @@ void main() {
     function ensureAssets() {
       if (assetsReady) return Promise.resolve();
       if (!assetsPromise) {
-        assetsPromise = preloadSoftOpenAssets({ stable: true }).then(() => {
+        assetsPromise = preloadSoftOpenAssets({ stable: true, western: true }).then(() => {
           assetsReady = true;
         }).catch((e) => {
           assetsPromise = null;
@@ -57635,6 +57923,10 @@ void main() {
         g2.camera.recenter();
         g2.cameraSnap = true;
         g2.touch?.setMode?.(true);
+        try {
+          g2.syncTouchControls?.();
+        } catch {
+        }
         g2.guide?.close?.(false);
         g2.scrapbook?.close?.();
       } catch {
@@ -57643,8 +57935,14 @@ void main() {
       strip.show();
       strip.showCase();
       try {
-        g2.lighting?.setPhase?.(0.55);
-        g2.mission.timeOfDay = 0.55;
+        g2.syncTouchControls?.();
+      } catch {
+      }
+      try {
+        g2.lighting?.setPhase?.(0.36);
+        g2.mission.timeOfDay = 0.36;
+        g2.R?.setExposure?.(1.48);
+        if (g2.lighting?.hemi) g2.lighting.hemi.intensity = Math.max(g2.lighting.hemi.intensity, 0.85);
       } catch {
       }
     }
@@ -57691,6 +57989,7 @@ void main() {
       } catch {
         g2.hud.toast("Could not load horse model. Check assets/models/horse.glb.", 5);
         suspend();
+        if (g2.redCounty) g2.exitToTitle?.();
         return false;
       }
       strip = ensureRedCountyStrip(g2.scene);
@@ -57718,6 +58017,52 @@ void main() {
       windowLeft = STANDBY_SEC;
       routeForStage();
       hudPhase();
+      return true;
+    }
+    function talkDoor() {
+      if (!canSimulate(g2) || g2.player.anim) return false;
+      if (active) {
+        g2.hud.toast("Soft Open is live. G shows the next beat; R recovers to the hitch.", 3);
+        return true;
+      }
+      if (!eligible()) {
+        g2.hud.toast("Finish or pause your current activity before Soft Open.", 3);
+        return false;
+      }
+      ensureAssets().catch(() => {
+      });
+      hideGhWorld(true);
+      try {
+        g2.lighting?.setPhase?.(0.55);
+      } catch {
+      }
+      if (!active && !acquire()) {
+        g2.hud.toast("Another crew call owns the board.", 3);
+        return false;
+      }
+      state.stage = "prep";
+      state.approach = "quiet";
+      checkpoint();
+      hudPhase();
+      g2.conversation.show({
+        name: "Soft Open \xB7 Quiet",
+        place: "LONE STAR \u2014 RED COUNTY",
+        text: "Rae on the wire. Poker case in the saloon alley. Soft wash at the creek. Quiet only \u2014 pick your horse and go.",
+        choices: [
+          ...state.started && !["complete", "brief", "prep"].includes(state.stage) ? [{ label: "Resume Soft Open \xB7 saved run", action: () => api.resume() }] : [],
+          { label: "Ride Dun \xB7 steady", action: () => {
+            api.start("dun");
+          } },
+          { label: "Ride Bay \xB7 mean", action: () => {
+            api.start("bay");
+          } },
+          { label: "Not tonight", action: () => {
+            suspend();
+            if (g2.redCounty) g2.exitToTitle?.();
+            else g2.hud.toast("Soft Open stayed on the board.", 2.5);
+          } }
+        ]
+      });
       return true;
     }
     function talkBrief() {
@@ -57851,6 +58196,88 @@ void main() {
       g2.hud.banner("Soft Open checkpoint", "Back at the hitch", 2.8);
       return true;
     }
+    function describe() {
+      const hitch = strip?.points?.hitch;
+      const alley = strip?.points?.alleyCase;
+      const drop = strip?.points?.drop;
+      const mount = mountLabel();
+      if (state.stage === "prep" || state.stage === "brief") {
+        return {
+          title: HEIST_TITLE,
+          phase: "Prep \xB7 Quiet",
+          action: "Confirm Dun or Bay, then ride to the hitch.",
+          control: "Conversation",
+          tip: "Quiet only. Cars stay dark.",
+          steps: [],
+          target: hitch,
+          distance: "",
+          urgent: false
+        };
+      }
+      if (state.stage === "window" && standby) {
+        return {
+          title: HEIST_TITLE,
+          phase: "Stand by \xB7 hitch",
+          action: `Hold at the hitch on ${mount}. Rae calls the alley window.`,
+          control: "W A S D \xB7 ride",
+          tip: "E dismounts near hitch. R recovers to hitch.",
+          steps: ["Stand by", "Alley case", "Creek drop"],
+          target: hitch,
+          distance: "",
+          urgent: false
+        };
+      }
+      if (state.stage === "window") {
+        return {
+          title: HEIST_TITLE,
+          phase: "Alley pinch \xB7 window open",
+          action: "Ride quiet to the alley behind the saloon. Grab the poker case.",
+          control: "W A S D \xB7 E dismount",
+          tip: "Heat rises if you cook the street at a gallop.",
+          steps: ["Stand by", "Alley case", "Creek drop"],
+          target: alley,
+          distance: "",
+          urgent: true
+        };
+      }
+      if (state.stage === "escape") {
+        return {
+          title: HEIST_TITLE,
+          phase: state.hasCase ? "Creek soft wash" : "Abort \xB7 creek drop",
+          action: state.hasCase ? "Take the soft wash at the creek. Keep street speed down." : "Empty-handed \u2014 still hit the creek to reset.",
+          control: "W A S D",
+          tip: "R recovers to the hitch.",
+          steps: ["Stand by", "Alley case", "Creek drop"],
+          target: drop,
+          distance: "",
+          urgent: !state.hasCase
+        };
+      }
+      return {
+        title: HEIST_TITLE,
+        phase: state.stage || "Soft Open",
+        action: "Follow Rae on the wire.",
+        control: "",
+        tip: "Quiet Soft Open.",
+        steps: [],
+        target: hitch,
+        distance: "",
+        urgent: false
+      };
+    }
+    function describeTitle() {
+      return {
+        title: "LONE STAR \u2014 RED COUNTY",
+        phase: "Soft Open",
+        action: "Start Soft Open from the title screen.",
+        control: "",
+        tip: "One product. Horses only. Phone and desktop share this page.",
+        steps: [],
+        target: null,
+        distance: "",
+        urgent: false
+      };
+    }
     function tryMountToggle() {
       if (!active || !horse || !strip || endingOpen) return false;
       const hitch = strip.points.hitch;
@@ -57874,6 +58301,7 @@ void main() {
         g2.player.place(outX, outZ, horse.state.yaw, RC_ORIGIN.y);
         try {
           g2.touch?.setMode?.(false);
+          g2.syncTouchControls?.();
         } catch {
         }
         g2.camera.recenter();
@@ -57889,6 +58317,7 @@ void main() {
       g2.player.place(hx, hz, horse.state.yaw, RC_ORIGIN.y);
       try {
         g2.touch?.setMode?.(true);
+        g2.syncTouchControls?.();
       } catch {
       }
       g2.camera.recenter();
@@ -57967,6 +58396,9 @@ void main() {
       get strip() {
         return strip;
       },
+      describe,
+      describeTitle,
+      talkDoor,
       talkBrief,
       talkPrep,
       start: start3,
@@ -57993,25 +58425,6 @@ void main() {
         };
       },
       present() {
-      },
-      describe() {
-        if (!active) {
-          return {
-            title: HEIST_TITLE,
-            action: state.quietCompleted ? `Quiet clears: ${state.quietCompleted}. Title \u2192 Soft Open.` : "Title \u2192 Soft Open. Quiet only. Horses, not cars."
-          };
-        }
-        if (state.stage === "prep") return { title: HEIST_TITLE, action: "Pick Dun or Bay. Quiet locked. Confirm to hitch up." };
-        if (!state.hasCase && !state.botched) {
-          return {
-            title: HEIST_TITLE,
-            action: windowOpen ? `Alley pinch \xB7 ${Math.ceil(windowLeft)}s \xB7 E dismount at hitch.` : "Stand by at the hitch for Rae's window call."
-          };
-        }
-        return {
-          title: HEIST_TITLE,
-          action: state.hasCase ? "Creek soft wash south of the strip. Keep heat down." : "Empty-handed \xB7 still reach the creek for the botched cut."
-        };
       }
     };
     return api;
@@ -62832,12 +63245,19 @@ void main() {
     g2.menus.panels.conversation = panel2;
     let generation = 0;
     const buttons = () => Array.from(panel2.querySelectorAll("button"));
+    function syncTouch() {
+      try {
+        g2.syncTouchControls?.();
+      } catch {
+      }
+    }
     function close() {
       generation++;
       panel2.classList.add("hidden");
       clearInput();
       g2.look.dx = g2.look.dy = g2.look.wheel = 0;
       g2.requestLock?.();
+      syncTouch();
     }
     function focus(delta) {
       const all = buttons(), at5 = all.indexOf(document.activeElement);
@@ -62882,6 +63302,7 @@ void main() {
         }
         panel2.classList.remove("hidden");
         buttons()[0]?.focus();
+        syncTouch();
       },
       handleInput(input2) {
         if (input2.pause || input2.back) {
@@ -62934,7 +63355,7 @@ void main() {
     maxReconcilePenetration: 0.5
   });
 
-  // node_modules/three/examples/jsm/shaders/CopyShader.js
+  // ../LoneStar-Next/node_modules/three/examples/jsm/shaders/CopyShader.js
   var CopyShader = {
     name: "CopyShader",
     uniforms: {
@@ -62974,7 +63395,7 @@ void main() {
     )
   };
 
-  // node_modules/three/examples/jsm/postprocessing/Pass.js
+  // ../LoneStar-Next/node_modules/three/examples/jsm/postprocessing/Pass.js
   var Pass = class {
     constructor() {
       this.isPass = true;
@@ -63018,7 +63439,7 @@ void main() {
     }
   };
 
-  // node_modules/three/examples/jsm/postprocessing/ShaderPass.js
+  // ../LoneStar-Next/node_modules/three/examples/jsm/postprocessing/ShaderPass.js
   var ShaderPass = class extends Pass {
     constructor(shader, textureID) {
       super();
@@ -63058,7 +63479,7 @@ void main() {
     }
   };
 
-  // node_modules/three/examples/jsm/postprocessing/MaskPass.js
+  // ../LoneStar-Next/node_modules/three/examples/jsm/postprocessing/MaskPass.js
   var MaskPass = class extends Pass {
     constructor(scene, camera) {
       super();
@@ -63115,7 +63536,7 @@ void main() {
     }
   };
 
-  // node_modules/three/examples/jsm/postprocessing/EffectComposer.js
+  // ../LoneStar-Next/node_modules/three/examples/jsm/postprocessing/EffectComposer.js
   var EffectComposer = class {
     constructor(renderer, renderTarget) {
       this.renderer = renderer;
@@ -63237,7 +63658,7 @@ void main() {
     }
   };
 
-  // node_modules/three/examples/jsm/postprocessing/RenderPass.js
+  // ../LoneStar-Next/node_modules/three/examples/jsm/postprocessing/RenderPass.js
   var RenderPass = class extends Pass {
     constructor(scene, camera, overrideMaterial = null, clearColor = null, clearAlpha = null) {
       super();
@@ -63288,7 +63709,7 @@ void main() {
     }
   };
 
-  // node_modules/three/examples/jsm/shaders/LuminosityHighPassShader.js
+  // ../LoneStar-Next/node_modules/three/examples/jsm/shaders/LuminosityHighPassShader.js
   var LuminosityHighPassShader = {
     name: "LuminosityHighPassShader",
     shaderID: "luminosityHighPass",
@@ -63341,7 +63762,7 @@ void main() {
     )
   };
 
-  // node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js
+  // ../LoneStar-Next/node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js
   var UnrealBloomPass = class _UnrealBloomPass extends Pass {
     constructor(resolution, strength, radius2, threshold) {
       super();
@@ -63597,7 +64018,7 @@ void main() {
   UnrealBloomPass.BlurDirectionX = new Vector2(1, 0);
   UnrealBloomPass.BlurDirectionY = new Vector2(0, 1);
 
-  // node_modules/three/examples/jsm/shaders/OutputShader.js
+  // ../LoneStar-Next/node_modules/three/examples/jsm/shaders/OutputShader.js
   var OutputShader = {
     name: "OutputShader",
     uniforms: {
@@ -63681,7 +64102,7 @@ void main() {
     )
   };
 
-  // node_modules/three/examples/jsm/postprocessing/OutputPass.js
+  // ../LoneStar-Next/node_modules/three/examples/jsm/postprocessing/OutputPass.js
   var OutputPass = class extends Pass {
     constructor() {
       super();
@@ -63790,7 +64211,7 @@ void main() {
     return output;
   }
 
-  // node_modules/three/examples/jsm/shaders/FXAAShader.js
+  // ../LoneStar-Next/node_modules/three/examples/jsm/shaders/FXAAShader.js
   var FXAAShader = {
     name: "FXAAShader",
     uniforms: {
@@ -82112,14 +82533,16 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         if (opts.car && (target2.onFoot || st4.mode === "chase" || st4.mode === "close")) {
           const c = opts.car;
           const dx2 = tmp2.x - c.x, dz2 = tmp2.z - c.z, d = Math.hypot(dx2, dz2);
-          const minD = target2.onFoot ? 2.9 : st4.mode === "close" ? 3.6 : 4.2;
-          const roof = c.y + (target2.onFoot ? 1.7 : (c.model?.dims?.height || 1.45) * 0.55 + 1.05);
-          if (d < minD) {
-            const k2 = (minD - d) / Math.max(d, 0.01);
-            tmp2.x += dx2 * k2;
-            tmp2.z += dz2 * k2;
+          if (d < 14) {
+            const minD = target2.onFoot ? 2.9 : st4.mode === "close" ? 3.6 : 4.2;
+            const roof = c.y + (target2.onFoot ? 1.7 : (c.model?.dims?.height || 1.45) * 0.55 + 1.05);
+            if (d < minD) {
+              const k2 = (minD - d) / Math.max(d, 0.01);
+              tmp2.x += dx2 * k2;
+              tmp2.z += dz2 * k2;
+            }
+            if (tmp2.y < roof) tmp2.y = roof;
           }
-          if (tmp2.y < roof) tmp2.y = roof;
         }
         const looking = Math.abs(dx) + Math.abs(dy) > 0 || st4.freeLook && st4.idle < 0.08;
         const k = opts.snap || looking ? 1 : 1 - Math.exp(-dt * (target2.onFoot ? 4.2 : 7 + spd * 4));
@@ -84998,7 +85421,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-136c056d97aa", tipSha: false ? "" : "3457c8a", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-0ba395ecd7d4", tipSha: false ? "" : "12d9b89", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
@@ -85025,7 +85448,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     try {
       document.documentElement.classList.add("red-county");
       document.title = "Red County \xB7 Soft Open";
-      const tip = g2.tipSha || (true ? "3457c8a" : "") || "";
+      const tip = g2.tipSha || (true ? "12d9b89" : "") || "";
       const kicker = document.querySelector("#title .kicker");
       if (kicker) kicker.textContent = tip ? "Soft Open \xB7 Quiet \xB7 tip " + tip : "Soft Open \xB7 Quiet";
       const h1 = document.querySelector("#title h1");
@@ -85060,7 +85483,13 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   }
   async function boot() {
     g.redCounty = detectRedCountyMode();
-    if (g.redCounty) applyRedCountyTitleChrome(g);
+    if (g.redCounty) {
+      applyRedCountyTitleChrome(g);
+      try {
+        preloadSoftOpenAssets({ stable: true, western: true });
+      } catch {
+      }
+    }
     try {
       const baked = g.tipSha || "";
       const v = new URLSearchParams(location.search).get("v") || "";
@@ -85250,7 +85679,19 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       g.vehicleModel = car.model;
       if (g.player) g.player.car = car;
     };
-    g.character = createCharacter({ shirt: 2832970, pants: 4866104 });
+    g.character = createCharacter(g.redCounty ? {
+      look: "scout",
+      print: false,
+      radio: false,
+      camera: false,
+      shirt: 2758672,
+      pants: 1841172,
+      boots: 1708556,
+      cap: 657414,
+      hair: 1708044,
+      skin: 12886138,
+      height: 1.03
+    } : { shirt: 2832970, pants: 4866104 });
     scene.add(g.character.group);
     g.player = createPlayer(g.character);
     g.player.car = g.vehicle;
@@ -85346,6 +85787,41 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     });
     g.afterDark = createAfterDark(g, world, buildAfterDarkSet(scene));
     g.softOpen = createSoftOpen(g);
+    g.exitToTitle = () => {
+      try {
+        toTitle();
+      } catch (e) {
+        console.warn("exitToTitle", e);
+      }
+    };
+    if (g.redCounty) {
+      try {
+        if (g.traffic?.group) g.traffic.group.visible = false;
+        for (const c of g.cars || []) {
+          c.controlled = false;
+          if (c?.model?.group) c.model.group.visible = false;
+        }
+      } catch {
+      }
+      preloadSoftOpenAssets({ stable: true, western: true }).then(() => {
+        try {
+          const strip = ensureRedCountyStrip(g.scene);
+          strip.show();
+          g._rcTitleStrip = strip;
+          g.scene?.traverse?.((o) => {
+            const n = typeof o.name === "string" ? o.name : "";
+            if (!n) return;
+            if (n === "greenville" || n.startsWith("gv-") || n === "skyline" || n.startsWith("bridge") || n.startsWith("kirk") || n.includes("filmset") || n.includes("Film") || n === "district" || n.startsWith("district") || n === "props" || n.startsWith("props") || n === "vegetation" || n.startsWith("veg")) o.visible = false;
+          });
+          try {
+            if (g.traffic?.group) g.traffic.group.visible = false;
+          } catch {
+          }
+        } catch (e) {
+          console.warn("RC title strip", e);
+        }
+      }).catch((e) => console.warn("RC title assets", e));
+    }
     const propRoom = buildPropHouse(world);
     g.propJob = createPropJob(g, world, propRoom, buildPropDressing(scene));
     g.dinerPickup = installDinerPickup(g, world, propRoom);
@@ -85607,8 +86083,10 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       startGame(true);
       const s = softOpenStore.value;
       if (s.started && s.stage !== "complete") g.softOpen.resume();
+      else if (g.redCounty) g.softOpen.talkDoor();
       else g.softOpen.talkBrief();
     };
+    ;
     const ghToggle = document.getElementById("btn-gh-toggle");
     const ghChapters = document.getElementById("gh-chapters");
     if (g.redCounty) {
@@ -85630,8 +86108,20 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       };
       ghToggle.textContent = "Golden Hour chapters \u25BE";
     }
-    g.menus.onPlay(() => startGame(false));
-    g.menus.onContinue(() => startGame(true));
+    g.menus.onPlay(() => {
+      if (g.redCounty) {
+        document.getElementById("btn-soft-open")?.click();
+        return;
+      }
+      startGame(false);
+    });
+    g.menus.onContinue(() => {
+      if (g.redCounty) {
+        document.getElementById("btn-soft-open")?.click();
+        return;
+      }
+      startGame(true);
+    });
     g.performCrewAction = (id7) => performCrewAction(g, id7, () => setPaused(false));
     g.menus.onPause({ resume: () => setPaused(false), checkpoint: () => {
       const recovery = crewRecovery(g);
@@ -85811,23 +86301,27 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     g.updateDriverTitle();
     g.updateInvitationTitle();
     try {
-      const prior = readPlaying();
-      const touchResume = !!(g.touch?.wantsTouchUi?.() || /(?:\?|&)(?:touch|phone)=1/.test(location.search));
-      if (touchResume && prior && (prior.tip === (g.tipSha || "") || !g.tipSha)) {
-        const freeroam = prior.freeroam !== false;
-        startGame(freeroam);
-        if (Number.isFinite(prior.x) && Number.isFinite(prior.z)) {
-          g.vehicle.place(prior.x, prior.z, Number.isFinite(prior.h) ? prior.h : 0, Number.isFinite(prior.y) ? prior.y : null);
-          if (prior.inCar && !g.inCar) {
-            try {
-              g.debug?.enterCar?.();
-            } catch {
+      if (g.redCounty) {
+        clearPlaying();
+      } else {
+        const prior = readPlaying();
+        const touchResume = !!(g.touch?.wantsTouchUi?.() || /(?:\?|&)(?:touch|phone)=1/.test(location.search));
+        if (touchResume && prior && (prior.tip === (g.tipSha || "") || !g.tipSha)) {
+          const freeroam = prior.freeroam !== false;
+          startGame(freeroam);
+          if (Number.isFinite(prior.x) && Number.isFinite(prior.z)) {
+            g.vehicle.place(prior.x, prior.z, Number.isFinite(prior.h) ? prior.h : 0, Number.isFinite(prior.y) ? prior.y : null);
+            if (prior.inCar && !g.inCar) {
+              try {
+                g.debug?.enterCar?.();
+              } catch {
+              }
             }
+            g.cameraSnap = true;
+            g.hud?.toast?.("Restored your drive after a phone reload.", 3.5);
           }
-          g.cameraSnap = true;
-          g.hud?.toast?.("Restored your drive after a phone reload.", 3.5);
+          markPlaying({ freeroam });
         }
-        markPlaying({ freeroam });
       }
     } catch (err) {
       console.warn("play-session restore failed", err);
@@ -85843,13 +86337,14 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       g.touch?.hide?.();
       return;
     }
-    const open = !!g.menus?.anyOpen?.() || !!g.photo?.active;
+    const open = !!g.menus?.anyOpen?.() || !!g.photo?.active || !!g.conversation?.active;
     const play = g.state === "play" && !g.paused && !open;
     if (play) {
-      g.touch.setMode?.(!!g.inCar);
+      g.touch.setMode?.(!!(g.inCar || g.softOpen?.mounted));
       g.touch.show();
     } else g.touch.hide();
   }
+  g.syncTouchControls = syncTouchControls;
   var PLAY_SESSION_KEY = "lsgh-next-play";
   function markPlaying(extra = {}) {
     try {
@@ -85909,8 +86404,44 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     g.menus.hideAll();
     g.hud.show(true);
     g.state = "play";
-    audio.setMusic?.("roam");
     g._titleCarPlaced = false;
+    if (g.redCounty) {
+      audio.setMusic?.("none");
+      try {
+        g.vehicleModel?.setLights?.({ head: false, brake: false, reverse: false });
+      } catch {
+      }
+      g.inCar = false;
+      g.inMount = false;
+      try {
+        if (g.traffic?.group) g.traffic.group.visible = false;
+        for (const c of g.cars || []) {
+          c.controlled = false;
+          try {
+            c.stopEngine?.();
+          } catch {
+          }
+          if (c?.model?.group) c.model.group.visible = false;
+        }
+      } catch {
+      }
+      g.mission.state = "none";
+      try {
+        g.mission.freeRoam?.();
+        g.mission.timeOfDay = 0.55;
+      } catch {
+      }
+      try {
+        g.lighting?.setPhase?.(0.55);
+      } catch {
+      }
+      fadeIn();
+      requestLock();
+      syncTouchControls();
+      clearPlaying();
+      return true;
+    }
+    audio.setMusic?.("roam");
     g.vehicleModel.setLights({ head: false, brake: false, reverse: false });
     g.resetToBase();
     if (continueRoam) {
@@ -86152,6 +86683,10 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     g.garage?.reset();
     g.downtown?.cancel();
     audio.setMusic?.(g.redCounty ? "none" : "title");
+    try {
+      g.R?.setExposure?.(g.redCounty ? 1.42 : 1.22);
+    } catch {
+    }
     g.state = "title";
     g.hud.show(false);
     g.menus.hideAll();
@@ -86310,8 +86845,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     return vehicleEntryCandidate(g.player, g.cars, { raycast, collideCircle });
   }
   function tryEnterVehicle() {
-    if (g.softOpen?.active) {
-      g.hud.toast("Soft Open \u2014 horses only. E mounts at the hitch.", 2.5);
+    if (g.redCounty || g.softOpen?.active) {
+      g.hud.toast(g.redCounty ? "Red County \u2014 horses only." : "Soft Open \u2014 horses only. E mounts at the hitch.", 2.5);
       return false;
     }
     const p = g.player;
@@ -86782,6 +87317,32 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     if (g.state === "title") {
       g.titleT += dt;
       const T2 = g.titleT;
+      if (g.redCounty) {
+        const o = RC_ORIGIN;
+        const ang = T2 * 0.11;
+        const r = 18 + Math.sin(T2 * 0.07) * 2;
+        const cx2 = o.x + Math.sin(ang) * r;
+        const cz2 = o.z + 4 + Math.cos(ang) * r * 0.75;
+        const cy2 = o.y + 6.2 + Math.sin(T2 * 0.14) * 0.9;
+        g.cam.position.set(cx2, cy2, cz2);
+        g.cam.lookAt(o.x - 6, o.y + 2.4, o.z + 8);
+        g.cam.fov = 40;
+        g.cam.updateProjectionMatrix();
+        g.lighting.follow(o.x, o.y + 4, o.z + 8, 1, 0);
+        g.lighting.setPhase(0.28 + Math.sin(T2 * 0.05) * 0.04);
+        try {
+          g.R?.setExposure?.(1.55);
+        } catch {
+        }
+        g.lightPool.update(cx2, cy2, cz2);
+        try {
+          g._rcTitleStrip?.updateBeacons?.(T2);
+        } catch {
+        }
+        prepareVegetation(g.scene, g.cam);
+        g.R.render();
+        return;
+      }
       const k = 0.5 - 0.5 * Math.cos(T2 * 0.09);
       const cx = -420 + k * 60, cz = 22 - k * 6, cy = 16.5 + Math.sin(T2 * 0.13) * 0.6;
       g.cam.position.set(cx, cy, cz);
@@ -86882,7 +87443,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         g.character.setVisible(false);
       } else {
         g.character.setVisible(!g.inCar);
-        g.camera.update(cameraDt, { x: cp.x, y: cp.y, z: cp.z, heading: cp.heading, speed: cp.speed, forward: [-Math.sin(cp.heading), -Math.cos(cp.heading)], onFoot: true }, look, { snap: g.cameraSnap, car: cv });
+        g.camera.update(cameraDt, { x: cp.x, y: cp.y, z: cp.z, heading: cp.heading, speed: cp.speed, forward: [-Math.sin(cp.heading), -Math.cos(cp.heading)], onFoot: true }, look, { snap: g.cameraSnap, car: g.softOpen?.active || g.redCounty ? null : cv });
         const d = new Vector3();
         g.cam.getWorldDirection(d);
         camYawAbs = Math.atan2(-d.x, -d.z);
