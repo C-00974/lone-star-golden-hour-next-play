@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-4999bf481270">
-<meta name="lsgh-tip" content="abb93c9">
+<meta name="lsgh-build" content="0.35.0-next.0-31288149572f">
+<meta name="lsgh-tip" content="4d5ea64">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -349,7 +349,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip abb93c9 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 4d5ea64 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -33646,6 +33646,7 @@ void main() {
     // Woodall at z=0 crosses the Greenville ribbon as intentional gameplay portal fiction into the Belmont vignette —
     // not a claim of a real East-Dallas freeway cross (real Woodall Rodgers is downtown). Keep geometry; document in guide.
     // Cycle HQ P0 street-name accuracy: blades match real N/S sides of Belmont. Cycle HR P1: Ross stub at south tip.
+    // Cycle HS: Richmond + Oram short stubs densify Lowest Greenville rhythm between Belmont and Ross (feel over survey).
     // Phase 5: modest N/S extend (~80m each) beyond Phase 1/2 OSM strip — feel over survey accuracy.
     {
       id: "greenville",
@@ -33708,6 +33709,28 @@ void main() {
       lanes: 2,
       speed: 25,
       pts: eastLine(840, 140, 1260, 140)
+    },
+    // Richmond Ave — just south of Belmont (real Richmond sits immediately south of Belmont). Short strip stub.
+    {
+      id: "greenville_richmond",
+      name: "Richmond Ave",
+      type: "street",
+      surface: "asphalt",
+      width: 11,
+      lanes: 2,
+      speed: 25,
+      pts: eastLine(1e3, 168, 1160, 168)
+    },
+    // Oram St — between Alta (z=200) and Ross (z=280). Real Oram is south of Belmont in Lowest Greenville.
+    {
+      id: "greenville_oram",
+      name: "Oram St",
+      type: "street",
+      surface: "asphalt",
+      width: 11,
+      lanes: 2,
+      speed: 25,
+      pts: eastLine(1e3, 240, 1160, 240)
     },
     // Greenville-strip-only Ross stub at south tip (z≈280). Southern Lowest Greenville anchor for learners.
     // Do NOT splice to DOWNTOWN dt_ross_ave — downtown Ross stays downtown; this is vignette-only.
