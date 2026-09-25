@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-b18526f4e3cb">
-<meta name="lsgh-tip" content="6d36bbb">
+<meta name="lsgh-build" content="0.35.0-next.0-5501bf5ab7e3">
+<meta name="lsgh-tip" content="35834dd">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -349,7 +349,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 6d36bbb · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 35834dd · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -55160,6 +55160,38 @@ void main() {
     return { chevrons, apexes, length: length2 };
   }
   FACILITY.guides = circuitGuideMarks();
+  function circuitSectorMarks(count3 = 3) {
+    const { pts, tan, length: length2 } = CIRCUIT;
+    const n = Math.max(2, Math.min(6, count3 | 0));
+    const sectors = [];
+    for (let i = 0; i < n; i++) {
+      const sTarget = i / n * length2;
+      let best = 0, bestD = Infinity;
+      for (let k = 0; k < pts.length; k++) {
+        const d = Math.abs(pts[k].s - sTarget);
+        if (d < bestD) {
+          bestD = d;
+          best = k;
+        }
+      }
+      const p = pts[best], t = tan[best];
+      sectors.push({
+        id: `s${i + 1}`,
+        index: i,
+        text: `S${i + 1}`,
+        s: p.s,
+        t: p.s / length2,
+        x: p.x,
+        z: p.z,
+        y: p.y,
+        lift: p.lift,
+        heading: Math.atan2(-t[0], -t[1]),
+        kind: "sector"
+      });
+    }
+    return sectors;
+  }
+  FACILITY.sectors = circuitSectorMarks();
   FACILITY.zoneLabels = [
     { id: "sf", text: "START / FINISH", x: FACILITY.startFinish.x, z: FACILITY.startFinish.z - 6, heading: FACILITY.startFinish.heading },
     { id: "drag", text: "DRAG STRIP", x: -756, z: 78, heading: 0 },
@@ -55475,7 +55507,7 @@ void main() {
     );
     face.rotation.x = -Math.PI / 2;
     face.rotation.z = -(mark.heading || 0);
-    const side2 = mark.zone === "drag" ? 3.6 : 3.2;
+    const side2 = mark.zone === "drag" ? 3.6 : mark.zone === "brake" ? 3.2 : 0;
     face.position.set(mark.x + side2, padY(mark.x + side2, mark.z) + 0.045, mark.z);
     face.name = `lot32-meter-${mark.id}`;
     group.add(face);
@@ -55636,6 +55668,46 @@ void main() {
       );
       chevron(group, a2, a2.heading, gold, 1.05);
     }
+    for (const sec of FACILITY.sectors || []) {
+      const t = { x: -Math.sin(sec.heading), z: -Math.cos(sec.heading) };
+      const r = { x: -t.z, z: t.x };
+      if (sec.index > 0) {
+        stripe(
+          group,
+          { x: sec.x - r.x * 5.2, z: sec.z - r.z * 5.2, y: sec.y },
+          { x: sec.x + r.x * 5.2, z: sec.z + r.z * 5.2, y: sec.y },
+          0.42,
+          white,
+          0.032
+        );
+        stripe(
+          group,
+          { x: sec.x - r.x * 5.2, z: sec.z - r.z * 5.2, y: sec.y },
+          { x: sec.x - r.x * 4.2, z: sec.z - r.z * 4.2, y: sec.y },
+          0.55,
+          teal,
+          0.034
+        );
+        stripe(
+          group,
+          { x: sec.x + r.x * 4.2, z: sec.z + r.z * 4.2, y: sec.y },
+          { x: sec.x + r.x * 5.2, z: sec.z + r.z * 5.2, y: sec.y },
+          0.55,
+          teal,
+          0.034
+        );
+      }
+      const lx = sec.x + r.x * (sec.index === 0 ? -3.8 : 3.6);
+      const lz = sec.z + r.z * (sec.index === 0 ? -3.8 : 3.6);
+      placeMeterLabel(group, {
+        id: `sector-${sec.id}`,
+        text: sec.text,
+        x: lx,
+        z: lz,
+        heading: sec.heading,
+        zone: "sector"
+      }, 2, 0.85);
+    }
     for (let i = 0; i < CIRCUIT.pts.length - 1; i++) {
       const p = CIRCUIT.pts[i];
       if (p.lift < 2.2 || i % 2 !== 0) continue;
@@ -55785,7 +55857,7 @@ void main() {
   };
   var MODE_HINT = {
     idle: "Free drive Lot 32 asphalt",
-    lap: "Cross the teal SF line \xB7 full clockwise lap (follow chevrons south)",
+    lap: "Cross teal SF \xB7 clockwise lap \xB7 sector gates S1\u2013S3 (follow chevrons)",
     drag: "Stage at the teal line \xB7 launch north to the red finish",
     brake: "Hit the gold gate at speed \xB7 brake to a stop",
     cones: "Circle the gold ring once \xB7 leave the cones standing"
@@ -55799,6 +55871,10 @@ void main() {
       lapBest: null,
       crossedSF: false,
       lastT: 0,
+      sectorIdx: 0,
+      sectorT: 0,
+      sectorTimes: [],
+      sectorBest: [null, null, null],
       dragArmed: false,
       dragRunning: false,
       dragT: 0,
@@ -55841,6 +55917,9 @@ void main() {
     function setMode(mode) {
       state.mode = mode;
       state.lapArmed = state.lapRunning = false;
+      state.sectorIdx = 0;
+      state.sectorT = 0;
+      state.sectorTimes = [];
       state.dragArmed = state.dragRunning = false;
       state.brakeArmed = state.brakeRunning = state.brakeGatePassed = false;
       state.brakeStart = state.brakeDist = null;
@@ -55888,10 +55967,37 @@ void main() {
     function finishLap(t) {
       state.lapRunning = false;
       state.lapArmed = true;
+      if (state.sectorTimes.length < sectorCount()) {
+        state.sectorTimes.push(state.sectorT);
+        recordSectorBest(state.sectorTimes.length - 1, state.sectorT);
+      }
       state.lapBest = state.lapBest == null ? t : Math.min(state.lapBest, t);
+      const splits = state.sectorTimes.map((s, i) => `S${i + 1} ${fmtTime(s)}`).join(" \xB7 ");
       g2.hud.gateFlash(state.lapBest === t ? `LAP ${fmtTime(t)} \xB7 BEST` : `LAP ${fmtTime(t)}`, "var(--ok)");
-      g2.hud.challenge(t, 1, 1, state.lapBest != null ? `BEST ${fmtTime(state.lapBest)}` : "LAP DONE");
+      g2.hud.challenge(t, 1, 1, splits || (state.lapBest != null ? `BEST ${fmtTime(state.lapBest)}` : "LAP DONE"));
       g2.audio.play?.("gateGood");
+    }
+    function sectorCount() {
+      return Math.max(2, (FACILITY.sectors || []).length || 3);
+    }
+    function recordSectorBest(idx, t) {
+      if (idx < 0 || idx >= state.sectorBest.length) return;
+      const cur = state.sectorBest[idx];
+      state.sectorBest[idx] = cur == null ? t : Math.min(cur, t);
+    }
+    function advanceSector() {
+      const idx = state.sectorIdx;
+      state.sectorTimes.push(state.sectorT);
+      recordSectorBest(idx, state.sectorT);
+      const best = state.sectorBest[idx];
+      const isBest = best != null && Math.abs(best - state.sectorT) < 1e-6;
+      g2.hud.gateFlash(
+        `S${idx + 1} ${fmtTime(state.sectorT)}${isBest ? " \xB7 BEST" : ""}`,
+        isBest ? "var(--ok)" : "var(--gold2)",
+        0.95
+      );
+      state.sectorIdx = idx + 1;
+      state.sectorT = 0;
     }
     function finishDrag(t, mph) {
       state.dragRunning = false;
@@ -55926,6 +56032,7 @@ void main() {
       const p = projectCircuit(v.x, v.z);
       const onTrack = p && p.d < CIRCUIT.width / 2 + 1.5;
       const atSF = near4(v, FACILITY.startFinish, 7);
+      const nSec = sectorCount();
       if (!state.lapRunning) {
         if (atSF && onTrack && v.speed < 4) state.lapArmed = true;
         if (state.lapArmed && atSF && v.speed > 5 && onTrack) {
@@ -55933,23 +56040,39 @@ void main() {
           state.lapT = 0;
           state.lastT = 0.02;
           state.crossedSF = false;
-          g2.hud.banner("Lap live", "Stay on the asphalt \xB7 corkscrew ahead", 2);
+          state.sectorIdx = 0;
+          state.sectorT = 0;
+          state.sectorTimes = [];
+          g2.hud.banner("Lap live", "S1\u2013S3 gates \xB7 stay on asphalt \xB7 corkscrew ahead", 2);
           g2.audio.play?.("slate");
         }
-        g2.hud.challenge(state.lapBest ?? 0, 1, 1, state.lapArmed ? "ARMED \xB7 FOLLOW CHEVRONS" : "LINE UP AT TEAL SF");
+        g2.hud.challenge(state.lapBest ?? 0, 1, 1, state.lapArmed ? "ARMED \xB7 S1 AT TEAL SF" : "LINE UP AT TEAL SF");
         return;
       }
       state.lapT += dt;
+      state.sectorT += dt;
       if (onTrack && p) {
         state.lastT = p.t;
         if (p.t > 0.22 && p.t < 0.88) state.crossedSF = true;
+        while (state.sectorIdx < nSec - 1 && state.lastT >= (state.sectorIdx + 1) / nSec) {
+          advanceSector();
+        }
       }
-      g2.hud.challenge(state.lapT, Math.max(0.15, state.lastT), 1, `LAP \xB7 ${Math.round(state.lastT * 100)}%`);
+      const sNum = Math.min(nSec, state.sectorIdx + 1);
+      g2.hud.challenge(
+        state.lapT,
+        Math.max(0.15, state.lastT),
+        1,
+        `S${sNum} ${fmtTime(state.sectorT)} \xB7 ${Math.round(state.lastT * 100)}%`
+      );
       if (state.crossedSF && state.lastT > 0.92 && atSF && v.speed > 2 && state.lapT > 8) finishLap(state.lapT);
       if (!onTrack && p && p.d > CIRCUIT.width / 2 + 8) {
         state.lapRunning = false;
         state.lapArmed = false;
         state.crossedSF = false;
+        state.sectorIdx = 0;
+        state.sectorT = 0;
+        state.sectorTimes = [];
         g2.hud.toast("Lap cancelled \xB7 back on the circuit to retry", 2.5);
       }
     }
@@ -81597,7 +81720,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-b18526f4e3cb", tipSha: false ? "" : "6d36bbb", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-5501bf5ab7e3", tipSha: false ? "" : "35834dd", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
