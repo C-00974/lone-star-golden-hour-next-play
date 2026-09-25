@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-31288149572f">
-<meta name="lsgh-tip" content="4d5ea64">
+<meta name="lsgh-build" content="0.35.0-next.0-161fbb429d03">
+<meta name="lsgh-tip" content="586ee53">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -349,7 +349,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 4d5ea64 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 586ee53 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -55103,6 +55103,77 @@ void main() {
     heading: Math.PI,
     w: 6
   };
+  function circuitGuideMarks(chevronStep = 36, apexMinKappa = 0.11, apexMinSep = 22) {
+    const { pts, tan, length: length2 } = CIRCUIT;
+    const chevrons = [];
+    for (let s = chevronStep; s < length2 - 8; s += chevronStep) {
+      let best = 0, bestD = Infinity;
+      for (let i = 0; i < pts.length; i++) {
+        const d = Math.abs(pts[i].s - s);
+        if (d < bestD) {
+          bestD = d;
+          best = i;
+        }
+      }
+      const p = pts[best], t = tan[best];
+      chevrons.push({
+        x: p.x,
+        z: p.z,
+        y: p.y,
+        s: p.s,
+        lift: p.lift,
+        heading: Math.atan2(-t[0], -t[1]),
+        kind: "chevron"
+      });
+    }
+    const heads = tan.map(([tx, tz]) => Math.atan2(tx, tz));
+    const apexRaw = [];
+    for (let i = 2; i < pts.length - 2; i++) {
+      let d = heads[i + 1] - heads[i - 1];
+      while (d > Math.PI) d -= Math.PI * 2;
+      while (d < -Math.PI) d += Math.PI * 2;
+      const ds = pts[i + 1].s - pts[i - 1].s || 1;
+      const kappa = Math.abs(d) / ds;
+      if (kappa < apexMinKappa) continue;
+      const p = pts[i], t = tan[i];
+      apexRaw.push({
+        x: p.x,
+        z: p.z,
+        y: p.y,
+        s: p.s,
+        lift: p.lift,
+        kappa,
+        heading: Math.atan2(-t[0], -t[1]),
+        kind: "apex"
+      });
+    }
+    apexRaw.sort((a2, b) => b.kappa - a2.kappa);
+    const apexes = [];
+    for (const a2 of apexRaw) {
+      if (apexes.some((b) => Math.hypot(a2.x - b.x, a2.z - b.z) < apexMinSep)) continue;
+      apexes.push(a2);
+      if (apexes.length >= 5) break;
+    }
+    apexes.sort((a2, b) => a2.s - b.s);
+    return { chevrons, apexes, length: length2 };
+  }
+  FACILITY.guides = circuitGuideMarks();
+  FACILITY.zoneLabels = [
+    { id: "sf", text: "START / FINISH", x: FACILITY.startFinish.x, z: FACILITY.startFinish.z - 6, heading: FACILITY.startFinish.heading },
+    { id: "drag", text: "DRAG STRIP", x: -756, z: 78, heading: 0 },
+    { id: "brake", text: "BRAKE LANE", x: -736, z: 80, heading: 0 },
+    { id: "cones", text: "CONE PAD", x: FACILITY.skid.x, z: FACILITY.skid.z + 20, heading: Math.PI }
+  ];
+  FACILITY.approach = {
+    gate: { x: -630, z: 75 },
+    stand: { x: FACILITY.stand.x, z: FACILITY.stand.z },
+    stripes: [
+      { x: -636, z: 75 },
+      { x: -640, z: 76 },
+      { x: -644, z: 77 },
+      { x: FACILITY.stand.x + 4, z: FACILITY.stand.z }
+    ]
+  };
   function projectCircuit(x, z) {
     const { pts, tan, length: length2 } = CIRCUIT;
     let best = null;
@@ -55303,6 +55374,48 @@ void main() {
     texture.colorSpace = SRGBColorSpace;
     return texture;
   }
+  function makeGroundLabel(text3) {
+    const c = document.createElement("canvas");
+    c.width = 1024;
+    c.height = 256;
+    const ctx2 = c.getContext("2d");
+    ctx2.clearRect(0, 0, 1024, 256);
+    ctx2.fillStyle = "rgba(18, 28, 36, 0.55)";
+    ctx2.fillRect(24, 40, 976, 176);
+    ctx2.strokeStyle = "#f2b134";
+    ctx2.lineWidth = 8;
+    ctx2.strokeRect(32, 48, 960, 160);
+    ctx2.textAlign = "center";
+    ctx2.textBaseline = "middle";
+    ctx2.fillStyle = "#f4efe6";
+    ctx2.font = "bold 92px sans-serif";
+    ctx2.fillText(text3, 512, 128);
+    const texture = new CanvasTexture(c);
+    texture.colorSpace = SRGBColorSpace;
+    texture.anisotropy = 4;
+    return texture;
+  }
+  function placeGroundLabel(group, label) {
+    const tex2 = makeGroundLabel(label.text);
+    const w = label.id === "sf" ? 9.5 : 8.2;
+    const h = label.id === "sf" ? 2.4 : 2.1;
+    const face = new Mesh(
+      new PlaneGeometry(w, h),
+      new MeshBasicMaterial({
+        map: tex2,
+        transparent: true,
+        depthWrite: false,
+        side: DoubleSide,
+        toneMapped: false
+      })
+    );
+    face.rotation.x = -Math.PI / 2;
+    face.rotation.z = -(label.heading || 0);
+    face.position.set(label.x, padY(label.x, label.z) + 0.04, label.z);
+    face.name = `lot32-label-${label.id}`;
+    group.add(face);
+    return face;
+  }
   function buildTestFacility(world2) {
     const group = new Group();
     group.name = "Lot 32 Test Facility";
@@ -55435,6 +55548,34 @@ void main() {
       teal
     );
     chevron(group, sf, sf.heading, teal, 1.8);
+    for (const m of FACILITY.guides.chevrons) {
+      chevron(group, m, m.heading, teal, 1.35);
+    }
+    for (const a2 of FACILITY.guides.apexes) {
+      const t = { x: -Math.sin(a2.heading), z: -Math.cos(a2.heading) };
+      const r = { x: -t.z, z: t.x };
+      stripe(
+        group,
+        { x: a2.x - r.x * 1.1, z: a2.z - r.z * 1.1, y: a2.y },
+        { x: a2.x + r.x * 1.1, z: a2.z + r.z * 1.1, y: a2.y },
+        0.55,
+        gold,
+        0.035
+      );
+      chevron(group, a2, a2.heading, gold, 1.05);
+    }
+    for (let i = 0; i < CIRCUIT.pts.length - 1; i++) {
+      const p = CIRCUIT.pts[i];
+      if (p.lift < 2.2 || i % 2 !== 0) continue;
+      const t = CIRCUIT.tan[i], rx = -t[1], rz = t[0];
+      for (const side2 of [-1, 1]) {
+        const ax = p.x + rx * side2 * (CIRCUIT.width / 2 + 0.6);
+        const az = p.z + rz * side2 * (CIRCUIT.width / 2 + 0.6);
+        const bx2 = p.x + rx * side2 * (CIRCUIT.width / 2 + 2.4);
+        const bz2 = p.z + rz * side2 * (CIRCUIT.width / 2 + 2.4);
+        stripe(group, { x: ax, z: az, y: p.y }, { x: bx2, z: bz2, y: p.y }, 0.28, red, 0.03);
+      }
+    }
     for (let i = 0; i < CIRCUIT.pts.length - 1; i += 3) {
       const p = CIRCUIT.pts[i], t = CIRCUIT.tan[i], rx = -t[1], rz = t[0];
       for (const side2 of [-1, 1]) {
@@ -55504,6 +55645,39 @@ void main() {
     const pole = new Mesh(new CylinderGeometry(0.08, 0.08, 1.2, 6), bases);
     pole.position.set(sx, padY(sx, sz) + 0.6, sz);
     group.add(pole);
+    for (const label of FACILITY.zoneLabels) placeGroundLabel(group, label);
+    {
+      const ap = FACILITY.approach;
+      stripe(
+        group,
+        { x: ap.gate.x - 0.2, z: ap.gate.z - 8 },
+        { x: ap.gate.x - 0.2, z: ap.gate.z + 8 },
+        0.9,
+        gold,
+        0.03
+      );
+      for (let i = 0; i < ap.stripes.length - 1; i++) {
+        const a2 = ap.stripes[i], b = ap.stripes[i + 1];
+        stripe(group, a2, b, 0.55, i % 2 === 0 ? white : gold, 0.028);
+      }
+      chevron(group, { x: ap.stripes[0].x, z: ap.stripes[0].z }, Math.PI / 2, gold, 1.4);
+      const standLabel = makeGroundLabel("STAND \xB7 ENTER");
+      const standFace = new Mesh(
+        new PlaneGeometry(5.5, 1.6),
+        new MeshBasicMaterial({
+          map: standLabel,
+          transparent: true,
+          depthWrite: false,
+          side: DoubleSide,
+          toneMapped: false
+        })
+      );
+      standFace.rotation.x = -Math.PI / 2;
+      standFace.rotation.z = Math.PI / 2;
+      standFace.position.set(FACILITY.stand.x + 3.2, padY(FACILITY.stand.x, FACILITY.stand.z) + 0.045, FACILITY.stand.z);
+      standFace.name = "lot32-label-stand";
+      group.add(standFace);
+    }
     world2.surfaces.push({
       id: FACILITY.id,
       query(x, z) {
@@ -81351,7 +81525,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-31288149572f", tipSha: false ? "" : "4d5ea64", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-161fbb429d03", tipSha: false ? "" : "586ee53", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
