@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-f36117a42eff">
-<meta name="lsgh-tip" content="3066c99">
+<meta name="lsgh-build" content="0.35.0-next.0-383735a4aec0">
+<meta name="lsgh-tip" content="f588630">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -349,7 +349,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 3066c99 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip f588630 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -33772,6 +33772,7 @@ void main() {
     kirkEast: { name: "Continental landing \xB7 Design District", x: 350, z: -120, y: E },
     stagingLot: { name: "Staging \xB7 Riverfront", x: 355, z: 300, y: E, heading: 0 },
     lot42: { name: "Lot 42", x: -820, z: 250, y: W },
+    testFacility: { name: "Riverfront Test Facility", x: 470, z: 340, y: E, heading: 0 },
     greenville: { name: "Greenville Ave \xB7 Lower", x: 1080, z: -50, y: eastY(1080) }
   };
   var SCOUT_SPOTS = [
@@ -46484,6 +46485,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     [PLACES.artPark.x, PLACES.artPark.z, 18],
     [PLACES.stagingLot.x, PLACES.stagingLot.z, 48],
     [PLACES.lot42.x, PLACES.lot42.z, 32],
+    [PLACES.testFacility.x, PLACES.testFacility.z, 95],
     [PLACES.gatewayPlaza.x, PLACES.gatewayPlaza.z, 11],
     [PLACES.kirkEast.x, PLACES.kirkEast.z, 11],
     [KIRK.westPlaza.x, KIRK.westPlaza.z, 11],
@@ -46518,6 +46520,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     [-745, 20, -670, 62],
     [-840, 20, -800, 36],
     [-845, 192, -772, 308],
+    [412, 220, 548, 475],
     [-552, -30, -530, -13]
   ];
   for (const [x0, n2] of [[-838, 4], [-740, 5], [-618, 5], [-470, 5]]) for (let i = 0; i < n2; i++) BUILDINGS.push([x0 + i * 18 - 6, 126, x0 + i * 18 + 6, 141]);
@@ -47045,7 +47048,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     // Kirk landings
     { x: PLACES.base.x, z: PLACES.base.z, r: 42 },
     { x: PLACES.artPark.x, z: PLACES.artPark.z, r: 16 },
-    { x: PLACES.stagingLot.x, z: PLACES.stagingLot.z, r: 30 }
+    { x: PLACES.stagingLot.x, z: PLACES.stagingLot.z, r: 30 },
+    { x: PLACES.testFacility.x, z: PLACES.testFacility.z, r: 90 }
   ];
   function excluded2(x, z) {
     for (const e of EXCL) {
