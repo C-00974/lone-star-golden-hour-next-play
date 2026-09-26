@@ -338,7 +338,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 5471e52 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip c6d63c1 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -54986,7 +54986,7 @@ void main() {
   var FACILITY = {
     id: "test-facility",
     name: "Lot 32 Test Facility",
-    version: 7,
+    version: 8,
     // Expanded west/north for a Seca-readable lap; still Lot 32 near stable (not Riverfront).
     bounds: { x0: -905, x1: -618, z0: -132, z1: 165 },
     entry: { x: -638, z: 75, heading: Math.PI / 2 },
@@ -55227,14 +55227,47 @@ void main() {
         landmark: "ANDRETTI"
       };
     }
+    const reservedApex = (t0, t1, landmark) => {
+      let bestI = -1, bestK = 0;
+      for (let i = 2; i < pts.length - 2; i++) {
+        if (pts[i].t < t0 || pts[i].t > t1) continue;
+        let d = heads[i + 1] - heads[i - 1];
+        while (d > Math.PI) d -= Math.PI * 2;
+        while (d < -Math.PI) d += Math.PI * 2;
+        const ds = pts[i + 1].s - pts[i - 1].s || 1;
+        const k = Math.abs(d) / ds;
+        if (k >= bestK) {
+          bestK = k;
+          bestI = i;
+        }
+      }
+      if (bestI < 0) return null;
+      const p = pts[bestI], t = tan[bestI];
+      return {
+        x: p.x,
+        z: p.z,
+        y: p.y,
+        s: p.s,
+        lift: p.lift,
+        kappa: Math.max(bestK, 0.06),
+        heading: Math.atan2(-t[0], -t[1]),
+        kind: "apex",
+        landmark
+      };
+    };
+    const t10Apex = reservedApex(0.88, 0.96, "TURN 10");
+    const t11Apex = reservedApex(0.96, 0.995, "TURN 11");
     apexRaw.sort((a2, b) => b.kappa - a2.kappa);
     const apexes = [];
     if (andrettiApex) apexes.push(andrettiApex);
+    if (t10Apex) apexes.push(t10Apex);
+    if (t11Apex) apexes.push(t11Apex);
     for (const a2 of apexRaw) {
       if (apexes.some((b) => Math.hypot(a2.x - b.x, a2.z - b.z) < apexMinSep)) continue;
       if (a2.s / length2 >= 0.14 && a2.s / length2 <= 0.28) continue;
+      if (a2.s / length2 >= 0.88) continue;
       apexes.push(a2);
-      if (apexes.length >= 5) break;
+      if (apexes.length >= 7) break;
     }
     apexes.sort((a2, b) => a2.s - b.s);
     return { chevrons, apexes, length: length2 };
@@ -55294,12 +55327,13 @@ void main() {
       id: "cork-8a-tree",
       kind: "tree",
       label: "8A TREE",
-      // Left of the 8A→Rainey carry line (~14 m off ribbon) — tall aim landmark.
-      x: -754,
-      z: -30,
-      height: 18,
-      crownR: 5,
-      trunkR: 0.48,
+      // Cycle IC: sit mid 8A→Rainey carry (was at Rainey) so crest silhouette reads;
+      // still ~11 m off ribbon; aim bearing toward Rainey held.
+      x: -778,
+      z: -58,
+      height: 22,
+      crownR: 5.6,
+      trunkR: 0.52,
       // Aim-from sample on the 8A plunge (tests check bearing toward Rainey).
       aimFrom: { x: -810, z: -96 },
       rainey: { x: -742, z: -32 }
@@ -55324,6 +55358,34 @@ void main() {
     };
   }
   FACILITY.turnWindows = null;
+  function turn6TireMarks(step2 = 5.5) {
+    const wins = FACILITY.turnWindows || circuitTurnWindows();
+    const { pts, tan } = CIRCUIT;
+    const edge = CIRCUIT.width / 2;
+    const marks = [];
+    let lastS = -Infinity;
+    for (let i = 0; i < pts.length; i++) {
+      const p = pts[i];
+      if (p.t < wins.turn6.t0 || p.t > wins.turn6.t1) continue;
+      if (p.s - lastS < step2) continue;
+      lastS = p.s;
+      const [tx, tz] = tan[i];
+      const rightX = tz, rightZ = -tx;
+      const ox = p.x - rightX * (edge + 2.4);
+      const oz = p.z - rightZ * (edge + 2.4);
+      marks.push({
+        id: `t6-tire-${marks.length + 1}`,
+        x: ox,
+        z: oz,
+        y: p.y,
+        heading: Math.atan2(-tx, -tz),
+        kind: "tire",
+        stacks: 3
+      });
+    }
+    return marks;
+  }
+  FACILITY.tireMarks = null;
   FACILITY.approach = {
     gate: { x: -630, z: 75 },
     stand: { x: FACILITY.stand.x, z: FACILITY.stand.z },
@@ -55483,6 +55545,7 @@ void main() {
     return null;
   }
   FACILITY.turnWindows = circuitTurnWindows();
+  FACILITY.tireMarks = turn6TireMarks();
 
   // src/world/testFacility.js
   function makeAsphaltMat() {
@@ -55516,6 +55579,29 @@ void main() {
       m.normalScale = new Vector2(1.1, 1.1);
     }
     return m;
+  }
+  function placeTireStack(group, mark) {
+    const y0 = padY(mark.x, mark.z);
+    const stacks = mark.stacks || 3;
+    const tireGroup = new Group();
+    tireGroup.name = `lot32-${mark.id}`;
+    const redM = new MeshStandardMaterial({ color: 12986408, roughness: 0.85, metalness: 0.05 });
+    const whiteM = new MeshStandardMaterial({ color: 15789027, roughness: 0.8, metalness: 0.02 });
+    const blackM = new MeshStandardMaterial({ color: 1710618, roughness: 0.95 });
+    for (let i = 0; i < stacks; i++) {
+      const mat = i % 2 === 0 ? redM : whiteM;
+      const ring = new Mesh(new TorusGeometry(0.42, 0.16, 6, 14), mat);
+      ring.rotation.x = Math.PI / 2;
+      ring.position.set(mark.x, y0 + 0.18 + i * 0.32, mark.z);
+      ring.castShadow = true;
+      ring.receiveShadow = true;
+      tireGroup.add(ring);
+      const core = new Mesh(new CylinderGeometry(0.22, 0.22, 0.12, 8), blackM);
+      core.position.set(mark.x, y0 + 0.18 + i * 0.32, mark.z);
+      tireGroup.add(core);
+    }
+    group.add(tireGroup);
+    return tireGroup;
   }
   function placeAimTree(group, landmark) {
     const y2 = padY(landmark.x, landmark.z);
@@ -55896,6 +55982,24 @@ void main() {
         0.035
       );
       chevron(group, a2, a2.heading, gold, 1.05);
+      if (a2.landmark === "TURN 10" || a2.landmark === "TURN 11") {
+        const inside = a2.landmark === "TURN 10" ? 1 : -1;
+        const fx = -Math.sin(a2.heading), fz = -Math.cos(a2.heading);
+        const rx = -fz, rz = fx;
+        for (let k = -2; k <= 2; k++) {
+          const px2 = a2.x + fx * k * 1.35 + rx * inside * (CIRCUIT.width / 2 - 0.55);
+          const pz2 = a2.z + fz * k * 1.35 + rz * inside * (CIRCUIT.width / 2 - 0.55);
+          const mat = (k + 2) % 2 === 0 ? red : white;
+          stripe(
+            group,
+            { x: px2 - fx * 0.55, z: pz2 - fz * 0.55, y: a2.y },
+            { x: px2 + fx * 0.55, z: pz2 + fz * 0.55, y: a2.y },
+            0.7,
+            mat,
+            0.04
+          );
+        }
+      }
     }
     for (const sec of FACILITY.sectors || []) {
       const t = { x: -Math.sin(sec.heading), z: -Math.cos(sec.heading) };
@@ -56112,6 +56216,9 @@ void main() {
         patch2.name = inT6 ? "lot32-gravel-t6" : "lot32-gravel-8a";
         group.add(patch2);
       }
+    }
+    for (const tm of FACILITY.tireMarks || []) {
+      placeTireStack(group, tm);
     }
     for (const lm of FACILITY.landmarks || []) {
       if (lm.kind === "tree") placeAimTree(group, lm);
@@ -82113,7 +82220,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-9972c6466259", tipSha: false ? "" : "5471e52", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-7a11b72100c0", tipSha: false ? "" : "c6d63c1", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
