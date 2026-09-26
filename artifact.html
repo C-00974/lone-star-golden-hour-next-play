@@ -276,6 +276,15 @@ html.touch-ui #speedo{right:max(8px,env(safe-area-inset-right));bottom:max(200px
 html.touch-ui #gps{display:none!important}
 html.touch-ui #controls{display:none}
 html.touch-ui #title .foot{display:none}
+/* Cycle II: Timed Lap challenge (sector / bests / arm) must stay readable on phone.
+   Desktop @media(max-height:560px) shoves #challenge top-right — same corner as .tc-btns —
+   so sector names + per-car bests disappear under E/V/R/M/G. Top-center clears
+   minimap (L) and utility strip (R). Lot 32 keeps Line/Rig bars at 100% — hide on touch. */
+html.touch-ui #challenge{left:50%;right:auto;top:max(6px,env(safe-area-inset-top));transform:translateX(-50%);width:auto;max-width:min(440px,calc(100vw - 220px));z-index:30;gap:8px;padding:6px 12px;flex-wrap:nowrap;justify-content:center}
+html.touch-ui #challenge .set,html.touch-ui #challenge .m{display:none}
+html.touch-ui #challenge .t{min-width:72px;font-size:24px}
+html.touch-ui #challenge .gate{min-width:0;max-width:min(320px,58vw);white-space:normal;letter-spacing:.08em;font-size:11px;line-height:1.25;text-align:center}
+html.touch-ui #challenge:not(.hidden) ~ #banner{top:max(64px,env(safe-area-inset-top) + 56px)}
 @media(max-width:900px){
   #speedo{transform:scale(.9);transform-origin:bottom right}
   #objective{max-width:min(320px,70vw);font-size:13px}
@@ -306,6 +315,10 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   /* Landscape: look stays full-bleed under pedals (z-index); pedals/stick keep multitouch */
   html.touch-ui #minimap { width: 110px; height: 110px; top: max(6px, env(safe-area-inset-top)); left: max(6px, env(safe-area-inset-left)); }
   html.touch-ui #objective { top: calc(max(6px, env(safe-area-inset-top)) + 116px); }
+  /* Cycle II: keep Timed Lap challenge top-center on short landscape phones */
+  html.touch-ui #challenge { top: max(4px, env(safe-area-inset-top)); max-width: min(400px, calc(100vw - 240px)); }
+  html.touch-ui #challenge .t { font-size: 22px; min-width: 64px; }
+  html.touch-ui #challenge .gate { font-size: 10px; max-width: min(280px, 52vw); }
   #title { padding-bottom: 4vh; justify-content: center; }
   #title h1 { font-size: clamp(36px, 14vh, 72px); }
   #title .menu { gap: 8px; max-height: 48vh; overflow: auto; }
@@ -338,7 +351,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 33d6591 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 0e7fdc7 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -82572,7 +82585,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-9111981a72a1", tipSha: false ? "" : "33d6591", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-741012aeeb3d", tipSha: false ? "" : "0e7fdc7", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
