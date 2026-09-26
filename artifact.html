@@ -351,7 +351,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip f60176d · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip bc80c54 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -75926,7 +75926,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       const ctl = v.controlled && v.engineOn && v.startT <= 0;
       const steerTarget = ctl ? clamp3(input2.steer, -1, 1) : 0;
       const spd = Math.abs(v.vf);
-      const maxSteer = Math.max(S4.steerMin, S4.steerMax * 1.22 / (1 + Math.pow(spd / ((S4.steerSpeedK || 10.5) * 4.15), 1.5)));
+      const maxSteer = Math.max(S4.steerMin, S4.steerMax * 1.22 / (1 + Math.pow(spd / ((S4.steerSpeedK || 10.5) * 1.15), 1.45)));
       const rateK = 1 / (1 + spd / 28);
       const returning = Math.abs(steerTarget) < Math.abs(v.steerIn) || Math.sign(steerTarget) !== Math.sign(v.steerIn);
       const kbRamp = input2.analog ? 1 : 0.88 - 0.16 * clamp3(spd / 34, 0, 1);
@@ -75934,7 +75934,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       v.steerIn = v.steerIn + clamp3(steerTarget - v.steerIn, -rate * dt, rate * dt);
       v.steer = v.steerIn * maxSteer;
       if (v.damage && v.damage.pull) v.steer += v.damage.pull * clamp3(spd / 14, 0, 1);
-      if ((v.driftT || 0) > 0 && Math.abs(v.vf) > 9) {
+      if ((v.driftT || 0) > 0 && Math.abs(v.vf) > 6) {
         const kc = 0.9 - 0.45 * S4.drift;
         v.steer = clamp3(v.steer - (v.beta || 0) * kc, -maxSteer * 1.3, maxSteer * 1.3);
       }
@@ -76094,14 +76094,14 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       v.beta = beta;
       const betaMax = 0.32 + 0.48 * S4.drift;
       const ab = Math.abs(beta);
-      const sliding = ab > 0.12 && vfAbs > 9;
+      const sliding = ab > 0.12 && vfAbs > 6;
       const counterSteer = sliding && v.steerIn * maxSteer * r > 4e-3;
       const pSlide = S4.powerSlide ?? 0.5;
-      const powerOn = v.throttle > 0.72 && v.slipR > 0.12 + 0.03 * (1 - pSlide) && vfAbs > 12 && vfAbs < 7 + 12 * pSlide;
+      const powerOn = v.throttle > 0.72 && v.slipR > 0.12 + 0.03 * (1 - pSlide) && vfAbs < 7 + 12 * pSlide;
       const trailBrake = S4.drift > 0.55 && v.brake > 0.35 && v.slipR > 0.1;
       const wantsSlide = v.handbrake || counterSteer || powerOn || trailBrake;
       v.drifting = sliding;
-      v.driftT = ab > 0.28 && vfAbs > 9 ? 0.9 : Math.max(0, (v.driftT || 0) - dt);
+      v.driftT = ab > 0.2 && vfAbs > 6 ? 0.9 : Math.max(0, (v.driftT || 0) - dt);
       if (!wantsSlide && S4.assist > 0) {
         const excess = Math.abs(r) - (Math.abs(rKin) * 1.5 + 0.25);
         if (excess > 0) yawAcc -= Math.sign(r) * excess * 6 * S4.assist;
@@ -76122,8 +76122,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
           yawAcc += beta * (turningIn && softLift ? 0.7 + 0.85 * S4.assist : 2.2 + 2 * S4.assist);
         }
       }
-      const yawDamp = v.drifting ? 0.18 : 0.35 + 0.42 * (1 - clamp3((vfAbs - 6) / 8, 0, 1));
-      yawAcc -= r * yawDamp;
+      yawAcc -= r * (v.drifting ? 0.18 : 0.35);
       const rDyn = r + yawAcc * dt;
       v.yawRate = supported ? lerp2(rKin, rDyn, kin) : r;
       if ((S4.plantPower || 0) > 0.2 && v.throttle > 0.7 && Math.abs(v.steerIn) > 0.75 && vfAbs < 16) {
@@ -82639,7 +82638,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-617ae112e9d2", tipSha: false ? "" : "f60176d", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-f66b279a5dfc", tipSha: false ? "" : "bc80c54", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
