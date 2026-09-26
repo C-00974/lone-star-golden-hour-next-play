@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-ddef73ba3d39">
-<meta name="lsgh-tip" content="ee5e5aa">
+<meta name="lsgh-build" content="0.35.0-next.0-1f2f5574b814">
+<meta name="lsgh-tip" content="25b1e38">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -362,7 +362,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip ee5e5aa · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 25b1e38 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -35024,16 +35024,16 @@ void main() {
   }
   var grey = (v) => `rgb(${v | 0},${v | 0},${v | 0})`;
   function tailBarTextures({ w = 1024, h = 96, ribs = [], windows = [], flutes = 44, border = 0.11 } = {}) {
-    const c = lampCanvases(w, h), X = c.x;
+    const c = lampCanvases(w, h), X2 = c.x;
     const HOUS = "#0a0809";
     for (const k of ["map", "emis"]) {
-      X[k].fillStyle = k === "map" ? HOUS : "#000";
-      X[k].fillRect(0, 0, w, h);
+      X2[k].fillStyle = k === "map" ? HOUS : "#000";
+      X2[k].fillRect(0, 0, w, h);
     }
-    X.rough.fillStyle = grey(240);
-    X.rough.fillRect(0, 0, w, h);
-    X.hgt.fillStyle = grey(60);
-    X.hgt.fillRect(0, 0, w, h);
+    X2.rough.fillStyle = grey(240);
+    X2.rough.fillRect(0, 0, w, h);
+    X2.hgt.fillStyle = grey(60);
+    X2.hgt.fillRect(0, 0, w, h);
     const y0 = Math.round(h * border), y1 = Math.round(h * (1 - border)), lh = y1 - y0;
     const cuts = [0, ...ribs, 1].map((u) => u * w);
     const inWindow = (u) => windows.some(([a2, b]) => u > a2 && u < b);
@@ -35050,25 +35050,25 @@ void main() {
         const vert2 = Math.sin(Math.PI * Math.min(1, Math.max(0, v)));
         if (dRib < ribW) {
           const edge = 1 - dRib / ribW;
-          X.map.fillStyle = `rgb(${16 + 26 * edge | 0},${12 + 16 * edge | 0},${13 + 16 * edge | 0})`;
-          X.rough.fillStyle = grey(215);
-          X.hgt.fillStyle = grey(30 + 40 * edge);
-          X.emis.fillStyle = "#000";
+          X2.map.fillStyle = `rgb(${16 + 26 * edge | 0},${12 + 16 * edge | 0},${13 + 16 * edge | 0})`;
+          X2.rough.fillStyle = grey(215);
+          X2.hgt.fillStyle = grey(30 + 40 * edge);
+          X2.emis.fillStyle = "#000";
         } else if (win) {
-          X.map.fillStyle = "#080709";
-          X.rough.fillStyle = grey(230);
-          X.hgt.fillStyle = grey(10);
-          X.emis.fillStyle = "#000";
+          X2.map.fillStyle = "#080709";
+          X2.rough.fillStyle = grey(230);
+          X2.hgt.fillStyle = grey(10);
+          X2.emis.fillStyle = "#000";
         } else {
           const k = Math.pow(flute, 1.5), lit = (0.3 + 0.7 * vert2) * (0.55 + 0.45 * k);
           const r = 15 + 34 * k + 7 * vert2, g2 = 3 + 6 * k, b = 4 + 5 * k;
-          X.map.fillStyle = `rgb(${r | 0},${g2 | 0},${b | 0})`;
-          X.rough.fillStyle = grey(128 + 56 * (1 - k));
-          X.hgt.fillStyle = grey(96 + 128 * k);
+          X2.map.fillStyle = `rgb(${r | 0},${g2 | 0},${b | 0})`;
+          X2.rough.fillStyle = grey(128 + 56 * (1 - k));
+          X2.hgt.fillStyle = grey(96 + 128 * k);
           const e = Math.min(255, 255 * lit);
-          X.emis.fillStyle = `rgb(${e | 0},${e * 0.14 | 0},${e * 0.07 | 0})`;
+          X2.emis.fillStyle = `rgb(${e | 0},${e * 0.14 | 0},${e * 0.07 | 0})`;
         }
-        for (const k of ["map", "rough", "hgt", "emis"]) X[k].fillRect(x, y2, 1, 1);
+        for (const k of ["map", "rough", "hgt", "emis"]) X2[k].fillRect(x, y2, 1, 1);
       }
     }
     const sy = Math.round(y0 + lh * 0.48), sh = Math.max(1, Math.round(lh * 0.07));
@@ -35078,24 +35078,24 @@ void main() {
       let dRib = 1e9;
       for (const cx of cuts) dRib = Math.min(dRib, Math.abs(x + 0.5 - cx));
       if (dRib < w * 45e-4) continue;
-      X.map.fillStyle = "rgba(118,74,70,0.30)";
-      X.map.fillRect(x, sy, 1, sh);
-      X.rough.fillStyle = "rgba(96,96,96,0.55)";
-      X.rough.fillRect(x, sy, 1, sh);
+      X2.map.fillStyle = "rgba(118,74,70,0.30)";
+      X2.map.fillRect(x, sy, 1, sh);
+      X2.rough.fillStyle = "rgba(96,96,96,0.55)";
+      X2.rough.fillRect(x, sy, 1, sh);
     }
     return lampMaps(c, { normalStrength: 1.7 });
   }
   function roundLampTextures({ s = 256, rings = 7, tint: tint2 = [92, 10, 9], white = false } = {}) {
-    const c = lampCanvases(s, s), X = c.x, R = s / 2;
-    X.map.fillStyle = "#070607";
-    X.map.fillRect(0, 0, s, s);
-    X.emis.fillStyle = "#000";
-    X.emis.fillRect(0, 0, s, s);
-    X.rough.fillStyle = grey(235);
-    X.rough.fillRect(0, 0, s, s);
-    X.hgt.fillStyle = grey(40);
-    X.hgt.fillRect(0, 0, s, s);
-    const img = { map: X.map.getImageData(0, 0, s, s), rough: X.rough.getImageData(0, 0, s, s), hgt: X.hgt.getImageData(0, 0, s, s), emis: X.emis.getImageData(0, 0, s, s) };
+    const c = lampCanvases(s, s), X2 = c.x, R = s / 2;
+    X2.map.fillStyle = "#070607";
+    X2.map.fillRect(0, 0, s, s);
+    X2.emis.fillStyle = "#000";
+    X2.emis.fillRect(0, 0, s, s);
+    X2.rough.fillStyle = grey(235);
+    X2.rough.fillRect(0, 0, s, s);
+    X2.hgt.fillStyle = grey(40);
+    X2.hgt.fillRect(0, 0, s, s);
+    const img = { map: X2.map.getImageData(0, 0, s, s), rough: X2.rough.getImageData(0, 0, s, s), hgt: X2.hgt.getImageData(0, 0, s, s), emis: X2.emis.getImageData(0, 0, s, s) };
     for (let y2 = 0; y2 < s; y2++) for (let x = 0; x < s; x++) {
       const dx = (x + 0.5 - R) / R, dy = (y2 + 0.5 - R) / R, r = Math.hypot(dx, dy), i = (y2 * s + x) * 4;
       if (r > 1) continue;
@@ -35119,43 +35119,43 @@ void main() {
       img.emis.data[i + 2] = white ? e : e * 0.07;
       img.emis.data[i + 3] = 255;
     }
-    for (const k of ["map", "rough", "hgt", "emis"]) X[k].putImageData(img[k], 0, 0);
+    for (const k of ["map", "rough", "hgt", "emis"]) X2[k].putImageData(img[k], 0, 0);
     return lampMaps(c, { normalStrength: 1.5 });
   }
   function blockLampTextures({ w = 256, h = 96, flutes = 16, colour = [86, 91, 97] } = {}) {
-    const c = lampCanvases(w, h), X = c.x;
-    X.map.fillStyle = "#0a090a";
-    X.map.fillRect(0, 0, w, h);
-    X.emis.fillStyle = "#000";
-    X.emis.fillRect(0, 0, w, h);
-    X.rough.fillStyle = grey(232);
-    X.rough.fillRect(0, 0, w, h);
-    X.hgt.fillStyle = grey(40);
-    X.hgt.fillRect(0, 0, w, h);
+    const c = lampCanvases(w, h), X2 = c.x;
+    X2.map.fillStyle = "#0a090a";
+    X2.map.fillRect(0, 0, w, h);
+    X2.emis.fillStyle = "#000";
+    X2.emis.fillRect(0, 0, w, h);
+    X2.rough.fillStyle = grey(232);
+    X2.rough.fillRect(0, 0, w, h);
+    X2.hgt.fillStyle = grey(40);
+    X2.hgt.fillRect(0, 0, w, h);
     const bx2 = Math.round(w * 0.1), by2 = Math.round(h * 0.19);
     for (let x = bx2; x < w - bx2; x++) {
       const u = (x - bx2) / (w - 2 * bx2), flute = 0.5 + 0.5 * Math.cos(u * Math.PI * 2 * flutes), k = Math.pow(flute, 1.4);
       for (let y2 = by2; y2 < h - by2; y2++) {
         const v = (y2 - by2) / (h - 2 * by2), vert2 = Math.sin(Math.PI * v);
         const lit = (0.42 + 0.58 * vert2) * (0.6 + 0.4 * k);
-        X.map.fillStyle = `rgb(${colour[0] * (0.48 + 0.52 * k) | 0},${colour[1] * (0.48 + 0.52 * k) | 0},${colour[2] * (0.48 + 0.52 * k) | 0})`;
-        X.rough.fillStyle = grey(112 + 66 * (1 - k));
-        X.hgt.fillStyle = grey(90 + 140 * k);
+        X2.map.fillStyle = `rgb(${colour[0] * (0.48 + 0.52 * k) | 0},${colour[1] * (0.48 + 0.52 * k) | 0},${colour[2] * (0.48 + 0.52 * k) | 0})`;
+        X2.rough.fillStyle = grey(112 + 66 * (1 - k));
+        X2.hgt.fillStyle = grey(90 + 140 * k);
         const e = Math.min(255, 255 * lit);
-        X.emis.fillStyle = `rgb(${e | 0},${e | 0},${e * 0.97 | 0})`;
-        for (const kk of ["map", "rough", "hgt", "emis"]) X[kk].fillRect(x, y2, 1, 1);
+        X2.emis.fillStyle = `rgb(${e | 0},${e | 0},${e * 0.97 | 0})`;
+        for (const kk of ["map", "rough", "hgt", "emis"]) X2[kk].fillRect(x, y2, 1, 1);
       }
     }
     return lampMaps(c, { normalStrength: 1.6 });
   }
   function slatPanelTextures({ w = 256, h = 256, slats: slats2 = 9 } = {}) {
-    const c = lampCanvases(w, h), X = c.x;
-    X.map.fillStyle = "#131315";
-    X.map.fillRect(0, 0, w, h);
-    X.rough.fillStyle = grey(190);
-    X.rough.fillRect(0, 0, w, h);
-    X.hgt.fillStyle = grey(150);
-    X.hgt.fillRect(0, 0, w, h);
+    const c = lampCanvases(w, h), X2 = c.x;
+    X2.map.fillStyle = "#131315";
+    X2.map.fillRect(0, 0, w, h);
+    X2.rough.fillStyle = grey(190);
+    X2.rough.fillRect(0, 0, w, h);
+    X2.hgt.fillStyle = grey(150);
+    X2.hgt.fillRect(0, 0, w, h);
     const pitch = h / slats2;
     for (let y2 = 0; y2 < h; y2++) {
       const t = y2 % pitch / pitch;
@@ -35163,12 +35163,12 @@ void main() {
       const face = 1 - groove;
       const shade2 = 0.55 + 0.45 * Math.pow(1 - t, 0.7);
       const lum = (12 + 26 * shade2) * face + 4 * groove;
-      X.map.fillStyle = `rgb(${lum | 0},${lum | 0},${lum * 1.04 | 0})`;
-      X.map.fillRect(0, y2, w, 1);
-      X.rough.fillStyle = grey(150 + 70 * groove);
-      X.rough.fillRect(0, y2, w, 1);
-      X.hgt.fillStyle = grey(40 + 180 * face * (1 - 0.5 * t));
-      X.hgt.fillRect(0, y2, w, 1);
+      X2.map.fillStyle = `rgb(${lum | 0},${lum | 0},${lum * 1.04 | 0})`;
+      X2.map.fillRect(0, y2, w, 1);
+      X2.rough.fillStyle = grey(150 + 70 * groove);
+      X2.rough.fillRect(0, y2, w, 1);
+      X2.hgt.fillStyle = grey(40 + 180 * face * (1 - 0.5 * t));
+      X2.hgt.fillRect(0, y2, w, 1);
     }
     const m = lampMaps(c, { normalStrength: 2.4 });
     m.emissive.dispose();
@@ -36249,7 +36249,7 @@ void main() {
       doorR: { x: 1.3, z: -0.57 },
       cockpit: { x: -0.43, y: 1.9, z: -0.48 }
     };
-    const m = materials(527117), b = batch(body, m), W2 = 1.01, Z4 = 2.966;
+    const m = materials(527117), b = batch(body, m), W2 = 1.01, Z5 = 2.966;
     const arches = [{ z: -dims.wheelBase / 2, y: 0.382, r: 0.49 }, { z: dims.wheelBase / 2, y: 0.382, r: 0.49 }];
     b.add("black", box(1.74, 0.15, 5.18, 0, 0.48, 0.05));
     b.add("cabin", box(1.86, 0.065, 4.66, 0, 0.797, 0.35), { interior: true });
@@ -36642,8 +36642,18 @@ void main() {
   function eastY(x) {
     return ELEV.east + 6 * smoothstep2(420, 900, x);
   }
-  var BOUNDS = { minX: -930, maxX: 1750, minZ: -520, maxZ: 800 };
-  var MAP = { minX: -1e3, maxX: 1800, minZ: -900, maxZ: 900 };
+  var BOUNDS = { minX: -1200, maxX: 1750, minZ: -720, maxZ: 800 };
+  var MAP = { minX: -1300, maxX: 1800, minZ: -900, maxZ: 900 };
+  var TRACK_CAMPUS = { x: -880, z: -380, clearR: 260 };
+  function inTrackCampusClear(x, z, m = 0) {
+    return Math.hypot(x - TRACK_CAMPUS.x, z - TRACK_CAMPUS.z) < TRACK_CAMPUS.clearR + m;
+  }
+  function trackCampusOverlapsRect(x0, z0, x1, z1, m = 0) {
+    const cx = TRACK_CAMPUS.x, cz = TRACK_CAMPUS.z, R = TRACK_CAMPUS.clearR + m;
+    const nx = Math.max(x0, Math.min(cx, x1));
+    const nz = Math.max(z0, Math.min(cz, z1));
+    return Math.hypot(cx - nx, cz - nz) < R;
+  }
   var D2R = Math.PI / 180;
   function lerp2(a2, b, t) {
     return a2 + (b - a2) * t;
@@ -36762,7 +36772,7 @@ void main() {
   var E = ELEV.east;
   var ROADS = [
     // --- West Dallas grid (at grade)
-    { id: "singleton_w", name: "Singleton Blvd", type: "boulevard", surface: "concrete", width: 22, lanes: 4, median: true, speed: 35, pts: line([-930, 0, W], [-500, 0, W]) },
+    { id: "singleton_w", name: "Singleton Blvd", type: "boulevard", surface: "concrete", width: 22, lanes: 4, median: true, speed: 35, pts: line([-1200, 0, W], [-500, 0, W]) },
     { id: "mhhb", name: "Margaret Hunt Hill Bridge", type: "deck", surface: "concrete", width: MHHB.deckWidth, lanes: 6, median: true, speed: 45, pts: deckPoints(-500, 560, 0, 10) },
     { id: "woodall", name: "Woodall Rodgers Fwy", type: "boulevard", surface: "concrete", width: 26, lanes: 6, median: true, speed: 45, pts: eastLine(560, 0, 1700, 0) },
     { id: "beckley", name: "Beckley Ave", type: "street", surface: "concrete", width: 16, lanes: 4, speed: 30, pts: beckleyPoints() },
@@ -36771,9 +36781,9 @@ void main() {
     { id: "bataan", name: "Bataan St", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: line([-760, -330, W], [-760, 330, W]) },
     { id: "sylvan", name: "Sylvan Ave", type: "boulevard", surface: "concrete", width: 18, lanes: 4, speed: 35, pts: join(line([-860, 330, W], [-860, -250, W]), arc(-780, -250, 80, 180, 270, W, W, 20)) },
     { id: "sylvan_viaduct", name: "Sylvan Ave Viaduct", type: "deck", surface: "concrete", width: 18, lanes: 4, speed: 45, pts: join(line([-780, -330, W], [-520, -330, W]), ramp(-520, -330, -330, -330, W, ELEV.sylvanDeck, 14), line([-330, -330, ELEV.sylvanDeck], [250, -330, ELEV.sylvanDeck]), ramp(250, -330, 392, -330, ELEV.sylvanDeck, E, 14)) },
-    { id: "continental_w", name: "Continental Ave", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: line([-930, -120, W], [-345, -120, W]) },
-    { id: "toronto", name: "Toronto St", type: "street", surface: "asphalt", width: 11, lanes: 2, speed: 25, pts: line([-930, -260, W], [-345, -260, W]) },
-    { id: "muncie", name: "Muncie Ave", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: line([-930, 160, W], [-345, 160, W]) },
+    { id: "continental_w", name: "Continental Ave", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: line([-1200, -120, W], [-345, -120, W]) },
+    { id: "toronto", name: "Toronto St", type: "street", surface: "asphalt", width: 11, lanes: 2, speed: 25, pts: line([-1200, -260, W], [-345, -260, W]) },
+    { id: "muncie", name: "Muncie Ave", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: line([-1200, 160, W], [-345, 160, W]) },
     { id: "base_access", name: "Production base", type: "access", surface: "asphalt", width: 9, lanes: 1, speed: 15, pts: line([-575, -254, W], [-575, -190, W]) },
     // Authored ground-level market access around the church; the bridge parapet stays intact.
     { id: "singleton_market_access", name: "Singleton Market access", type: "access", surface: "asphalt", width: 7, lanes: 1, speed: 10, pts: join(line([-520, 60, W], [-446, 60, W]), arc(-446, 48, 12, 90, 0, W, W, 12), line([-434, 48, W], [-434, 31, W])) },
@@ -36967,7 +36977,7 @@ void main() {
     kirkEast: { name: "Continental landing \xB7 Design District", x: 350, z: -120, y: E },
     stagingLot: { name: "Staging \xB7 Riverfront", x: 355, z: 300, y: E, heading: 0 },
     lot42: { name: "Lot 42", x: -820, z: 250, y: W },
-    testFacility: { name: "Lot 32 Test Facility", x: -680, z: 75, y: W, heading: 0 },
+    testFacility: { name: "Lot 32 Test Facility", x: -766.5, z: -318.5, y: W, heading: 0 },
     greenville: { name: "Greenville Ave \xB7 Belmont / Lowest", x: 1080, z: -50, y: eastY(1080) }
   };
   var SCOUT_SPOTS = [
@@ -37043,9 +37053,9 @@ void main() {
     { id: "hunt", name: "Hunt Consolidated", x: 1050, z: 30, w: 70, d: 40, h: 60, style: "glass", light: "#ffe9c4" }
   ];
   var TREE_LINES = [
-    { kind: "liveoak", from: [-930, -13], to: [-520, -13], spacing: 26 },
+    { kind: "liveoak", from: [-1200, -13], to: [-520, -13], spacing: 26 },
     // Singleton verges
-    { kind: "liveoak", from: [-930, 13], to: [-520, 13], spacing: 26 },
+    { kind: "liveoak", from: [-1200, 13], to: [-520, 13], spacing: 26 },
     { kind: "liveoak", from: [-380, -150], to: [-380, -95], spacing: 12 },
     // Lozada Gateway
     { kind: "cottonwood", from: [-20, -500], to: [60, 500], spacing: 30, jitter: 25 },
@@ -38347,17 +38357,17 @@ void main() {
       const a2 = pts[Math.max(0, i - 1)].c, b = pts[Math.min(n - 1, i + 1)].c;
       let T2 = norm(sub2(b, a2));
       if (Math.hypot(...T2) < 1e-6) T2 = [0, -1, 0];
-      let X;
+      let X2;
       if (pts[i].n || i === 0) {
         const ref = pts[i].n ? pts[i].n : Math.abs(T2[1]) > 0.9 ? [0, 0, -1] : [0, 1, 0];
-        X = norm(cross2(ref, T2));
+        X2 = norm(cross2(ref, T2));
       } else {
         const px2 = frames[i - 1].X, d = px2[0] * T2[0] + px2[1] * T2[1] + px2[2] * T2[2];
-        X = norm([px2[0] - T2[0] * d, px2[1] - T2[1] * d, px2[2] - T2[2] * d]);
-        if (Math.hypot(...X) < 1e-6 || !isFinite(X[0])) X = frames[i - 1].X;
+        X2 = norm([px2[0] - T2[0] * d, px2[1] - T2[1] * d, px2[2] - T2[2] * d]);
+        if (Math.hypot(...X2) < 1e-6 || !isFinite(X2[0])) X2 = frames[i - 1].X;
       }
-      const Z4 = norm(cross2(T2, X));
-      frames.push({ X, Z: Z4, T: T2 });
+      const Z5 = norm(cross2(T2, X2));
+      frames.push({ X: X2, Z: Z5, T: T2 });
     }
     const upward = pts[n - 1].c[1] - pts[0].c[1] > 0.5 * total;
     const adir = upward ? -1 : 1;
@@ -41662,15 +41672,15 @@ void main() {
     }
     for (const s of [-1, 1]) {
       const movingCards = watchParts([hideG, tanG, carpetG, trimIn, alloyG]);
-      const X = s * 0.786;
-      hideG.push(at(roundedSlab(0.86, 0.2, 0.035, 0.03, 2), X, 0.672, -0.1, 0, s * Math.PI / 2));
-      tanG.push(at(roundedSlab(0.72, 0.155, 0.03, 0.03, 2), X - s * 0.014, 0.5, -0.1, 0, s * Math.PI / 2));
-      carpetG.push(at(box(0.022, 0.11, 0.8), X, 0.39, -0.1));
-      hideG.push(at(roundedSlab(0.34, 0.075, 0.09, 0.03, 2), X - s * 0.045, 0.588, -0.06, 0, s * Math.PI / 2));
-      hideG.push(at(box(0.016, 0.115, 0.03), X - s * 0.03, 0.7, -0.3), at(box(0.016, 0.02, 0.075), X - s * 0.03, 0.645, -0.3));
-      alloyG.push(at(box(0.02, 0.02, 0.09), X - s * 0.036, 0.64, -0.4));
-      trimIn.push(at(new CircleGeometry(0.055, 16), X - s * 0.02, 0.452, 0.14, 0, s * Math.PI / 2));
-      trimIn.push(at(box(0.016, 0.03, 0.09), X - s * 0.026, 0.76, 0.24));
+      const X2 = s * 0.786;
+      hideG.push(at(roundedSlab(0.86, 0.2, 0.035, 0.03, 2), X2, 0.672, -0.1, 0, s * Math.PI / 2));
+      tanG.push(at(roundedSlab(0.72, 0.155, 0.03, 0.03, 2), X2 - s * 0.014, 0.5, -0.1, 0, s * Math.PI / 2));
+      carpetG.push(at(box(0.022, 0.11, 0.8), X2, 0.39, -0.1));
+      hideG.push(at(roundedSlab(0.34, 0.075, 0.09, 0.03, 2), X2 - s * 0.045, 0.588, -0.06, 0, s * Math.PI / 2));
+      hideG.push(at(box(0.016, 0.115, 0.03), X2 - s * 0.03, 0.7, -0.3), at(box(0.016, 0.02, 0.075), X2 - s * 0.03, 0.645, -0.3));
+      alloyG.push(at(box(0.02, 0.02, 0.09), X2 - s * 0.036, 0.64, -0.4));
+      trimIn.push(at(new CircleGeometry(0.055, 16), X2 - s * 0.02, 0.452, 0.14, 0, s * Math.PI / 2));
+      trimIn.push(at(box(0.016, 0.03, 0.09), X2 - s * 0.026, 0.76, 0.24));
       tagAdded(movingCards, s);
     }
     hideG.push(at(roundedSlab(1.34, 0.46, 0.05, 0.04, 2), 0, 0.615, 0.6));
@@ -55169,34 +55179,46 @@ void main() {
   // src/game/testFacilityCourse.js
   var YOFF = 0.055;
   var padY = (x, z) => Math.max(terrainHeight(x, z), W) + YOFF;
+  var _PREV = { x0: -905, x1: -618, z0: -132, z1: 165 };
+  var _OXc = (_PREV.x0 + _PREV.x1) / 2;
+  var _OZc = (_PREV.z0 + _PREV.z1) / 2;
+  var CAMPUS_DX = TRACK_CAMPUS.x - _OXc;
+  var CAMPUS_DZ = TRACK_CAMPUS.z - _OZc;
+  var X = (x) => x + CAMPUS_DX;
+  var Z2 = (z) => z + CAMPUS_DZ;
   var FACILITY = {
     id: "test-facility",
     name: "Lot 32 Test Facility",
     version: 12,
-    // Expanded west/north for a Seca-readable lap; still Lot 32 near stable (not Riverfront).
-    bounds: { x0: -905, x1: -618, z0: -132, z1: 165 },
-    entry: { x: -638, z: 75, heading: Math.PI / 2 },
-    stand: { x: -648, z: 78, r: 9, heading: -Math.PI / 2 },
-    apron: { x0: -690, x1: -632, z0: 50, z1: 105 },
-    skid: { x: -665, z: 78, r: 14, inner: 10.5, outer: 17 },
+    // Clear runoff pad: rails at clearR so 8-heading probe ≥250 m before first hit
+    bounds: {
+      x0: TRACK_CAMPUS.x - TRACK_CAMPUS.clearR,
+      x1: TRACK_CAMPUS.x + TRACK_CAMPUS.clearR,
+      z0: TRACK_CAMPUS.z - TRACK_CAMPUS.clearR,
+      z1: TRACK_CAMPUS.z + TRACK_CAMPUS.clearR
+    },
+    entry: { x: X(-638), z: Z2(75), heading: Math.PI / 2 },
+    stand: { x: X(-648), z: Z2(78), r: 9, heading: -Math.PI / 2 },
+    apron: { x0: X(-690), x1: X(-632), z0: Z2(50), z1: Z2(105) },
+    skid: { x: X(-665), z: Z2(78), r: 14, inner: 10.5, outer: 17 },
     drag: {
-      x0: -762,
-      x1: -750,
-      z0: 5,
-      z1: 150,
-      start: { x: -756, z: 142, heading: 0 },
-      finish: { x: -756, z: 12 },
+      x0: X(-762),
+      x1: X(-750),
+      z0: Z2(5),
+      z1: Z2(150),
+      start: { x: X(-756), z: Z2(142), heading: 0 },
+      finish: { x: X(-756), z: Z2(12) },
       length: 130,
       // Distance from start toward finish (m) — painted + labeled for accel feel reads
       markers: [30, 60, 90, 120]
     },
     brake: {
-      x0: -742,
-      x1: -730,
-      z0: 20,
-      z1: 145,
-      gate: { x: -736, z: 135, heading: 0 },
-      end: { x: -736, z: 28 },
+      x0: X(-742),
+      x1: X(-730),
+      z0: Z2(20),
+      z1: Z2(145),
+      gate: { x: X(-736), z: Z2(135), heading: 0 },
+      end: { x: X(-736), z: Z2(28) },
       markers: [10, 20, 30, 40, 50, 60, 80, 100]
     }
   };
@@ -55208,82 +55230,83 @@ void main() {
     return 13.2 * up * (1 - drop);
   }
   function rawCircuitPts() {
+    const P2 = (x, z) => [X(x), Z2(z)];
     return [
       // SF — heading +Z (south). Between brake lane and apron.
-      [-720, 25],
+      P2(-720, 25),
       // T1 south run — hold heading into Andretti brake zone (Cycle IA)
-      [-722, 52],
-      [-724, 90],
-      [-722, 120],
-      [-716, 134],
+      P2(-722, 52),
+      P2(-724, 90),
+      P2(-722, 120),
+      P2(-716, 134),
       // Andretti Hairpin — circular left ~R22 / ~190° (held from Cycle IA)
-      [-714, 140],
-      [-713, 145.5],
-      [-710.6, 150.6],
-      [-707, 154.8],
-      [-702.4, 158.1],
-      [-697.2, 160.1],
-      [-691.6, 160.7],
-      [-686.1, 159.9],
-      [-680.9, 157.7],
-      [-676.5, 154.2],
-      [-673.1, 149.8],
-      [-670.9, 144.7],
-      [-670, 139.1],
-      [-670.6, 133.6],
+      P2(-714, 140),
+      P2(-713, 145.5),
+      P2(-710.6, 150.6),
+      P2(-707, 154.8),
+      P2(-702.4, 158.1),
+      P2(-697.2, 160.1),
+      P2(-691.6, 160.7),
+      P2(-686.1, 159.9),
+      P2(-680.9, 157.7),
+      P2(-676.5, 154.2),
+      P2(-673.1, 149.8),
+      P2(-670.9, 144.7),
+      P2(-670, 139.1),
+      P2(-670.6, 133.6),
       // Andretti exit → west channel
-      [-673.4, 121.9],
-      [-684.6, 106.3],
-      [-698, 98],
-      [-716, 92],
-      [-724, 76],
-      [-720, 58],
+      P2(-673.4, 121.9),
+      P2(-684.6, 106.3),
+      P2(-698, 98),
+      P2(-716, 92),
+      P2(-724, 76),
+      P2(-720, 58),
       // Flowing esses (west channel)
-      [-708, 44],
-      [-722, 30],
-      [-712, 14],
-      [-726, -2],
-      [-714, -18],
-      [-728, -34],
-      [-716, -50],
-      [-732, -66],
-      [-720, -80],
+      P2(-708, 44),
+      P2(-722, 30),
+      P2(-712, 14),
+      P2(-726, -2),
+      P2(-714, -18),
+      P2(-728, -34),
+      P2(-716, -50),
+      P2(-732, -66),
+      P2(-720, -80),
       // Turn 6 — circular fast sweeper onto Rahal (~R32). Seca literacy: overcook → gravel
       // outside; patient line carries Evora speed into the climb. Cycle IB deepen.
       // Lot 32 mirror: northbound → west (right-hand); gravel on true outside (east).
-      [-720.6, -86.2],
-      [-722.4, -92.2],
-      [-725.4, -97.8],
-      [-729.4, -102.6],
-      [-734.2, -106.6],
-      [-739.8, -109.6],
-      [-745.8, -111.4],
-      [-752, -112],
+      P2(-720.6, -86.2),
+      P2(-722.4, -92.2),
+      P2(-725.4, -97.8),
+      P2(-729.4, -102.6),
+      P2(-734.2, -106.6),
+      P2(-739.8, -109.6),
+      P2(-745.8, -111.4),
+      P2(-752, -112),
       // Rahal Straight climb (west → north / −Z)
-      [-780, -110],
-      [-825, -110],
-      [-855, -114],
+      P2(-780, -110),
+      P2(-825, -110),
+      P2(-855, -114),
       // Corkscrew crest + left-right plunge (8 → 8A). Aim the 8A tree into Rainey.
-      [-880, -118],
-      [-862, -120],
-      [-838, -112],
-      [-810, -96],
-      [-782, -76],
-      [-760, -55],
+      P2(-880, -118),
+      P2(-862, -120),
+      P2(-838, -112),
+      P2(-810, -96),
+      P2(-782, -76),
+      P2(-760, -55),
       // Rainey downhill left → real T10 / T11 return complex onto the front straight
-      [-742, -32],
-      [-732, -14],
-      [-726, 0],
+      P2(-742, -32),
+      P2(-732, -14),
+      P2(-726, 0),
       // Turn 10 — RIGHT that sets up Turn 11 (Cycle IB; was a short polyline stitch)
-      [-716, 12],
-      [-706, 20],
-      [-700, 30],
-      [-704, 40],
+      P2(-716, 12),
+      P2(-706, 20),
+      P2(-700, 30),
+      P2(-704, 40),
       // Turn 11 — LEFT onto front straight heading +Z into SF
-      [-714, 46],
-      [-722, 40],
-      [-724, 32],
-      [-720, 25]
+      P2(-714, 46),
+      P2(-722, 40),
+      P2(-724, 32),
+      P2(-720, 25)
     ];
   }
   function densify2(pts, step2 = 4) {
@@ -55311,7 +55334,7 @@ void main() {
     const length2 = cum || 1;
     let crestI = 0, crestD = Infinity;
     for (let i = 0; i < dense.length; i++) {
-      const d = Math.hypot(dense[i][0] - -862, dense[i][1] - -120);
+      const d = Math.hypot(dense[i][0] - X(-862), dense[i][1] - Z2(-120));
       if (d < crestD) {
         crestD = d;
         crestI = i;
@@ -55476,7 +55499,7 @@ void main() {
     const raineyApex = reservedSmoothApex(0.84, 0.9, "RAINEY", 0.02);
     let cork8aApex = null;
     {
-      const target2 = { x: -810, z: -96 };
+      const target2 = { x: X(-810), z: Z2(-96) };
       let bestI = -1, bestD = Infinity;
       for (let i = 0; i < pts.length; i++) {
         const p = pts[i];
@@ -55565,18 +55588,18 @@ void main() {
   FACILITY.sectors = circuitSectorMarks();
   FACILITY.zoneLabels = [
     { id: "sf", text: "START / FINISH", x: FACILITY.startFinish.x, z: FACILITY.startFinish.z - 6, heading: FACILITY.startFinish.heading },
-    { id: "drag", text: "DRAG STRIP", x: -756, z: 78, heading: 0 },
-    { id: "brake", text: "BRAKE LANE", x: -736, z: 80, heading: 0 },
+    { id: "drag", text: "DRAG STRIP", x: X(-756), z: Z2(78), heading: 0 },
+    { id: "brake", text: "BRAKE LANE", x: X(-736), z: Z2(80), heading: 0 },
     { id: "cones", text: "CONE PAD", x: FACILITY.skid.x, z: FACILITY.skid.z + 20, heading: Math.PI },
     // Laguna landmark reads along the lengthened circuit
-    { id: "andretti", text: "ANDRETTI", x: -692, z: 161, heading: Math.PI },
-    { id: "turn6", text: "TURN 6", x: -734, z: -106, heading: Math.PI / 2 },
-    { id: "rahal", text: "RAHAL", x: -825, z: -108, heading: Math.PI / 2 },
-    { id: "corkscrew", text: "CORKSCREW", x: -862, z: -120, heading: 0 },
-    { id: "cork8a", text: "CORK 8A", x: -810, z: -96, heading: Math.PI / 4 },
-    { id: "rainey", text: "RAINEY", x: -742, z: -32, heading: -Math.PI / 2 },
-    { id: "turn10", text: "TURN 10", x: -706, z: 20, heading: -Math.PI / 2 },
-    { id: "turn11", text: "TURN 11", x: -714, z: 46, heading: Math.PI }
+    { id: "andretti", text: "ANDRETTI", x: X(-692), z: Z2(161), heading: Math.PI },
+    { id: "turn6", text: "TURN 6", x: X(-734), z: Z2(-106), heading: Math.PI / 2 },
+    { id: "rahal", text: "RAHAL", x: X(-825), z: Z2(-108), heading: Math.PI / 2 },
+    { id: "corkscrew", text: "CORKSCREW", x: X(-862), z: Z2(-120), heading: 0 },
+    { id: "cork8a", text: "CORK 8A", x: X(-810), z: Z2(-96), heading: Math.PI / 4 },
+    { id: "rainey", text: "RAINEY", x: X(-742), z: Z2(-32), heading: -Math.PI / 2 },
+    { id: "turn10", text: "TURN 10", x: X(-706), z: Z2(20), heading: -Math.PI / 2 },
+    { id: "turn11", text: "TURN 11", x: X(-714), z: Z2(46), heading: Math.PI }
   ];
   FACILITY.landmarks = [
     {
@@ -55585,14 +55608,14 @@ void main() {
       label: "8A TREE",
       // Cycle IC: sit mid 8A→Rainey carry (was at Rainey) so crest silhouette reads;
       // still ~11 m off ribbon; aim bearing toward Rainey held.
-      x: -778,
-      z: -58,
+      x: X(-778),
+      z: Z2(-58),
       height: 22,
       crownR: 5.6,
       trunkR: 0.52,
       // Aim-from sample on the 8A plunge (tests check bearing toward Rainey).
-      aimFrom: { x: -810, z: -96 },
-      rainey: { x: -742, z: -32 }
+      aimFrom: { x: X(-810), z: Z2(-96) },
+      rainey: { x: X(-742), z: Z2(-32) }
     }
   ];
   function circuitTurnWindows() {
@@ -55601,10 +55624,10 @@ void main() {
       const p = projectCircuit(x, z);
       return p ? p.t : null;
     };
-    const t6a = tOf(-722.4, -92.2), t6b = tOf(-752, -112);
-    const t10a = tOf(-716, 12), t10b = tOf(-704, 40);
-    const t11a = tOf(-714, 46), t11b = tOf(-724, 32);
-    const t8a = tOf(-810, -96), tRain = tOf(-742, -32);
+    const t6a = tOf(X(-722.4), Z2(-92.2)), t6b = tOf(X(-752), Z2(-112));
+    const t10a = tOf(X(-716), Z2(12)), t10b = tOf(X(-704), Z2(40));
+    const t11a = tOf(X(-714), Z2(46)), t11b = tOf(X(-724), Z2(32));
+    const t8a = tOf(X(-810), Z2(-96)), tRain = tOf(X(-742), Z2(-32));
     return {
       turn6: { t0: Math.min(t6a, t6b) - 5e-3, t1: Math.max(t6a, t6b) + 0.01 },
       cork8a: { t0: (t8a ?? 0.75) - 0.02, t1: (tRain ?? 0.88) + 0.01 },
@@ -55643,12 +55666,12 @@ void main() {
   }
   FACILITY.tireMarks = null;
   FACILITY.approach = {
-    gate: { x: -630, z: 75 },
+    gate: { x: FACILITY.bounds.x1 - 8, z: FACILITY.stand.z },
     stand: { x: FACILITY.stand.x, z: FACILITY.stand.z },
     stripes: [
-      { x: -636, z: 75 },
-      { x: -640, z: 76 },
-      { x: -644, z: 77 },
+      { x: X(-636), z: Z2(75) },
+      { x: X(-640), z: Z2(76) },
+      { x: X(-644), z: Z2(77) },
       { x: FACILITY.stand.x + 4, z: FACILITY.stand.z }
     ]
   };
@@ -56112,8 +56135,9 @@ void main() {
       barrierRail(group, railMat2, B3.x0, B3.z0, B3.x1, B3.z0, yC);
       barrierRail(group, railMat2, B3.x0, B3.z1, B3.x1, B3.z1, yC);
       barrierRail(group, railMat2, B3.x0, B3.z0, B3.x0, B3.z1, yC);
-      barrierRail(group, railMat2, B3.x1, B3.z0, B3.x1, 58, yC);
-      barrierRail(group, railMat2, B3.x1, 98, B3.x1, B3.z1, yC);
+      const gateZ0 = FACILITY.stand.z - 20, gateZ1 = FACILITY.stand.z + 20;
+      barrierRail(group, railMat2, B3.x1, B3.z0, B3.x1, gateZ0, yC);
+      barrierRail(group, railMat2, B3.x1, gateZ1, B3.x1, B3.z1, yC);
     }
     {
       const S5 = FACILITY.stand;
@@ -63021,7 +63045,7 @@ void main(){
     return pts[pts.length - 1].y;
   }
   function buildSylvan(world2, M3, group, glow2, lights) {
-    const Z4 = -330, X02 = -510, X12 = 384;
+    const Z5 = -330, X02 = -510, X12 = 384;
     const shadowOK = (m) => {
       m.castShadow = true;
       m.receiveShadow = true;
@@ -63032,9 +63056,9 @@ void main(){
       const y2 = sylvanY(x);
       const half = [[-8.55, -0.06], [-8.55, 0.42], [-8.62, 0.5], [-9, 0.5], [-9, 0], [-9.08, -0.06], [-9.08, -0.3], [-8.8, -0.42]];
       const pts = [...half, ...half.slice().reverse().map(([z, yy]) => [-z, yy])];
-      const strips = [{ pts: pts.map(([z, yy]) => [Z4 + z, y2 + yy]), closed: false }];
+      const strips = [{ pts: pts.map(([z, yy]) => [Z5 + z, y2 + yy]), closed: false }];
       if (girders) for (const gz of [-6.3, -2.1, 2.1, 6.3]) {
-        const z0 = Z4 + gz, g2 = [[-0.45, -0.4], [-0.45, -0.49], [-0.09, -0.56], [-0.09, -1.45], [-0.4, -1.52], [-0.4, -1.74], [0.4, -1.74], [0.4, -1.52], [0.09, -1.45], [0.09, -0.56], [0.45, -0.49], [0.45, -0.4]];
+        const z0 = Z5 + gz, g2 = [[-0.45, -0.4], [-0.45, -0.49], [-0.09, -0.56], [-0.09, -1.45], [-0.4, -1.52], [-0.4, -1.74], [0.4, -1.74], [0.4, -1.52], [0.09, -1.45], [0.09, -0.56], [0.45, -0.49], [0.45, -0.4]];
         strips.push({ pts: g2.map(([z, yy]) => [z0 + z, y2 + yy]), closed: true });
       }
       return strips;
@@ -63042,7 +63066,7 @@ void main(){
     const runs = [];
     let cur = null;
     for (const x of xs) {
-      const el2 = sylvanY(x) - terrainHeight(x, Z4) > 1.2;
+      const el2 = sylvanY(x) - terrainHeight(x, Z5) > 1.2;
       if (!cur || cur.el !== el2) {
         cur = { el: el2, xs: [] };
         runs.push(cur);
@@ -63056,7 +63080,7 @@ void main(){
       if (rx.length < 2) continue;
       runGeos.push(extrude(rx, (x) => deckProfile(x, r.el), { uScale: 6, vScale: 6 }));
     }
-    for (const x of [X02, X12]) for (const sd of [-1, 1]) runGeos.push(new BoxGeometry(0.2, 0.56, 0.5).translate(x, sylvanY(x) + 0.22, Z4 + sd * 8.8));
+    for (const x of [X02, X12]) for (const sd of [-1, 1]) runGeos.push(new BoxGeometry(0.2, 0.56, 0.5).translate(x, sylvanY(x) + 0.22, Z5 + sd * 8.8));
     const sdeck = new Mesh(mergeGeometries(runGeos), M3.concrete);
     sdeck.name = "sylvan-deck";
     group.add(shadowOK(sdeck));
@@ -63064,12 +63088,12 @@ void main(){
     const colGeos = [], caps = [];
     for (let x = -415; x <= 350; x += 30) {
       const y2 = sylvanY(x), top = y2 - 1.74 - 1.1 + 0.02;
-      if (y2 - terrainHeight(x, Z4) < 2.2) continue;
-      caps.push({ p: [x, top, Z4] });
+      if (y2 - terrainHeight(x, Z5) < 2.2) continue;
+      caps.push({ p: [x, top, Z5] });
       for (const s of [-1, 1]) {
-        const g2 = terrainHeight(x, Z4 + s * 5) - 1;
-        colGeos.push(new CylinderGeometry(0.6, 0.6, top - g2 + 0.1, 14, 1, false).translate(x, (g2 + top + 0.1) / 2, Z4 + s * 5));
-        addCylinder(x, Z4 + s * 5, 0.65, g2, top + 1, "sylvan-pier");
+        const g2 = terrainHeight(x, Z5 + s * 5) - 1;
+        colGeos.push(new CylinderGeometry(0.6, 0.6, top - g2 + 0.1, 14, 1, false).translate(x, (g2 + top + 0.1) / 2, Z5 + s * 5));
+        addCylinder(x, Z5 + s * 5, 0.65, g2, top + 1, "sylvan-pier");
       }
     }
     const scols = new Mesh(mergeGeometries(colGeos), M3.concrete);
@@ -63077,12 +63101,12 @@ void main(){
     group.add(shadowOK(scols));
     group.add(instanced(capGeo, M3.concrete, caps, { cast: true, receive: true, name: "sylvan-caps" }));
     const posts = [], postGeo = new BoxGeometry(0.06, 1.05, 0.06).translate(0, 0.525, 0);
-    for (let x = X02 + 1.2; x <= X12 - 1.2; x += 2.4) for (const s of [-1, 1]) posts.push({ p: [x, sylvanY(x) + 0.48, Z4 + s * 8.78] });
+    for (let x = X02 + 1.2; x <= X12 - 1.2; x += 2.4) for (const s of [-1, 1]) posts.push({ p: [x, sylvanY(x) + 0.48, Z5 + s * 8.78] });
     group.add(instanced(postGeo, M3.black, posts, { name: "sylvan-posts" }));
     const railProfile = (x) => {
       const y2 = sylvanY(x) + 0.5, out = [];
       for (const s of [-1, 1]) {
-        const z = Z4 + s * 8.78;
+        const z = Z5 + s * 8.78;
         for (const h of [0.36, 0.7, 1.05]) out.push({ pts: [[z - 0.03, y2 + h + 0.03], [z - 0.03, y2 + h - 0.03], [z + 0.03, y2 + h - 0.03], [z + 0.03, y2 + h + 0.03]], closed: true });
       }
       return out;
@@ -63093,7 +63117,7 @@ void main(){
     const poles = [], globes = [], pools = [];
     let side2 = 1;
     for (let x = X02 + 12; x <= X12 - 12; x += 24) {
-      const y2 = sylvanY(x) + 0.48, z = Z4 + side2 * 8.85;
+      const y2 = sylvanY(x) + 0.48, z = Z5 + side2 * 8.85;
       poles.push({ p: [x, y2, z] });
       globes.push({ p: [x, y2, z] });
       glow2.push(x, y2 + 5.15, z);
@@ -63106,7 +63130,7 @@ void main(){
     group.add(lightPools(world2, pools, 16763274, 0.34, "sylvan-lightpools"));
     for (let x = X02; x < X12; x += 20) {
       const x2 = Math.min(X12, x + 20), y0 = Math.min(sylvanY(x), sylvanY(x2)) - 1, y1 = Math.max(sylvanY(x), sylvanY(x2)) + 1.6;
-      for (const s of [-1, 1]) addWall(x, Z4 + s * 8.78, x2, Z4 + s * 8.78, y0, y1, 0.5, "sylvan-parapet");
+      for (const s of [-1, 1]) addWall(x, Z5 + s * 8.78, x2, Z5 + s * 8.78, y0, y1, 0.5, "sylvan-parapet");
     }
   }
   function buildBridge(world2) {
@@ -63167,7 +63191,7 @@ void main(){
   }
 
   // src/world/kirk.js
-  var Z2 = KIRK.z;
+  var Z3 = KIRK.z;
   var HW = KIRK.width / 2;
   var X0 = KIRK.x0;
   var X1 = KIRK.x1;
@@ -63393,10 +63417,10 @@ void main(){
   var isEmbankment = (x) => x < X0 || x > 372;
   function bot(x) {
     const t = topY(x);
-    if (x < X0) return Math.min(t - SLAB, terrainHeight(x, Z2) - 0.7);
+    if (x < X0) return Math.min(t - SLAB, terrainHeight(x, Z3) - 0.7);
     if (x > 370) {
       const k = smoothstep2(370, 374, x);
-      return lerp2(t - SLAB, Math.min(t - SLAB, terrainHeight(x, Z2) - 0.7), k);
+      return lerp2(t - SLAB, Math.min(t - SLAB, terrainHeight(x, Z3) - 0.7), k);
     }
     return t - SLAB;
   }
@@ -63404,33 +63428,33 @@ void main(){
     const xs = [...range2(WEND, X0, 2), ...range2(X0 + 10, X1 - 10, 10), ...range2(X1, EEND, 2)];
     const up = (dy) => (x) => topY(x) + dy;
     G2.structure.push(sweep([
-      { z: Z2 + 8.6, y: up(0) },
-      { z: Z2 + 8.6, y: up(0.25) },
-      { z: Z2 + HW, y: up(0.25) },
-      { z: Z2 + HW, y: up(0) },
-      { z: Z2 + HW, y: bot },
-      { z: Z2 - HW, y: bot },
-      { z: Z2 - HW, y: up(0) },
-      { z: Z2 - HW, y: up(0.25) },
-      { z: Z2 - 8.6, y: up(0.25) },
-      { z: Z2 - 8.6, y: up(0) }
+      { z: Z3 + 8.6, y: up(0) },
+      { z: Z3 + 8.6, y: up(0.25) },
+      { z: Z3 + HW, y: up(0.25) },
+      { z: Z3 + HW, y: up(0) },
+      { z: Z3 + HW, y: bot },
+      { z: Z3 - HW, y: bot },
+      { z: Z3 - HW, y: up(0) },
+      { z: Z3 - HW, y: up(0.25) },
+      { z: Z3 - 8.6, y: up(0.25) },
+      { z: Z3 - 8.6, y: up(0) }
     ], xs, STRUCT_TILE));
-    G2.deckTop.push(sweep([{ z: Z2 - 8.6, y: up(0) }, { z: Z2 + 8.6, y: up(0) }], xs, 4));
+    G2.deckTop.push(sweep([{ z: Z3 - 8.6, y: up(0) }, { z: Z3 + 8.6, y: up(0) }], xs, 4));
     const [gap0, gap1] = LEVEE_GAP[0], gapX = (gap0 + gap1) / 2;
     const cameraX0 = gapX - 22, cameraX1 = gapX + 22, cameraHalf = (cameraX1 - cameraX0) / 2;
-    addBox(gapX, Z2, cameraHalf, HW, 0, topY(gapX) - SLAB, topY(gapX), "kirk.slab", { rayVolume: true });
-    for (const side2 of [-1, 1]) addBox(gapX, Z2 + side2 * 8.8, cameraHalf, 0.2, 0, topY(gapX), topY(gapX) + 0.25, "kirk.curb", { rayVolume: true });
-    for (const x of [gap0 - 0.2, gap1 + 0.2]) addBox(x, Z2, 0.2, 8.1, 0, topY(x) - SLAB - STEM, topY(x) - SLAB, "kirk.diaphragm", { rayVolume: true });
+    addBox(gapX, Z3, cameraHalf, HW, 0, topY(gapX) - SLAB, topY(gapX), "kirk.slab", { rayVolume: true });
+    for (const side2 of [-1, 1]) addBox(gapX, Z3 + side2 * 8.8, cameraHalf, 0.2, 0, topY(gapX), topY(gapX) + 0.25, "kirk.curb", { rayVolume: true });
+    for (const x of [gap0 - 0.2, gap1 + 0.2]) addBox(x, Z3, 0.2, 8.1, 0, topY(x) - SLAB - STEM, topY(x) - SLAB, "kirk.diaphragm", { rayVolume: true });
     const stemSections = [[X0, LEVEE_GAP[0][0]], [LEVEE_GAP[0][1], RIVER.x0], [RIVER.x1, LEVEE_GAP[1][0]], [LEVEE_GAP[1][1], X1], [X1, 346]];
     for (const [a2, b] of stemSections) {
       const sx = range2(a2, b, 6);
       for (const zc of [-7.5, -4.5, -1.5, 1.5, 4.5, 7.5]) {
         const localA = Math.max(a2, cameraX0), localB = Math.min(b, cameraX1);
-        if (localB > localA) addBox((localA + localB) / 2, Z2 + zc, (localB - localA) / 2, 0.24, 0, topY(gapX) - SLAB - STEM, topY(gapX) - SLAB + 0.03, "kirk.stem", { rayVolume: true });
+        if (localB > localA) addBox((localA + localB) / 2, Z3 + zc, (localB - localA) / 2, 0.24, 0, topY(gapX) - SLAB - STEM, topY(gapX) - SLAB + 0.03, "kirk.stem", { rayVolume: true });
         const w = 0.24, top = (x) => topY(x) - SLAB + 0.03, low2 = (x) => topY(x) - SLAB - STEM;
-        G2.structure.push(sweep([{ z: Z2 + zc - w, y: low2 }, { z: Z2 + zc - w, y: top }, { z: Z2 + zc + w, y: top }, { z: Z2 + zc + w, y: low2 }, { z: Z2 + zc - w, y: low2 }], sx, STRUCT_TILE));
+        G2.structure.push(sweep([{ z: Z3 + zc - w, y: low2 }, { z: Z3 + zc - w, y: top }, { z: Z3 + zc + w, y: top }, { z: Z3 + zc + w, y: low2 }, { z: Z3 + zc - w, y: low2 }], sx, STRUCT_TILE));
       }
-      for (const x of [a2, b]) G2.structure.push(box2(0.4, STEM, 16.2, x + (x === a2 ? 0.2 : -0.2), topY(x) - SLAB - STEM / 2, Z2));
+      for (const x of [a2, b]) G2.structure.push(box2(0.4, STEM, 16.2, x + (x === a2 ? 0.2 : -0.2), topY(x) - SLAB - STEM / 2, Z3));
     }
     const bentXs = [];
     for (let x = -270; x <= 270; x += 30) if (x < RIVER.x0 || x > RIVER.x1) bentXs.push(x);
@@ -63438,58 +63462,58 @@ void main(){
     for (const x of bentXs) {
       const t = topY(x), slabBot = t - SLAB, capTop = slabBot - STEM + 0.05, capBot = capTop - CAP;
       const zs = x > X1 ? [-7.6, 7.6] : [-7.2, -3.6, 0, 3.6, 7.2];
-      const gy = Math.min(...zs.map((zc) => terrainHeight(x, Z2 + zc)));
+      const gy = Math.min(...zs.map((zc) => terrainHeight(x, Z3 + zc)));
       if (x > 340) {
         for (const zc of zs) {
-          G2.structure.push(cyl(0.55, 0.6, gy - 0.8, slabBot + 0.05, x, Z2 + zc, 10));
-          addCylinder(x, Z2 + zc, 0.65, gy - 1, slabBot, "kirk.col");
+          G2.structure.push(cyl(0.55, 0.6, gy - 0.8, slabBot + 0.05, x, Z3 + zc, 10));
+          addCylinder(x, Z3 + zc, 0.65, gy - 1, slabBot, "kirk.col");
         }
-        G2.structure.push(box2(1, 0.9, 17.4, x, slabBot - 0.4, Z2));
+        G2.structure.push(box2(1, 0.9, 17.4, x, slabBot - 0.4, Z3));
       } else if (capBot - gy < 2.2) {
-        G2.structure.push(box2(1.3, slabBot - (gy - 0.8), 17.4, x, (slabBot + gy - 0.8) / 2, Z2));
-        addBox(x, Z2, 0.7, 8.7, 0, gy - 1, slabBot, "kirk.bent");
-        if (x > cameraX0 && x < cameraX1) addBox(x, Z2, 0.65, 8.7, 0, gy - 0.8, slabBot, "kirk.bent.camera", { rayVolume: true });
+        G2.structure.push(box2(1.3, slabBot - (gy - 0.8), 17.4, x, (slabBot + gy - 0.8) / 2, Z3));
+        addBox(x, Z3, 0.7, 8.7, 0, gy - 1, slabBot, "kirk.bent");
+        if (x > cameraX0 && x < cameraX1) addBox(x, Z3, 0.65, 8.7, 0, gy - 0.8, slabBot, "kirk.bent.camera", { rayVolume: true });
       } else {
-        G2.structure.push(box2(1.25, CAP, x > X1 ? 17.6 : 18.2, x, capTop - CAP / 2, Z2));
+        G2.structure.push(box2(1.25, CAP, x > X1 ? 17.6 : 18.2, x, capTop - CAP / 2, Z3));
         for (const zc of zs) {
-          const g0 = terrainHeight(x, Z2 + zc) - 0.8;
-          G2.structure.push(cyl(0.55, 0.62, g0, capBot + 0.06, x, Z2 + zc, 10));
-          addCylinder(x, Z2 + zc, 0.65, g0, capBot, "kirk.col");
+          const g0 = terrainHeight(x, Z3 + zc) - 0.8;
+          G2.structure.push(cyl(0.55, 0.62, g0, capBot + 0.06, x, Z3 + zc, 10));
+          addCylinder(x, Z3 + zc, 0.65, g0, capBot, "kirk.col");
         }
       }
       if (x < X1) {
-        G2.structure.push(box2(0.4, STEM, 16.2, x, slabBot - STEM / 2, Z2));
-        if (x > cameraX0 && x < cameraX1) addBox(x, Z2, 0.2, 8.1, 0, slabBot - STEM, slabBot, "kirk.diaphragm", { rayVolume: true });
+        G2.structure.push(box2(0.4, STEM, 16.2, x, slabBot - STEM / 2, Z3));
+        if (x > cameraX0 && x < cameraX1) addBox(x, Z3, 0.2, 8.1, 0, slabBot - STEM, slabBot, "kirk.diaphragm", { rayVolume: true });
       }
     }
     for (const x of [X0 - 0.6]) {
-      const t = topY(x), gy = terrainHeight(x, Z2);
-      G2.structure.push(box2(1.2, t - SLAB - (gy - 0.8), 18.4, x, (t - SLAB + gy - 0.8) / 2, Z2));
+      const t = topY(x), gy = terrainHeight(x, Z3);
+      G2.structure.push(box2(1.2, t - SLAB - (gy - 0.8), 18.4, x, (t - SLAB + gy - 0.8) / 2, Z3));
     }
     for (const x of [RIVER.x0, RIVER.xm, RIVER.x1]) {
-      const gy = Math.min(terrainHeight(x, Z2 - 8), terrainHeight(x, Z2), terrainHeight(x, Z2 + 8)) - 1.2;
+      const gy = Math.min(terrainHeight(x, Z3 - 8), terrainHeight(x, Z3), terrainHeight(x, Z3 + 8)) - 1.2;
       const seatTop = topY(x) - SLAB - 3.2 - 0.25, capBot = seatTop - 1.2;
-      G2.structure.push(box2(2.6, capBot - gy, 15, x, (capBot + gy) / 2, Z2));
-      for (const s of [-1, 1]) G2.structure.push(cyl(1.3, 1.45, gy, capBot, x, Z2 + s * 7.5, 14));
-      G2.structure.push(box2(3.4, 1.2, 18, x, seatTop - 0.6, Z2));
-      addBox(x, Z2, 1.8, 9.2, 0, gy, seatTop + 1, "kirk.pier");
+      G2.structure.push(box2(2.6, capBot - gy, 15, x, (capBot + gy) / 2, Z3));
+      for (const s of [-1, 1]) G2.structure.push(cyl(1.3, 1.45, gy, capBot, x, Z3 + s * 7.5, 14));
+      G2.structure.push(box2(3.4, 1.2, 18, x, seatTop - 0.6, Z3));
+      addBox(x, Z3, 1.8, 9.2, 0, gy, seatTop + 1, "kirk.pier");
       if (x !== RIVER.xm) {
         const side2 = x === RIVER.x0 ? -1 : 1, t = topY(x);
-        G2.structure.push(box2(1.6, t - SLAB - STEM - seatTop + 0.05, 17.6, x + side2 * 0.9, (t - SLAB - STEM + 0.05 + seatTop) / 2, Z2));
+        G2.structure.push(box2(1.6, t - SLAB - STEM - seatTop + 0.05, 17.6, x + side2 * 0.9, (t - SLAB - STEM + 0.05 + seatTop) / 2, Z3));
       }
     }
     const gz = [-7, -2.4, 2.4, 7], depth = 3.2;
     for (const [a2, b] of [[RIVER.x0, RIVER.xm], [RIVER.xm, RIVER.x1]]) {
       const x0 = a2 + 0.35, x1 = b - 0.35, L2 = x1 - x0, xc = (x0 + x1) / 2, yTop = topY(xc) - SLAB;
       for (const zc of gz) {
-        G2.steel.push(box2(L2, depth - 0.12, 0.06, xc, yTop - depth / 2, Z2 + zc, 0, 2));
-        G2.steel.push(box2(L2, 0.07, 0.62, xc, yTop - 0.035, Z2 + zc, 0, 2));
-        G2.steel.push(box2(L2, 0.07, 0.62, xc, yTop - depth + 0.035, Z2 + zc, 0, 2));
-        for (let x = x0 + 1.5; x < x1 - 1; x += 3) for (const s of [-1, 1]) G2.steel.push(box2(0.14, depth - 0.2, 0.18, x, yTop - depth / 2, Z2 + zc + s * 0.12, 0, 2));
-        for (const x of [x0, x1]) G2.steel.push(box2(0.5, 0.25, 0.7, x + (x === x0 ? 0.25 : -0.25), yTop - depth - 0.125, Z2 + zc, 0, 2));
+        G2.steel.push(box2(L2, depth - 0.12, 0.06, xc, yTop - depth / 2, Z3 + zc, 0, 2));
+        G2.steel.push(box2(L2, 0.07, 0.62, xc, yTop - 0.035, Z3 + zc, 0, 2));
+        G2.steel.push(box2(L2, 0.07, 0.62, xc, yTop - depth + 0.035, Z3 + zc, 0, 2));
+        for (let x = x0 + 1.5; x < x1 - 1; x += 3) for (const s of [-1, 1]) G2.steel.push(box2(0.14, depth - 0.2, 0.18, x, yTop - depth / 2, Z3 + zc + s * 0.12, 0, 2));
+        for (const x of [x0, x1]) G2.steel.push(box2(0.5, 0.25, 0.7, x + (x === x0 ? 0.25 : -0.25), yTop - depth - 0.125, Z3 + zc, 0, 2));
       }
       for (let x = x0 + 3.75; x < x1; x += 7.5) for (let i = 0; i < gz.length - 1; i++) {
-        const za = Z2 + gz[i], zb = Z2 + gz[i + 1], dz2 = zb - za, dy = depth - 0.5, len = Math.hypot(dz2, dy), ang = Math.atan2(dy, dz2);
+        const za = Z3 + gz[i], zb = Z3 + gz[i + 1], dz2 = zb - za, dy = depth - 0.5, len = Math.hypot(dz2, dy), ang = Math.atan2(dy, dz2);
         G2.steel.push(box2(0.11, 0.11, len, x, yTop - depth / 2, (za + zb) / 2, 0, 2, ang, 0));
         G2.steel.push(box2(0.11, 0.11, len, x, yTop - depth / 2, (za + zb) / 2, 0, 2, -ang, 0));
         G2.steel.push(box2(0.11, 0.11, dz2, x, yTop - depth + 0.2, (za + zb) / 2, 0, 2));
@@ -63497,7 +63521,7 @@ void main(){
     }
     for (const a2 of KIRK_APRONS) G2.plaza.push(block(a2.x0, a2.x1, a2.z0, a2.z1, a2.bottom, a2.yTop, 2));
     const wt = topY(WEND);
-    G2.structure.push(box2(0.35, wt + 0.25 - 7.9, 18, WEND - 0.17, (wt + 0.25 + 7.9) / 2, Z2));
+    G2.structure.push(box2(0.35, wt + 0.25 - 7.9, 18, WEND - 0.17, (wt + 0.25 + 7.9) / 2, Z3));
     const st4 = WEST.stairs, n = 10, rise = st4.rise / n, tread = (st4.x1 - st4.x0) / n;
     for (let i = 0; i < n; i++) {
       const yT = wt - rise * (i + 1), xa = st4.x1 - tread * (i + 1), xb = st4.x1 - tread * i;
@@ -63524,7 +63548,7 @@ void main(){
       G2.plaza.push(block(p.x0, p.x1, p.z0, p.z1, p.y - 0.6, p.y, 6));
       for (const [x0, x1, z0, z1] of [[p.x0 - 0.15, p.x1 + 0.15, p.z0 - 0.15, p.z0], [p.x0 - 0.15, p.x1 + 0.15, p.z1, p.z1 + 0.15], [p.x0 - 0.15, p.x0, p.z0, p.z1], [p.x1, p.x1 + 0.15, p.z0, p.z1]]) G2.structure.push(block(x0, x1, z0, z1, p.y - 0.6, p.y + 0.12, 1));
     }
-    G2.structure.push(box2(0.5, 0.18, 18.2, EEND + 0.1, topY(EEND) - 0.02, Z2));
+    G2.structure.push(box2(0.5, 0.18, 18.2, EEND + 0.1, topY(EEND) - 0.02, Z3));
   }
   var PANEL = 3.5;
   function panelGeometry() {
@@ -63545,7 +63569,7 @@ void main(){
     const geo = panelGeometry();
     const runs = [];
     for (const side2 of [-1, 1]) {
-      const zs = Z2 + side2 * 8.8, n = Math.round((EEND - WEND) / PANEL), L2 = (EEND - WEND) / n;
+      const zs = Z3 + side2 * 8.8, n = Math.round((EEND - WEND) / PANEL), L2 = (EEND - WEND) / n;
       for (let k = 0; k < n; k++) {
         const x = WEND + k * L2, dy = topY(x + L2) - topY(x);
         runs.push({ x, y: topY(x) + 0.25, z: zs, rotY: 0, rotZ: Math.atan2(dy, L2), len: L2 });
@@ -63584,12 +63608,12 @@ void main(){
       G2.meshes.push(im);
     });
     const ends = [];
-    for (const side2 of [-1, 1]) for (const x of [EEND]) ends.push(box2(0.42, 1.25, 0.48, x, topY(x) + 0.25 + 0.62, Z2 + side2 * 8.8, 0, 1));
+    for (const side2 of [-1, 1]) for (const x of [EEND]) ends.push(box2(0.42, 1.25, 0.48, x, topY(x) + 0.25 + 0.62, Z3 + side2 * 8.8, 0, 1));
     ends.push(box2(0.42, 1.25, 0.48, ld.x0 + 0.22, wt + 0.62, ld.z0, 0, 1), box2(0.42, 1.25, 0.48, WEND - 0.17, wt + 0.62, -119, 0, 1));
     const lamps = [];
-    for (let x = -300; x <= 300; x += 60) lamps.push({ x, z: Z2 - 8.8 });
-    for (let x = -270; x <= 270; x += 60) lamps.push({ x, z: Z2 + 8.8 });
-    lamps.push({ x: 345, z: Z2 - 8.8 }, { x: 375, z: Z2 + 8.8 }, { x: -325, z: Z2 + 8.8 });
+    for (let x = -300; x <= 300; x += 60) lamps.push({ x, z: Z3 - 8.8 });
+    for (let x = -270; x <= 270; x += 60) lamps.push({ x, z: Z3 + 8.8 });
+    lamps.push({ x: 345, z: Z3 - 8.8 }, { x: 375, z: Z3 + 8.8 }, { x: -325, z: Z3 + 8.8 });
     for (const l of lamps) {
       const y2 = topY(l.x) + 0.25;
       ends.push(box2(0.62, 1.5, 0.62, l.x, y2 + 0.75, l.z, 0, 1), box2(0.74, 0.12, 0.74, l.x, y2 + 1.56, l.z, 0, 1));
@@ -63621,10 +63645,10 @@ void main(){
     G2.meshes.push(shafts, globes);
     G2.glowPoints = pts;
     const trailX = (LEVEE_GAP[0][0] + LEVEE_GAP[0][1]) / 2, railBase = topY(trailX) + 0.25;
-    for (const side2 of [-1, 1]) addBox(trailX, Z2 + side2 * 8.8, 22, 0.25, 0, railBase, railBase + 1.34, "kirk.rail.camera", { rayVolume: true, cameraOnly: true, rayBelowY: railBase });
+    for (const side2 of [-1, 1]) addBox(trailX, Z3 + side2 * 8.8, 22, 0.25, 0, railBase, railBase + 1.34, "kirk.rail.camera", { rayVolume: true, cameraOnly: true, rayBelowY: railBase });
     const seg = 10;
     for (const side2 of [-1, 1]) for (let x = WEND; x < EEND; x += seg) {
-      const x1 = Math.min(EEND, x + seg), zz = Z2 + side2 * 8.8;
+      const x1 = Math.min(EEND, x + seg), zz = Z3 + side2 * 8.8;
       const yTop = Math.max(topY(x), topY(x1)) + 2.2, yBot = isEmbankment(x) || isEmbankment(x1) ? Math.min(terrainHeight(x, zz), terrainHeight(x1, zz), topY(x)) - 1.5 : Math.min(topY(x), topY(x1)) - 1.4;
       addWall(x, zz, x1, zz, yBot, yTop, 0.4, "kirk.rail");
     }
@@ -64021,13 +64045,13 @@ void main(){
       { masts: [[216, -8, 5.2], [231, -8, 4.4], [224, -2.2, 5.8]], color: teal }
     ];
     for (const s of sails) {
-      const corners = s.masts.map(([x, dz2, h]) => [x, top(x) + h - 0.15, Z2 + dz2]);
+      const corners = s.masts.map(([x, dz2, h]) => [x, top(x) + h - 0.15, Z3 + dz2]);
       if (corners.length === 3) corners.push(corners[0]);
       G2.fabric.push(sailGeo(corners, s.color));
       for (const [x, dz2, h] of s.masts) {
         const y2 = top(x);
-        G2.metal.push(paint2(cyl(0.075, 0.1, y2, y2 + h, x, Z2 + dz2, 8, 1), GALV), paint2(box2(0.5, 0.12, 0.5, x, y2 + 0.06, Z2 + dz2, 0, 1), GALV));
-        addCylinder(x, Z2 + dz2, 0.22, y2 - 1, y2 + 3, "kirk.mast");
+        G2.metal.push(paint2(cyl(0.075, 0.1, y2, y2 + h, x, Z3 + dz2, 8, 1), GALV), paint2(box2(0.5, 0.12, 0.5, x, y2 + 0.06, Z3 + dz2, 0, 1), GALV));
+        addCylinder(x, Z3 + dz2, 0.22, y2 - 1, y2 + 3, "kirk.mast");
       }
     }
     const lc = [15246650, 3116939, 15789280, 14243371].map(loungerGeo);
@@ -64049,22 +64073,22 @@ void main(){
       [226, -5, 1.3]
     ];
     loungers.forEach(([x, dz2, ry], i) => {
-      G2.painted.push(at3(lc[i % 4], x, top(x), Z2 + dz2, ry));
-      addBox(x, Z2 + dz2, 0.4, 0.8, ry, top(x) - 1, top(x) + 1.2, "kirk.chair");
+      G2.painted.push(at3(lc[i % 4], x, top(x), Z3 + dz2, ry));
+      addBox(x, Z3 + dz2, 0.4, 0.8, ry, top(x) - 1, top(x) + 1.2, "kirk.chair");
     });
-    const bc = { x0: -96, x1: -78, z0: Z2 + 3.6, z1: Z2 + 7.6 };
+    const bc = { x0: -96, x1: -78, z0: Z3 + 3.6, z1: Z3 + 7.6 };
     const by2 = top(-87);
     for (const [w, d, x, z] of [[bc.x1 - bc.x0 + 0.3, 0.16, (bc.x0 + bc.x1) / 2, bc.z0], [bc.x1 - bc.x0 + 0.3, 0.16, (bc.x0 + bc.x1) / 2, bc.z1], [0.16, bc.z1 - bc.z0, bc.x0, (bc.z0 + bc.z1) / 2], [0.16, bc.z1 - bc.z0, bc.x1, (bc.z0 + bc.z1) / 2]]) G2.wood.push(box2(w, 0.28, d, x, by2 + 0.14, z, 0, 1));
     G2.murals.push(decal(bc.x1 - bc.x0 - 0.1, bc.z1 - bc.z0 - 0.1, (bc.x0 + bc.x1) / 2, by2 + 0.02, (bc.z0 + bc.z1) / 2, M3, "sand"));
     [[-90, 4.4, 13120043], [-89.2, 5.1, 3116939], [-84, 6.3, 13120043], [-83.1, 4.9, 3116939], [-86.5, 5.6, 16052198]].forEach(([x, dz2, c]) => {
       const g2 = new SphereGeometry(0.055, 7, 5);
-      g2.translate(x, by2 + 0.075, Z2 + dz2);
+      g2.translate(x, by2 + 0.075, Z3 + dz2);
       G2.painted.push(paint2(g2, c));
     });
     G2.signs.push(panel(1.6, 0.4, -87, by2 + 1.1, bc.z0 - 0.35, S4, "bocce", Math.PI));
     G2.metal.push(paint2(cyl(0.03, 0.03, by2, by2 + 1.3, -87, bc.z0 - 0.35, 6, 1), GALV));
     for (const x of [-141, -135, -129]) {
-      const y2 = top(x), z = Z2 + 5.2;
+      const y2 = top(x), z = Z3 + 5.2;
       G2.structure.push(cyl(0.26, 0.34, y2, y2 + 0.7, x, z, 10), box2(1.15, 0.07, 1.15, x, y2 + 0.735, z, 0, 1));
       G2.murals.push(decal(0.9, 0.9, x, y2 + 0.775, z, M3, "board"));
       for (const s of [-1, 1]) G2.structure.push(cyl(0.2, 0.24, y2, y2 + 0.44, x + s * 0.95, z, 8));
@@ -64072,40 +64096,40 @@ void main(){
       addCylinder(x - 0.95, z, 0.3, y2 - 1, y2 + 1, "kirk.stool");
       addCylinder(x + 0.95, z, 0.3, y2 - 1, y2 + 1, "kirk.stool");
     }
-    const pg = { x0: 113, x1: 137, z0: Z2 - 7.9, z1: Z2 - 2.2 }, py2 = top(125);
+    const pg = { x0: 113, x1: 137, z0: Z3 - 7.9, z1: Z3 - 2.2 }, py2 = top(125);
     G2.murals.push(decal(pg.x1 - pg.x0, pg.z1 - pg.z0, (pg.x0 + pg.x1) / 2, py2 + 0.02, (pg.z0 + pg.z1) / 2, M3, "rubber"));
     const blocks = [[116, -5.5, 1.2, 15909198, 0], [118.2, -4, 0.8, 3108787, 0.6], [121.5, -6.2, 1.4, 14699066, 0], [124.5, -3.6, 1, 16052714, 0.4], [127.5, -6, 0.9, 3842170, 0], [130, -3.8, 1.3, 15909198, 0.8], [133.5, -5.8, 1.1, 3108787, 0], [121.5, -6.2, 0.8, 16052714, 0.78, 1.4]];
     for (const [x, dz2, s, c, ry, lift] of blocks) {
       const y2 = py2 + (lift || 0);
-      G2.painted.push(pb(c, s, s, s, x, y2 + s / 2, Z2 + dz2, ry));
-      if (!lift) addBox(x, Z2 + dz2, s / 2, s / 2, ry, y2 - 1, y2 + s, "kirk.block");
+      G2.painted.push(pb(c, s, s, s, x, y2 + s / 2, Z3 + dz2, ry));
+      if (!lift) addBox(x, Z3 + dz2, s / 2, s / 2, ry, y2 - 1, y2 + s, "kirk.block");
     }
-    const wedge = prism8([[134.5, py2, Z2 - 3.8], [136.8, py2, Z2 - 3.8], [136.8, py2, Z2 - 2.6], [134.5, py2, Z2 - 2.6], [134.5, py2 + 1.3, Z2 - 3.8], [136.8, py2 + 0.02, Z2 - 3.8], [136.8, py2 + 0.02, Z2 - 2.6], [134.5, py2 + 1.3, Z2 - 2.6]], 1);
+    const wedge = prism8([[134.5, py2, Z3 - 3.8], [136.8, py2, Z3 - 3.8], [136.8, py2, Z3 - 2.6], [134.5, py2, Z3 - 2.6], [134.5, py2 + 1.3, Z3 - 3.8], [136.8, py2 + 0.02, Z3 - 3.8], [136.8, py2 + 0.02, Z3 - 2.6], [134.5, py2 + 1.3, Z3 - 2.6]], 1);
     G2.painted.push(paint2(wedge, 14699066));
-    addBox(135.6, Z2 - 3.2, 1.15, 0.6, 0, py2 - 1, py2 + 1.3, "kirk.block");
-    G2.painted.push(paint2(cyl(0.6, 0.6, py2, py2 + 0.9, 114.5, Z2 - 3, 12, 1, false), 3842170));
-    addCylinder(114.5, Z2 - 3, 0.6, py2 - 1, py2 + 1, "kirk.block");
+    addBox(135.6, Z3 - 3.2, 1.15, 0.6, 0, py2 - 1, py2 + 1.3, "kirk.block");
+    G2.painted.push(paint2(cyl(0.6, 0.6, py2, py2 + 0.9, 114.5, Z3 - 3, 12, 1, false), 3842170));
+    addCylinder(114.5, Z3 - 3, 0.6, py2 - 1, py2 + 1, "kirk.block");
     for (const [ax, az, ry] of [[125.5, -6.6, 0.15], [130.8, -6.4, -0.2]]) {
       const arch2 = new TorusGeometry(1.35, 0.045, 6, 18, Math.PI);
       arch2.rotateY(ry);
-      arch2.translate(ax, py2, Z2 + az);
+      arch2.translate(ax, py2, Z3 + az);
       G2.metal.push(paint2(arch2, GALV));
       for (let k = 1; k < 6; k++) {
         const a2 = Math.PI * k / 6, rx = Math.cos(a2) * 1.35, rh = Math.sin(a2) * 1.35;
-        G2.metal.push(pb(GALV, 0.035, 0.035, 0.7, ax + rx * Math.cos(ry), py2 + rh, Z2 + az - rx * Math.sin(ry), ry));
+        G2.metal.push(pb(GALV, 0.035, 0.035, 0.7, ax + rx * Math.cos(ry), py2 + rh, Z3 + az - rx * Math.sin(ry), ry));
       }
-      addBox(ax, Z2 + az, 1.4, 0.4, ry, py2 - 1, py2 + 1.5, "kirk.block");
+      addBox(ax, Z3 + az, 1.4, 0.4, ry, py2 - 1, py2 + 1.5, "kirk.block");
     }
     const planters = [];
     const px2 = [-296, -286, -262, -248, -236, -175, -165, -150, -112, -104, -62, -46, -12, 12, 98, 106, 148, 160, 240, 256, 276, 292];
     px2.forEach((x, i) => {
       const dz2 = (i % 2 ? 1 : -1) * 6.9;
-      planters.push([x, Z2 + dz2]);
+      planters.push([x, Z3 + dz2]);
     });
     planters.push([-357.5, -149.5], [-363, -149.5], [-353.5, -134], [-361, -98.2], [-367, -98.2], [-373, -98.2], [370, -140.5], [370, -100]);
     for (const [x, z] of planters) {
-      const y2 = z < Z2 - 20 || Math.abs(z - Z2) > 11 ? x < 0 ? WEST.plazaY : EAST2.plazaY : top(x);
-      const along = Math.abs(z - Z2) < 11 ? 0 : Math.PI / 2;
+      const y2 = z < Z3 - 20 || Math.abs(z - Z3) > 11 ? x < 0 ? WEST.plazaY : EAST2.plazaY : top(x);
+      const along = Math.abs(z - Z3) < 11 ? 0 : Math.PI / 2;
       G2.painted.push(pb(CORTEN, 2.2, 0.72, 0.85, x, y2 + 0.36, z, along), pb(3812900, 2, 0.06, 0.65, x, y2 + 0.7, z, along));
       addBox(x, z, along ? 0.45 : 1.1, along ? 1.1 : 0.45, 0, y2 - 1, y2 + 1.2, "kirk.planter");
       G2.grassAt.push([x, y2 + 0.66, z]);
@@ -64120,16 +64144,16 @@ void main(){
       [-120, -6.2, Math.PI],
       [238, -6.2, Math.PI],
       [292, 0, Math.PI],
-      [-360, -135.5 - Z2, 0],
-      [-368, -135.5 - Z2, 0],
-      [-361, -100.6 - Z2, Math.PI],
-      [-367, -100.6 - Z2, Math.PI],
-      [-373, -100.6 - Z2, Math.PI],
-      [383.5, -136 - Z2, -Math.PI / 2],
-      [383.5, -104 - Z2, -Math.PI / 2]
+      [-360, -135.5 - Z3, 0],
+      [-368, -135.5 - Z3, 0],
+      [-361, -100.6 - Z3, Math.PI],
+      [-367, -100.6 - Z3, Math.PI],
+      [-373, -100.6 - Z3, Math.PI],
+      [383.5, -136 - Z3, -Math.PI / 2],
+      [383.5, -104 - Z3, -Math.PI / 2]
     ];
     for (const [x, dz2, ry] of benches) {
-      const z = Z2 + dz2, y2 = Math.abs(dz2) < 11 ? top(x) : x < 0 ? WEST.plazaY : EAST2.plazaY;
+      const z = Z3 + dz2, y2 = Math.abs(dz2) < 11 ? top(x) : x < 0 ? WEST.plazaY : EAST2.plazaY;
       G2.wood.push(at3(B2.wood, x, y2, z, ry));
       G2.metal.push(at3(B2.metal, x, y2, z, ry));
       addBox(x, z, 0.95, 0.35, ry, y2 - 1, y2 + 1.2, "kirk.bench");
@@ -64202,9 +64226,9 @@ void main(){
     G2.signs.push(panel(7.8, 0.7, -352.41, wy + 0.44, -100.5, S4, "lozada", -Math.PI / 2));
     G2.structure.push(box2(0.5, 0.06, 8.4, -352.2, wy + 0.85, -100.5));
     G2.murals.push(stripX(-350.6, -329.6, -132.6, -129.6, (z) => beckleyY(z) + 0.055, M3, "zebra"));
-    const signs = [[-296, Z2 - 7.2, "wayW", 0], [297, Z2 + 7.2, "wayE", Math.PI], [369.5, -133.5, "wayE", Math.PI / 2], [-352.5, -145, "wayW", Math.PI / 2]];
+    const signs = [[-296, Z3 - 7.2, "wayW", 0], [297, Z3 + 7.2, "wayE", Math.PI], [369.5, -133.5, "wayE", Math.PI / 2], [-352.5, -145, "wayW", Math.PI / 2]];
     for (const [x, z, name, yaw] of signs) {
-      const y2 = Math.abs(z - Z2) < 11 ? top(x) : x < 0 ? WEST.plazaY : EAST2.plazaY;
+      const y2 = Math.abs(z - Z3) < 11 ? top(x) : x < 0 ? WEST.plazaY : EAST2.plazaY;
       G2.metal.push(paint2(cyl(0.04, 0.05, y2, y2 + 2.6, x, z, 6, 1), GREEN));
       G2.signs.push(panel(1.6, 0.4, x, y2 + 2.35, z, S4, name, yaw));
       addCylinder(x, z, 0.12, y2 - 1, y2 + 2, "kirk.sign");
@@ -64227,7 +64251,7 @@ void main(){
     addWall(st4.x0, (st4.z0 + st4.z1) / 2, st4.x1, (st4.z0 + st4.z1) / 2, 7.5, 11.5, 0.1, "kirk.rail");
     const ey = topY(EEND - 1.6);
     for (let i = 0; i < 13; i++) {
-      const z = Z2 - 8.16 + i * 1.36;
+      const z = Z3 - 8.16 + i * 1.36;
       G2.metal.push(paint2(cyl(0.08, 0.09, ey, ey + 0.95, EEND - 1.6, z, 8, 1), GALV));
       addCylinder(EEND - 1.6, z, 0.14, ey - 1, ey + 1.5, "kirk.bollard");
     }
@@ -64236,11 +64260,11 @@ void main(){
       G2.metal.push(paint2(cyl(0.03, 0.03, y2, y2 + 0.8, x - 0.35, zz, 6, 1), GALV), paint2(cyl(0.03, 0.03, y2, y2 + 0.8, x + 0.35, zz, 6, 1), GALV), pb(GALV, 0.76, 0.06, 0.06, x, y2 + 0.8, zz));
       addBox(x, z - 0.8, 0.45, 1.2, 0, y2 - 1, y2 + 1, "kirk.rack");
     }
-    for (const [x, z, y2] of [[-291, Z2 - 7.6, top(-291)], [-3, Z2 + 7.6, top(-3)], [232, Z2 + 7.6, top(232)], [384.5, -130.2, EAST2.plazaY], [-353.2, -131.5, WEST.plazaY], [-356.5, -97, WEST.plazaY]]) {
+    for (const [x, z, y2] of [[-291, Z3 - 7.6, top(-291)], [-3, Z3 + 7.6, top(-3)], [232, Z3 + 7.6, top(232)], [384.5, -130.2, EAST2.plazaY], [-353.2, -131.5, WEST.plazaY], [-356.5, -97, WEST.plazaY]]) {
       G2.metal.push(paint2(cyl(0.3, 0.27, y2, y2 + 0.95, x, z, 10, 1, false), GREEN));
       addCylinder(x, z, 0.35, y2 - 1, y2 + 1.2, "kirk.bin");
     }
-    G2.murals.push(decal(12, 6, -282, top(-282) + 0.012, Z2, M3, "welcome"), decal(8, 8, -130, top(-130) + 0.012, Z2 - 3.2, M3, "sun", 0.2), decal(8, 8, 62, top(62) + 0.012, Z2 + 3.4, M3, "chev", -0.15), decal(7, 7, 232, top(232) + 0.012, Z2, M3, "star"));
+    G2.murals.push(decal(12, 6, -282, top(-282) + 0.012, Z3, M3, "welcome"), decal(8, 8, -130, top(-130) + 0.012, Z3 - 3.2, M3, "sun", 0.2), decal(8, 8, 62, top(62) + 0.012, Z3 + 3.4, M3, "chev", -0.15), decal(7, 7, 232, top(232) + 0.012, Z3, M3, "star"));
     G2.murals.push(decal(10, 5, 376.5, EAST2.plazaY + 0.012, -135.5, M3, "welcome", Math.PI / 2));
     G2.murals.push(decal(10, 5, -365, WEST.plazaY + 0.012, -139.5, M3, "welcome", 0));
   }
@@ -64339,7 +64363,7 @@ void main(){
       const pools = G2.lampAt.map(([x, y2, z]) => {
         const g2 = new PlaneGeometry(9, 9);
         g2.rotateX(-Math.PI / 2);
-        g2.translate(x + (z < Z2 ? 1.2 : -1.2), y2 + 0.035, z + (z < Z2 ? 1.4 : -1.4));
+        g2.translate(x + (z < Z3 ? 1.2 : -1.2), y2 + 0.035, z + (z < Z3 ? 1.4 : -1.4));
         return g2;
       });
       const pm = new MeshBasicMaterial({ map: glowTex(128, 0.75, 0), color: 16761471, transparent: true, opacity: 0, depthWrite: false, blending: AdditiveBlending, fog: false });
@@ -64350,9 +64374,9 @@ void main(){
       pool.frustumCulled = true;
       group.add(pool);
       world2.lamps.push(pool);
-      for (const [x, y2, z] of [[-325, topY(-325), Z2 + 8.8], [-120, topY(-120), Z2 - 8.8], [30, topY(30), Z2 + 8.8], [120, topY(120), Z2 - 8.8], [240, topY(240), Z2 - 8.8]]) {
+      for (const [x, y2, z] of [[-325, topY(-325), Z3 + 8.8], [-120, topY(-120), Z3 - 8.8], [30, topY(30), Z3 + 8.8], [120, topY(120), Z3 - 8.8], [240, topY(240), Z3 - 8.8]]) {
         const pl = new PointLight(16761466, 0, 34, 2);
-        pl.position.set(x + (z < Z2 ? 0.6 : -0.6), y2 + 5.4, z);
+        pl.position.set(x + (z < Z3 ? 0.6 : -0.6), y2 + 5.4, z);
         pl.userData.nightIntensity = 140;
         pl.name = "kirk.light";
         group.add(pl);
@@ -64365,7 +64389,7 @@ void main(){
       g2.hud?.say("", "The Continental Avenue Bridge opened in 1930 as a concrete viaduct carrying traffic across the Trinity floodway. Closed to cars, it reopened in 2014 as a linear park, and was renamed for former mayor Ron Kirk in 2016.", 5);
       if (recordDiscovery("kirkPlaque")) g2.hud?.toast("Discovery \xB7 Continental Avenue Bridge, 1930", 3);
     } });
-    addTrigger({ id: "kirkMidspan", x: 30, z: Z2, r: 16, once: true, onEnter(g2) {
+    addTrigger({ id: "kirkMidspan", x: 30, z: Z3, r: 16, once: true, onEnter(g2) {
       g2.hud?.toast("Ronald Kirk Bridge \xB7 the best view in West Dallas", 3);
     } });
     return group;
@@ -67389,6 +67413,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     quad2(B2, key2, [x0, y2, z1], [x1, y2, z1], [x1, y2, z0], [x0, y2, z0], tile, color);
   }
   function warehouse(B2, A2, lamps, sp) {
+    if (trackCampusOverlapsRect(sp.x0, sp.z0, sp.x1, sp.z1, 4)) return;
     const b = { x0: sp.x0, z0: sp.z0, x1: sp.x1, z1: sp.z1 };
     const ft = footing(b.x0, b.z0, b.x1, b.z1);
     const y0 = ft.hi + 0.02, base = ft.lo - 0.6;
@@ -68027,6 +68052,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     }
   }
   function yardLot(B2, x0, z0, x1, z1, { kind = "asphalt", fenced = false, gate = null, front = "S", barbed = true, h = 2.4 } = {}) {
+    if (trackCampusOverlapsRect(x0, z0, x1, z1, 4)) return;
     if (kind === "parking") patch(B2, "parking", x0, z0, x1, z1, 5, 0.035, 1, null, [0, 0, (x1 - x0) / 2.7, (z1 - z0) / 12]);
     else patch(B2, kind === "gravel" ? "gravel" : "asphalt", x0, z0, x1, z1, 5, 0.035, kind === "gravel" ? 5 : 7, kind === "gravel" ? 13813942 : 15263456);
     if (fenced) {
@@ -68155,6 +68181,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     B2.add(key2, g2);
   }
   function bungalow(B2, world2, night, { x, z, facing = "S", w = 8.6, d = 11, color = null, roof = null, porch = true, fenceFront = true, lot = 16 }) {
+    if (trackCampusOverlapsRect(x - lot / 2, z - lot / 2, x + lot / 2, z + lot / 2, 2)) return;
     const along = facing === "S" || facing === "N";
     const b = along ? { x0: x - w / 2, z0: z - d / 2, x1: x + w / 2, z1: z + d / 2 } : { x0: x - d / 2, z0: z - w / 2, x1: x + d / 2, z1: z + w / 2 };
     const ft = footing(b.x0, b.z0, b.x1, b.z1), gy = ft.hi, fl = gy + 0.65, hc = color ?? pick2(HOUSE_COLORS), rc = roof ?? pick2(ROOF_COLORS), wallH = 3, trim = 16052454;
@@ -68423,6 +68450,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     night.lights.push([(b.x0 + b.x1) / 2, y0 + h - 0.3, z0 + dep / 2, 15267071, 40]);
   }
   function selfStorage(B2, A2, lamps, world2, night, x0, z0, x1, z1) {
+    if (trackCampusOverlapsRect(x0, z0, x1, z1, 4)) return;
     const ft = footing(x0, z0, x1, z1), y0 = ft.hi + 0.02;
     patch(B2, "asphalt", x0, z0, x1, z1, 5, 0.045, 7, 16777215);
     const rows3 = 3, rowD = 10, gap = (z1 - z0 - 6 - rows3 * rowD) / (rows3 - 1);
@@ -68635,12 +68663,12 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     const coneMat = new MeshStandardMaterial({ color: 16738842, roughness: 0.6 });
     instanced2(group, coneGeo(), coneMat, cones2, { name: "cones" });
     if (trailers.length) {
-      const items = trailers.map(([x, z, ry]) => {
+      const items = trailers.filter(([x, z]) => !trackCampusOverlapsRect(x - 2, z - 8, x + 2, z + 8, 0)).map(([x, z, ry]) => {
         const ty = terrainHeight(x, z);
         addBox(x, z, 1.35, 7.4, ry, ty - 1, ty + 5, "trailer");
         return [x, ty, z, ry];
       });
-      instanced2(group, trailerGeo(), B2.mats.get("trailerMat").mat, items, { name: "trailers", color: [15921904, 14080470, 12897492, 15130572, 15921904] });
+      if (items.length) instanced2(group, trailerGeo(), B2.mats.get("trailerMat").mat, items, { name: "trailers", color: [15921904, 14080470, 12897492, 15130572, 15921904] });
     }
     if (night.wires.length) {
       const wg = new BufferGeometry();
@@ -69367,6 +69395,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     }
     const heightOf = (kind, s) => Math.max(...variants[kind].map((v) => v.height)) * s;
     function tryTree(kind, x, z, o = {}) {
+      if (inTrackCampusClear(x, z, 2)) return null;
       const S4 = SPECIES[kind];
       if (!o.keep && keepFrac < 1 && Rt() > keepFrac) return null;
       if (x < BOUNDS.minX + 4 || x > BOUNDS.maxX - 4 || z < BOUNDS.minZ + 4 || z > BOUNDS.maxZ - 4) return null;
@@ -69383,6 +69412,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       return t;
     }
     function tryShrub(x, z, o = {}) {
+      if (inTrackCampusClear(x, z, 2)) return null;
       if (x < BOUNDS.minX + 3 || x > BOUNDS.maxX - 3 || z < BOUNDS.minZ + 3 || z > BOUNDS.maxZ - 3) return null;
       const y2 = terrainHeight(x, z);
       if (y2 < ELEV.water + 0.5 || slopeAt(x, z) > 0.4 || !roadClear2(x, z, y2, 2, o.margin ?? 3) || excluded(x, z, 1) || tooClose(x, z, 1.8)) return null;
@@ -69697,6 +69727,15 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   }
 
   // src/world/props.js
+  var campusSkip = (x, z) => inTrackCampusClear(x, z, 2);
+  function addBox2(cx, cz, hx, hz, rot = 0, y0 = -100, y1 = 100, tag = "box", data = null) {
+    if (campusSkip(cx, cz) && typeof tag === "string" && (tag.startsWith("prop:") || tag === "fence")) return null;
+    return addBox(cx, cz, hx, hz, rot, y0, y1, tag, data);
+  }
+  function addCylinder2(x, z, r, y0, y1, tag, data = null) {
+    if (campusSkip(x, z) && typeof tag === "string" && tag.startsWith("prop:")) return null;
+    return addCylinder(x, z, r, y0, y1, tag, data);
+  }
   var V2 = (x, y2, z) => new Vector3(x, y2, z);
   var _m4 = new Matrix4();
   var _q3 = new Quaternion();
@@ -70853,15 +70892,15 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     const sigLenses = [];
     for (const j of signalJ) {
       let cabinet = false;
-      [[j.A, j.B, j.ta, j.ta], [j.A, j.B, [-j.ta[0], -j.ta[1]], j.ta], [j.B, j.A, j.tb, j.tb], [j.B, j.A, [-j.tb[0], -j.tb[1]], j.tb]].forEach(([R, X, dir, tR], corner) => {
+      [[j.A, j.B, j.ta, j.ta], [j.A, j.B, [-j.ta[0], -j.ta[1]], j.ta], [j.B, j.A, j.tb, j.tb], [j.B, j.A, [-j.tb[0], -j.tb[1]], j.tb]].forEach(([R, X2, dir, tR], corner) => {
         if (wrongWay(R, dir, tR)) return;
-        const hR = R.road.width / 2, hX = X.road.width / 2, [dx, dz2] = dir, [rx, rz] = right(dx, dz2);
+        const hR = R.road.width / 2, hX = X2.road.width / 2, [dx, dz2] = dir, [rx, rz] = right(dx, dz2);
         const back = j.x > 700 ? 3 : 1.7;
         const px2 = j.x + dx * (hX + back) + rx * (hR + 1.6), pz2 = j.z + dz2 * (hX + back) + rz * (hR + 1.6);
         const py2 = projectOnRoad(R, px2, pz2).y + 0.16;
         const L2 = hR + 1.4, yaw = rotForX(-rx, -rz), tilt = 0.055;
         I2.sigPole.add(px2, py2, pz2, yaw);
-        addCylinder(px2, pz2, 0.26, py2, py2 + 9.6, "prop:signal");
+        addCylinder2(px2, pz2, 0.26, py2, py2 + 9.6, "prop:signal");
         occupy(px2, pz2);
         addLamp(px2 - rx * SIG_LAMP[0], py2 + SIG_LAMP[1], pz2 - rz * SIG_LAMP[0], yaw);
         const dt = j.x > 700, cb = dt ? 1.15 : 1.5;
@@ -70869,7 +70908,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
           cabinet = true;
           const cx = px2 + dx * 1.1 + rx * cb, cz = pz2 + dz2 * 1.1 + rz * cb;
           I2.cabinet.add(cx, py2, cz, headingFor(-rx, -rz));
-          addBox(cx, cz, 0.45, 0.28, headingFor(-rx, -rz), py2, py2 + 1.7, "prop:cabinet");
+          addBox2(cx, cz, 0.45, 0.28, headingFor(-rx, -rz), py2, py2 + 1.7, "prop:cabinet");
           occupy(cx, cz);
         }
         if (dt) {
@@ -70891,10 +70930,10 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
           }
         }
         const tn = L2 * 0.64;
-        signs.panel("mast:" + displayName(X), 2.4, 0.56, px2 - rx * tn, py2 + 6.8 + Math.tan(tilt) * tn - 0.4, pz2 - rz * tn, face, "mast:" + displayName(X), 0.03);
-        const owX = ONE_WAY[X.road.id];
+        signs.panel("mast:" + displayName(X2), 2.4, 0.56, px2 - rx * tn, py2 + 6.8 + Math.tan(tilt) * tn - 0.4, pz2 - rz * tn, face, "mast:" + displayName(X2), 0.03);
+        const owX = ONE_WAY[X2.road.id];
         if (owX) {
-          const tX = X === j.A ? j.ta : j.tb;
+          const tX = X2 === j.A ? j.ta : j.tb;
           signs.panel(onewayCell(face, tX[0] * owX, tX[1] * owX), 0.9, 0.3, px2 - dx * 0.19, py2 + 2.75, pz2 - dz2 * 0.19, face);
         }
         if (corner % 2 === 1) {
@@ -70908,16 +70947,16 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       if (j.signal) continue;
       const { A: A2, B: B2 } = j, hA = A2.road.width / 2, hB = B2.road.width / 2, fourWay = A2.road.width === B2.road.width;
       const apps = [];
-      const addApp = (R, X, t, ends) => {
+      const addApp = (R, X2, t, ends) => {
         for (const dir of [[t[0], t[1]], [-t[0], -t[1]]]) {
           const from = dir[0] === t[0] && dir[1] === t[1] ? ends.start : ends.end;
-          if (!from && !wrongWay(R, dir, t)) apps.push({ R, X, dir });
+          if (!from && !wrongWay(R, dir, t)) apps.push({ R, X: X2, dir });
         }
       };
       addApp(B2, A2, j.tb, j.eb);
       if (fourWay) addApp(A2, B2, j.ta, j.ea);
-      for (const { R, X, dir } of apps) {
-        const hR = R.road.width / 2, hX = X.road.width / 2, [dx, dz2] = dir, [rx, rz] = right(dx, dz2);
+      for (const { R, X: X2, dir } of apps) {
+        const hR = R.road.width / 2, hX = X2.road.width / 2, [dx, dz2] = dir, [rx, rz] = right(dx, dz2);
         const px2 = j.x - dx * (hX + 1.3) + rx * (hR + 1), pz2 = j.z - dz2 * (hX + 1.3) + rz * (hR + 1);
         if (excluded2(px2, pz2)) continue;
         const py2 = projectOnRoad(R, px2, pz2).y + 0.16;
@@ -70925,11 +70964,11 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         post(px2, py2, pz2, 3.1);
         const face = headingFor(-dx, -dz2);
         signs.octagon("stop", 0.38, px2 - dx * 0.05, py2 + 2.25, pz2 - dz2 * 0.05, face);
-        signs.panel("blade:" + displayName(X), 0.9, 0.2, px2 + rx * 0.5, py2 + 2.9, pz2 + rz * 0.5, face, "blade:" + displayName(X));
+        signs.panel("blade:" + displayName(X2), 0.9, 0.2, px2 + rx * 0.5, py2 + 2.9, pz2 + rz * 0.5, face, "blade:" + displayName(X2));
         signs.panel("blade:" + displayName(R), 0.9, 0.2, px2 - dx * 0.5, py2 + 3.12, pz2 - dz2 * 0.5, headingFor(rx, rz), "blade:" + displayName(R));
-        const owX = ONE_WAY[X.road.id];
+        const owX = ONE_WAY[X2.road.id];
         if (owX) {
-          const tX = X === j.A ? j.ta : j.tb;
+          const tX = X2 === j.A ? j.ta : j.tb;
           signs.panel(onewayCell(face, tX[0] * owX, tX[1] * owX), 0.9, 0.3, px2 - dx * 0.05, py2 + 1.66, pz2 - dz2 * 0.05, face);
         }
       }
@@ -70945,7 +70984,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
           const rot = rotForX(p.tx, p.tz);
           I2.acorn.add(sp.x, sp.y, sp.z, rot);
           occupy(sp.x, sp.z);
-          addCylinder(sp.x, sp.z, 0.2, sp.y, sp.y + 4.6, "prop:pole");
+          addCylinder2(sp.x, sp.z, 0.2, sp.y, sp.y + 4.6, "prop:pole");
           for (const [lx, ly] of GLOBE_AT) {
             const [gx, gz] = local2(sp.x, sp.z, rot, lx, 0);
             I2.globe.add(gx, sp.y + ly, gz, 0);
@@ -70966,7 +71005,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
           const y2 = p.y + 0.16;
           I2.light2.add(x, y2, z, rot);
           occupy(x, z);
-          addCylinder(x, z, 0.24, p.y, y2 + 9, "prop:pole");
+          addCylinder2(x, z, 0.24, p.y, y2 + 9, "prop:pole");
           for (const d of [1, -1]) addLamp(x + rx * LAMP_X * d, y2 + LAMP_Y, z + rz * LAMP_X * d, rot);
         } else {
           const sp = sidePoint(p, hw + 1, k % 2 ? 1 : -1);
@@ -70974,7 +71013,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
           const rot = rotForX(-sp.rx, -sp.rz);
           (rd.road.type === "street" ? I2.light1s : I2.light1).add(sp.x, sp.y, sp.z, rot);
           occupy(sp.x, sp.z);
-          addCylinder(sp.x, sp.z, 0.2, sp.y, sp.y + 9, "prop:pole");
+          addCylinder2(sp.x, sp.z, 0.2, sp.y, sp.y + 9, "prop:pole");
           addLamp(sp.x - sp.rx * LAMP_X, sp.y + LAMP_Y, sp.z - sp.rz * LAMP_X, rot);
           if (DT3.includes(rd)) banners(sp.x, sp.y, sp.z, p.tx, p.tz, 5.2, 1.8, 0.6);
         }
@@ -71007,7 +71046,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         const rot = rotForX(p.tx, p.tz), y2 = sp.y - 0.1;
         I2.ppole.add(sp.x, y2, sp.z, rot);
         occupy(sp.x, sp.z);
-        addCylinder(sp.x, sp.z, 0.16, y2, y2 + 10.8, "prop:pole");
+        addCylinder2(sp.x, sp.z, 0.16, y2, y2 + 10.8, "prop:pole");
         const att = POWER_WIRES.map(([lx, ly, lz]) => {
           const [wx, wz] = local2(sp.x, sp.z, rot, lx, lz);
           return { x: wx, y: y2 + ly, z: wz };
@@ -71048,7 +71087,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       I2.shelter.add(sp.x, sp.y, sp.z, rot);
       I2.glass.add(sp.x, sp.y, sp.z, rot);
       occupy(sp.x, sp.z);
-      addBox(sp.x, sp.z, 2.35, 0.95, rot, sp.y, sp.y + 2.7, "prop:shelter");
+      addBox2(sp.x, sp.z, 2.35, 0.95, rot, sp.y, sp.y + 2.7, "prop:shelter");
       const [bx2, bz2] = local2(sp.x, sp.z, rot, -0.5, 0.42);
       I2.bench.add(bx2, sp.y, bz2, rot);
       const ad = v ? "ad:ktrnv" : "ad:shelter";
@@ -71119,7 +71158,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         if (nearJunction(sp.x, sp.z, 15) || blocked(sp.x, sp.z, sp.y, mainRd, 2.5) || excluded2(sp.x, sp.z) || !free(sp.x, sp.z, 2.2)) continue;
         const rot = rotForX(p.tx, p.tz) + Math.round(hash2(s | 0, side2 + 3) * 4) * Math.PI / 2;
         I2.planter.add(sp.x, sp.y - 0.01, sp.z, rot);
-        addBox(sp.x, sp.z, 0.49, 0.49, rot, sp.y, sp.y + 0.6, "prop:planter");
+        addBox2(sp.x, sp.z, 0.49, 0.49, rot, sp.y, sp.y + 0.6, "prop:planter");
         occupy(sp.x, sp.z);
       }
       for (const side2 of [1, -1]) for (let s = side2 > 0 ? 41 : 68; s < mainRd.length - 30; s += 57) for (const o of [0, 1.2]) {
@@ -71130,13 +71169,13 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       }
       for (const j of junctions) {
         if (j.A !== mainRd && j.B !== mainRd) continue;
-        const X = j.A === mainRd ? j.B : j.A, t = j.A === mainRd ? j.ta : j.tb, hX = X.road.width / 2, [rx, rz] = right(t[0], t[1]);
+        const X2 = j.A === mainRd ? j.B : j.A, t = j.A === mainRd ? j.ta : j.tb, hX = X2.road.width / 2, [rx, rz] = right(t[0], t[1]);
         for (const sa of [1, -1]) for (const sl of [1, -1]) for (let i = 0; i < 3; i++) {
           const a2 = (hX + 2.1 + 1.3 * i) * sa, l = (hw + 0.62) * sl, x = j.x + t[0] * a2 + rx * l, z = j.z + t[1] * a2 + rz * l;
           if (blocked(x, z, j.y, mainRd, 1.5) || !free(x, z, 0.7)) continue;
           const y2 = projectOnRoad(mainRd, x, z).y + 0.16;
           I2.dtBollard.add(x, y2, z, 0);
-          addCylinder(x, z, 0.1, y2, y2 + 1.05, "prop:bollard");
+          addCylinder2(x, z, 0.1, y2, y2 + 1.05, "prop:bollard");
         }
       }
     }
@@ -71146,7 +71185,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         const p = pointAt(rd, s), sp = sidePoint(p, hw + 0.62, side2);
         if (nearJunction(sp.x, sp.z, 15.5) || blocked(sp.x, sp.z, sp.y, rd, 3) || excluded2(sp.x, sp.z) || !free(sp.x, sp.z, 1.4)) continue;
         I2.meter.add(sp.x, sp.y, sp.z, headingFor(-sp.rx, -sp.rz));
-        addCylinder(sp.x, sp.z, 0.08, sp.y, sp.y + 1.6, "prop:meter");
+        addCylinder2(sp.x, sp.z, 0.08, sp.y, sp.y + 1.6, "prop:meter");
       }
     }
     const bigSign = (cell, w, h, x, z, heading2, bottomY, groundY, back = "alu", pw = 0.16) => {
@@ -71156,7 +71195,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         post(px2, Math.min(groundY, terrainHeight(px2, pz2)) - 0.3, pz2, bottomY + h * 0.92 - Math.min(groundY, terrainHeight(px2, pz2)) + 0.3, pw);
       }
       signs.panel(cell, w, h, x, bottomY + h / 2, z, heading2, back, pw + 0.03);
-      addBox(x, z, w / 2, 0.2, -heading2, bottomY, bottomY + h, "prop:sign");
+      addBox2(x, z, w / 2, 0.2, -heading2, bottomY, bottomY + h, "prop:sign");
     };
     bigSign("guideE", 5.6, 2.1, -470, 16.4, Math.PI / 2, deckY(-470) + 2.6, terrainHeight(-470, 16.4), "alu", 0.2);
     bigSign("guideW", 5.6, 2.1, 535, -16.4, -Math.PI / 2, deckY(535) + 2.6, terrainHeight(535, -16.4), "alu", 0.2);
@@ -71178,7 +71217,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       for (let i = 0; i < n; i++) {
         const sx = x0 + dx * 3.06 * i, sz = z0 + dz2 * 3.06 * i, cx = sx + dx * 1.5, cz = sz + dz2 * 1.5, y2 = terrainHeight(cx, cz) - 0.05;
         I2.barrier.add(sx, y2, sz, rot);
-        addBox(cx, cz, 1.5, 0.31, rot, y2, y2 + 0.85, "prop:barrier");
+        addBox2(cx, cz, 1.5, 0.31, rot, y2, y2 + 0.85, "prop:barrier");
       }
     };
     barrierRow(-258, 115, 1, 0, 3);
@@ -71196,8 +71235,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     const billboardAt = (x, z, yaw, frontAd, backAd) => {
       const y2 = terrainHeight(x, z);
       I2.billboard.add(x, y2 - 0.05, z, yaw);
-      addCylinder(x, z, 0.5, y2, y2 + 10, "prop:billboard");
-      addBox(x, z, 7.4, 0.35, yaw, y2 + 9.4, y2 + 14.6, "prop:billboard");
+      addCylinder2(x, z, 0.5, y2, y2 + 10, "prop:billboard");
+      addBox2(x, z, 7.4, 0.35, yaw, y2 + 9.4, y2 + 14.6, "prop:billboard");
       signs.panel(frontAd, 14.4, 4.8, x, y2 + 12, z, yaw, backAd, 0.27);
     };
     billboardAt(426, 74, Math.PI - 0.28, "ad:tacos", "ad:brazos");
@@ -71269,9 +71308,9 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       post(px2 - 1.9, top, pz2 + 6.35, 1.8);
       signs.panel("pump", 1, 0.62, px2 - 1.9 + 0.55, top + 1.45, pz2 + 6.35, Math.PI);
       signs.quad("pump", 0.9, 0.56, px2 - 0.7, top + 2.3, pz2 + 3.27, Math.PI, 0);
-      addBox(px2, pz2, 4, 3.25, 0, top, top + 5.6, "prop:pump");
-      addBox(px2, pz2, 5.5, 6, 0, 3.5, top, "prop:pump");
-      addBox(214.5, pz2, 1.2, 3.5, 0, 2, 5.45, "prop:pump");
+      addBox2(px2, pz2, 4, 3.25, 0, top, top + 5.6, "prop:pump");
+      addBox2(px2, pz2, 5.5, 6, 0, 3.5, top, "prop:pump");
+      addBox2(214.5, pz2, 1.2, 3.5, 0, 2, 5.45, "prop:pump");
       addInteractable({ id: "pump_station", x: px2 - 1.4, z: pz2 + 6.35, r: 3, label: "Read the notice", onInteract(g2) {
         g2.hud?.say("", "Trinity River Pump Station No. 2. When the river runs high, this is what keeps the Design District dry.", 5);
       } });
@@ -73183,24 +73222,24 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     S4.pts[1][1] -= 0.03;
     S4.pts[2][1] -= 0.02;
   }
-  var Z3 = { cowl: -0.75, roofFront: -0.05, bPillar: 0.22, cPillar: 1.05, dPillar: 1.85, tail: 2.2, tailBottom: 2.4, wheel: 1.475 };
+  var Z4 = { cowl: -0.75, roofFront: -0.05, bPillar: 0.22, cPillar: 1.05, dPillar: 1.85, tail: 2.2, tailBottom: 2.4, wheel: 1.475 };
   var M2 = { PAINT: 0, GLASS: 1, BLACK: 2, LENS: 3 };
   var LAMP = { z0: -2.42, z1: -2.36, f0: 7, f1: 9.5, depth: 0.035 };
   function bodyMaterialAt2(z, f) {
     if (z > LAMP.z0 - 1e-4 && z < LAMP.z1 + 1e-4 && f > LAMP.f0 && f < LAMP.f1) return M2.LENS;
-    if (f < 6 || z < Z3.cowl) return M2.PAINT;
-    if (z < Z3.roofFront) return M2.GLASS;
-    if (z > Z3.tail) {
-      if (z > Z3.tailBottom) return M2.PAINT;
+    if (f < 6 || z < Z4.cowl) return M2.PAINT;
+    if (z < Z4.roofFront) return M2.GLASS;
+    if (z > Z4.tail) {
+      if (z > Z4.tailBottom) return M2.PAINT;
       return f > 7.15 ? M2.GLASS : f > 6.85 ? M2.BLACK : M2.PAINT;
     }
     if (f >= 8) return M2.PAINT;
-    if (z > Z3.dPillar) {
-      const u = (z - Z3.dPillar) / (Z3.tail - Z3.dPillar), pf = 6 + 2 * u;
+    if (z > Z4.dPillar) {
+      const u = (z - Z4.dPillar) / (Z4.tail - Z4.dPillar), pf = 6 + 2 * u;
       return Math.abs(f - pf) < 0.12 ? M2.BLACK : f > pf ? M2.GLASS : M2.PAINT;
     }
     if (f < 6.15 || f > 7.85) return M2.BLACK;
-    if (Math.abs(z - Z3.bPillar) < 0.055 || Math.abs(z - Z3.cPillar) < 0.055) return M2.BLACK;
+    if (Math.abs(z - Z4.bPillar) < 0.055 || Math.abs(z - Z4.cPillar) < 0.055) return M2.BLACK;
     return M2.GLASS;
   }
   function onSurface2(g2, s, lift = 0) {
@@ -73434,21 +73473,21 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       brake: lampMaterial({ maps: barMaps, emissive: 16718348, spec: 0.22, clearcoat: 0.18, ccRough: 0.4, normalScale: 0.55, envI: 0.15 }),
       reverse: lampMaterial({ maps: revMaps, emissive: 16774890, spec: 0.24, clearcoat: 0.18, ccRough: 0.4, normalScale: 0.5, envI: 0.15 })
     };
-    const arches = [{ z: -Z3.wheel, y: 0.36, r: 0.45, fTo: 5 }, { z: Z3.wheel, y: 0.36, r: 0.45, fTo: 5 }];
+    const arches = [{ z: -Z4.wheel, y: 0.36, r: 0.45, fTo: 5 }, { z: Z4.wheel, y: 0.36, r: 0.45, fTo: 5 }];
     const L2 = loft(STATIONS3, { segs: SEGS3, rowStep: 0.03, matAt: bodyMaterialAt2, arches, caps: { front: M2.PAINT, rear: M2.PAINT }, uvRepeat: [1, 1] });
     const bodyMesh = new Mesh(L2.geometry, [paint3, glass, blackGloss, lens]);
     bodyMesh.castShadow = true;
     bodyMesh.receiveShadow = true;
     body.add(bodyMesh);
     const grid2 = L2.grid;
-    const doorLayout = makeFrontDoorSelector(grid2, { front: -0.72, rear: Z3.bPillar, glassRear: Z3.bPillar - 0.055, cowl: Z3.cowl, header: Z3.roofFront });
+    const doorLayout = makeFrontDoorSelector(grid2, { front: -0.72, rear: Z4.bPillar, glassRear: Z4.bPillar - 0.055, cowl: Z4.cowl, header: Z4.roofFront });
     tagTriangles(bodyMesh.geometry, doorLayout.choose);
     bodyMesh.name = "wagonBody";
     const hinge = (side2) => sampleGrid(grid2, doorLayout.bounds.front, 5.6, side2).p;
     const articulation = createVehicleArticulation(body, { left: hinge(-1), right: hinge(1) });
     let steeringWheelVisual;
     const wells = [];
-    for (const s of [-1, 1]) for (const z of [-Z3.wheel, Z3.wheel]) {
+    for (const s of [-1, 1]) for (const z of [-Z4.wheel, Z4.wheel]) {
       const g2 = wellGeometry(0.44, 0.6, 0.96, 26);
       g2.translate(0, 0.36, z);
       if (s < 0) g2.scale(-1, 1, 1);
@@ -73461,7 +73500,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     const trim = [];
     for (const s of [-1, 1]) {
       trim.push(ribbonAlongZ(grid2, 8, -2.33, -0.79, 9e-3, s), ribbonAtZ(grid2, -2.34, 8, 10, 9e-3, s), ribbonAtZ(grid2, -0.775, 8.05, 10, 0.05, s, 2e-3));
-      trim.push(tagPart(ribbonAtZ(grid2, doorLayout.bounds.front, 2.05, 6.05, 9e-3, s), s < 0 ? "left" : "right"), tagPart(ribbonAtZ(grid2, doorLayout.bounds.rear, 2.05, 6.05, 9e-3, s), s < 0 ? "left" : "right"), ribbonAtZ(grid2, Z3.cPillar, 2.05, 6.05, 9e-3, s));
+      trim.push(tagPart(ribbonAtZ(grid2, doorLayout.bounds.front, 2.05, 6.05, 9e-3, s), s < 0 ? "left" : "right"), tagPart(ribbonAtZ(grid2, doorLayout.bounds.rear, 2.05, 6.05, 9e-3, s), s < 0 ? "left" : "right"), ribbonAtZ(grid2, Z4.cPillar, 2.05, 6.05, 9e-3, s));
       trim.push(ribbonAlongZ(grid2, 2, -2.2, 2.35, 0.012, s, 1e-3));
       trim.push(railGeometry(grid2, 8.35, -0.02, 2.08, s));
     }
@@ -73514,18 +73553,18 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     spoiler.receiveShadow = true;
     const seals = [];
     for (const s of [-1, 1]) {
-      seals.push(ribbonPath(grid2, [[Z3.cowl - 5e-3, 6.05], [Z3.roofFront + 0.01, 8.02]], 0.03, s, 35e-4, 22));
+      seals.push(ribbonPath(grid2, [[Z4.cowl - 5e-3, 6.05], [Z4.roofFront + 0.01, 8.02]], 0.03, s, 35e-4, 22));
       seals.push(
-        tagPart(ribbonAlongZ(grid2, 6.1, Z3.roofFront, doorLayout.bounds.glassRear, 0.026, s, 35e-4, 5), s < 0 ? "left" : "right"),
-        ribbonAlongZ(grid2, 6.1, doorLayout.bounds.glassRear, Z3.dPillar, 0.026, s, 35e-4, 16)
+        tagPart(ribbonAlongZ(grid2, 6.1, Z4.roofFront, doorLayout.bounds.glassRear, 0.026, s, 35e-4, 5), s < 0 ? "left" : "right"),
+        ribbonAlongZ(grid2, 6.1, doorLayout.bounds.glassRear, Z4.dPillar, 0.026, s, 35e-4, 16)
       );
       seals.push(
-        tagPart(ribbonAlongZ(grid2, 7.92, Z3.roofFront, doorLayout.bounds.glassRear, 0.022, s, 35e-4, 5), s < 0 ? "left" : "right"),
-        ribbonAlongZ(grid2, 7.92, doorLayout.bounds.glassRear, Z3.dPillar, 0.022, s, 35e-4, 16)
+        tagPart(ribbonAlongZ(grid2, 7.92, Z4.roofFront, doorLayout.bounds.glassRear, 0.022, s, 35e-4, 5), s < 0 ? "left" : "right"),
+        ribbonAlongZ(grid2, 7.92, doorLayout.bounds.glassRear, Z4.dPillar, 0.022, s, 35e-4, 16)
       );
-      seals.push(ribbonPath(grid2, [[Z3.dPillar - 0.01, 6.05], [Z3.tail + 0.01, 8.02]], 0.028, s, 35e-4, 20));
-      seals.push(ribbonAtZ(grid2, Z3.cowl + 0.035, 6.05, 10, 0.022, s, 45e-4, 22));
-      seals.push(ribbonAtZ(grid2, Z3.tail + 0.045, 6.35, 10, 0.022, s, 45e-4, 22));
+      seals.push(ribbonPath(grid2, [[Z4.dPillar - 0.01, 6.05], [Z4.tail + 0.01, 8.02]], 0.028, s, 35e-4, 20));
+      seals.push(ribbonAtZ(grid2, Z4.cowl + 0.035, 6.05, 10, 0.022, s, 45e-4, 22));
+      seals.push(ribbonAtZ(grid2, Z4.tail + 0.045, 6.35, 10, 0.022, s, 45e-4, 22));
     }
     const sealMesh = new Mesh(merge(seals), seal);
     sealMesh.receiveShadow = true;
@@ -73558,8 +73597,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     }
     gloss.push(box(0.36, 0.2, 0.012, 0, 0.47, 2.505));
     for (const s of [-1, 1]) {
-      gloss.push(ribbonPath(grid2, [[Z3.cowl - 0.02, 5.95], [Z3.roofFront + 0.02, 8.02]], 0.11, s, 2e-3, 26));
-      gloss.push(ribbonPath(grid2, [[Z3.dPillar - 0.02, 5.95], [Z3.tail + 0.02, 8.02]], 0.1, s, 2e-3, 26));
+      gloss.push(ribbonPath(grid2, [[Z4.cowl - 0.02, 5.95], [Z4.roofFront + 0.02, 8.02]], 0.11, s, 2e-3, 26));
+      gloss.push(ribbonPath(grid2, [[Z4.dPillar - 0.02, 5.95], [Z4.tail + 0.02, 8.02]], 0.1, s, 2e-3, 26));
     }
     const headMesh = new Mesh(merge(heads), lightMat.head);
     headMesh.receiveShadow = true;
@@ -73717,16 +73756,16 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     for (const cx of [-0.075, 0.075]) trimIn.push(at(new CylinderGeometry(0.038, 0.038, 0.03, 12), cx, 0.618, 0.02));
     for (const s of [-1, 1]) {
       const movingCards = watchParts([hideG, tanG, carpetG, trimIn, alloyG]);
-      const X = s * 0.845;
-      hideG.push(at(roundedSlab(0.8, 0.22, 0.035, 0.03, 2), X, 0.83, -0.2, 0, s * Math.PI / 2));
-      tanG.push(at(roundedSlab(0.74, 0.18, 0.03, 0.03, 2), X - s * 0.014, 0.64, -0.2, 0, s * Math.PI / 2));
-      hideG.push(at(roundedSlab(0.4, 0.085, 0.105, 0.03, 2), X - s * 0.052, 0.735, -0.06, 0, s * Math.PI / 2));
-      alloyG.push(at(box(0.024, 0.024, 0.105), X - s * 0.042, 0.79, -0.4));
-      trimIn.push(at(new CircleGeometry(0.065, 16), X - s * 0.02, 0.56, 0.12, 0, s * Math.PI / 2));
-      trimIn.push(at(box(0.018, 0.034, 0.14), X - s * 0.03, 0.88, -0.26));
+      const X2 = s * 0.845;
+      hideG.push(at(roundedSlab(0.8, 0.22, 0.035, 0.03, 2), X2, 0.83, -0.2, 0, s * Math.PI / 2));
+      tanG.push(at(roundedSlab(0.74, 0.18, 0.03, 0.03, 2), X2 - s * 0.014, 0.64, -0.2, 0, s * Math.PI / 2));
+      hideG.push(at(roundedSlab(0.4, 0.085, 0.105, 0.03, 2), X2 - s * 0.052, 0.735, -0.06, 0, s * Math.PI / 2));
+      alloyG.push(at(box(0.024, 0.024, 0.105), X2 - s * 0.042, 0.79, -0.4));
+      trimIn.push(at(new CircleGeometry(0.065, 16), X2 - s * 0.02, 0.56, 0.12, 0, s * Math.PI / 2));
+      trimIn.push(at(box(0.018, 0.034, 0.14), X2 - s * 0.03, 0.88, -0.26));
       tagAdded(movingCards, s);
-      hideG.push(at(roundedSlab(0.9, 0.2, 0.032, 0.03, 2), X + s * 6e-3, 0.83, 1.05, 0, s * Math.PI / 2));
-      tanG.push(at(roundedSlab(0.74, 0.16, 0.028, 0.03, 2), X - s * 0.01, 0.66, 1.05, 0, s * Math.PI / 2));
+      hideG.push(at(roundedSlab(0.9, 0.2, 0.032, 0.03, 2), X2 + s * 6e-3, 0.83, 1.05, 0, s * Math.PI / 2));
+      tanG.push(at(roundedSlab(0.74, 0.16, 0.028, 0.03, 2), X2 - s * 0.01, 0.66, 1.05, 0, s * Math.PI / 2));
     }
     {
       const sw = steeringWheel({ R: 0.188, tube: 0.02, dish: 0.052, style: "modern", spokes: 3, drill: 0 });
@@ -74188,9 +74227,9 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     return { spin };
   }
   function makeMatAt(K) {
-    const Z4 = K.zones, beltF = Z4.beltF ?? 4, roofEdgeF = Z4.roofEdgeF ?? 6, capF = Z4.capBlackF ?? 2.3;
+    const Z5 = K.zones, beltF = Z5.beltF ?? 4, roofEdgeF = Z5.roofEdgeF ?? 6, capF = Z5.capBlackF ?? 2.3;
     const livery = K.livery || null;
-    const win = Z4.windows || null;
+    const win = Z5.windows || null;
     const glassAt = (z, f) => {
       if (!win) return false;
       for (const w of win) if (z > w[0] && z < w[1] && f > w[2] && f < w[3]) return true;
@@ -74198,7 +74237,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     };
     return (z, f, side2) => {
       if (f < 0.95) return BLACK2;
-      if (z < Z4.front + 0.09 || z > Z4.rear - 0.09) return f < capF ? BLACK2 : livery ? livery(z, f, PAINT) : PAINT;
+      if (z < Z5.front + 0.09 || z > Z5.rear - 0.09) return f < capF ? BLACK2 : livery ? livery(z, f, PAINT) : PAINT;
       let m = PAINT;
       if (win) {
         m = glassAt(z, f) ? GLASS : f > roofEdgeF + 0.9 ? PAINT : PAINT;
@@ -74208,20 +74247,20 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
             break;
           }
         }
-      } else if (z < Z4.cowl) m = PAINT;
-      else if (z < Z4.roofF) {
-        const u = (z - Z4.cowl) / (Z4.roofF - Z4.cowl), pf = beltF + 0.1 + (roofEdgeF - beltF - 0.1) * u;
+      } else if (z < Z5.cowl) m = PAINT;
+      else if (z < Z5.roofF) {
+        const u = (z - Z5.cowl) / (Z5.roofF - Z5.cowl), pf = beltF + 0.1 + (roofEdgeF - beltF - 0.1) * u;
         if (f > pf) m = GLASS;
-        else if (z > Z4.doorFront && f > beltF + 0.15) m = GLASS;
-        else if (z > Z4.doorFront && f > beltF) m = BLACK2;
-      } else if (z < Z4.roofB) {
+        else if (z > Z5.doorFront && f > beltF + 0.15) m = GLASS;
+        else if (z > Z5.doorFront && f > beltF) m = BLACK2;
+      } else if (z < Z5.roofB) {
         if (f > roofEdgeF + 0.15) m = PAINT;
         else if (f > roofEdgeF) m = BLACK2;
         else if (f < beltF) m = PAINT;
         else if (f < beltF + 0.15) m = BLACK2;
         else {
           m = GLASS;
-          for (const p of Z4.pillars || []) {
+          for (const p of Z5.pillars || []) {
             const d = Math.abs(z - p);
             if (d < 0.05) {
               m = PAINT;
@@ -74233,15 +74272,15 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
             }
           }
         }
-      } else if (z < Z4.deckF) {
-        const u = (z - Z4.roofB) / (Z4.deckF - Z4.roofB), pf = roofEdgeF - (roofEdgeF - beltF - 0.1) * u;
+      } else if (z < Z5.deckF) {
+        const u = (z - Z5.roofB) / (Z5.deckF - Z5.roofB), pf = roofEdgeF - (roofEdgeF - beltF - 0.1) * u;
         if (f > pf) m = GLASS;
-        else if (z < Z4.roofB + (Z4.quarterLen || 0) && f > beltF + 0.15) m = GLASS;
-        else if (z < Z4.roofB + (Z4.quarterLen || 0) && f > beltF) m = BLACK2;
+        else if (z < Z5.roofB + (Z5.quarterLen || 0) && f > beltF + 0.15) m = GLASS;
+        else if (z < Z5.roofB + (Z5.quarterLen || 0) && f > beltF) m = BLACK2;
       }
       if (m === PAINT && livery) m = livery(z, f, PAINT);
-      if (Z4.panels) {
-        for (const q of Z4.panels) if (z > q[0] && z < q[1] && f > q[2] && f < q[3]) return q[4];
+      if (Z5.panels) {
+        for (const q of Z5.panels) if (z > q[0] && z < q[1] && f > q[2] && f < q[3]) return q[4];
       }
       return m;
     };
@@ -74249,13 +74288,13 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   var BUCKETS = ["paint", "paint2", "trim", "gloss", "chrome", "steel", "under", "rubber", "glass", "inside", "seat", "sign", "plate", "head", "tail", "rev", "beaconA", "beaconB", "glowH", "glowT"];
   var NO_SHADOW = /* @__PURE__ */ new Set(["glass", "glowH", "glowT", "head", "tail", "rev", "beaconA", "beaconB", "sign", "inside", "seat", "plate", "under", "trim", "gloss"]);
   function buildKind(K) {
-    const Z4 = K.zones, matAt = makeMatAt(K);
+    const Z5 = K.zones, matAt = makeMatAt(K);
     const B2 = {};
     for (const b of BUCKETS) B2[b] = [];
     const parts = [];
     const ctx2 = {
       K,
-      Z: Z4,
+      Z: Z5,
       dims: K.dims,
       matAt,
       add(bucket, ...g2) {
@@ -74279,16 +74318,16 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       w.translate(0, a2.y, a2.z);
       ctx2.add("under", s < 0 ? mirrorX(w) : w);
     }
-    if (K.floor !== false) ctx2.add("under", box(K.dims.width * 0.66, 0.04, (Z4.rear - Z4.front) * 0.86, 0, K.floorY ?? (arches[0] ? arches[0].y * 0.62 : 0.24), (Z4.front + Z4.rear) / 2));
-    if (Z4.shell !== false) ctx2.add("inside", innerShell(grid2, matAt, { offset: 0.03, z0: Z4.cowl - 0.15, z1: (Z4.deckF ?? Z4.rear) + 0.25, fMin: 2.6 }));
+    if (K.floor !== false) ctx2.add("under", box(K.dims.width * 0.66, 0.04, (Z5.rear - Z5.front) * 0.86, 0, K.floorY ?? (arches[0] ? arches[0].y * 0.62 : 0.24), (Z5.front + Z5.rear) / 2));
+    if (Z5.shell !== false) ctx2.add("inside", innerShell(grid2, matAt, { offset: 0.03, z0: Z5.cowl - 0.15, z1: (Z5.deckF ?? Z5.rear) + 0.25, fMin: 2.6 }));
     for (const s of [-1, 1]) {
-      for (const dz2 of Z4.doors || []) ctx2.add("trim", ribbonAtZ(grid2, dz2, 1.05, (Z4.beltF ?? 4) + 0.1, 0.014, s, 16e-4, 16));
-      if ((Z4.handles || []).length) {
-        const hy = Z4.handleY ?? 0.95, z0 = Z4.handles[0];
+      for (const dz2 of Z5.doors || []) ctx2.add("trim", ribbonAtZ(grid2, dz2, 1.05, (Z5.beltF ?? 4) + 0.1, 0.014, s, 16e-4, 16));
+      if ((Z5.handles || []).length) {
+        const hy = Z5.handleY ?? 0.95, z0 = Z5.handles[0];
         ctx2.part(
           "handle" + (s < 0 ? "L" : "R"),
           K.chromeHandles ? "chrome" : "gloss",
-          merge(Z4.handles.map((hz) => merge([box(0.035, 0.028, 0.15, 0, 0, hz - z0), box(0.028, 0.05, 0.05, 0, -0.015, hz - z0 + 0.05)]))),
+          merge(Z5.handles.map((hz) => merge([box(0.035, 0.028, 0.15, 0, 0, hz - z0), box(0.028, 0.05, 0.05, 0, -0.015, hz - z0 + 0.05)]))),
           s * (K.dims.width / 2 - 0.015),
           hy,
           z0
@@ -76989,36 +77028,36 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     }
   };
   function makeMatAt2(K) {
-    const Z4 = K.zones, beltF = 4, roofEdgeF = 6;
+    const Z5 = K.zones, beltF = 4, roofEdgeF = 6;
     return (z, f) => {
-      if (Z4.bedZ != null && z > Z4.bedZ) return f < 0.95 ? BLACK3 : f > Z4.bedInnerF ? BLACK3 : PAINT3;
-      if (z < Z4.front + 0.1 || z > Z4.rear - 0.1) return f < 2.3 ? BLACK3 : PAINT3;
+      if (Z5.bedZ != null && z > Z5.bedZ) return f < 0.95 ? BLACK3 : f > Z5.bedInnerF ? BLACK3 : PAINT3;
+      if (z < Z5.front + 0.1 || z > Z5.rear - 0.1) return f < 2.3 ? BLACK3 : PAINT3;
       if (f < 0.95) return BLACK3;
-      if (z < Z4.cowl) return PAINT3;
-      if (z < Z4.roofF) {
-        const u = (z - Z4.cowl) / (Z4.roofF - Z4.cowl), pf = beltF + 0.1 + (roofEdgeF - beltF - 0.1) * u;
+      if (z < Z5.cowl) return PAINT3;
+      if (z < Z5.roofF) {
+        const u = (z - Z5.cowl) / (Z5.roofF - Z5.cowl), pf = beltF + 0.1 + (roofEdgeF - beltF - 0.1) * u;
         if (f > pf) return GLASS2;
-        if (z > Z4.doorFront && f > beltF + 0.15) return GLASS2;
-        if (z > Z4.doorFront && f > beltF) return BLACK3;
+        if (z > Z5.doorFront && f > beltF + 0.15) return GLASS2;
+        if (z > Z5.doorFront && f > beltF) return BLACK3;
         return PAINT3;
       }
-      if (z < Z4.roofB) {
+      if (z < Z5.roofB) {
         if (f > roofEdgeF + 0.15) return PAINT3;
         if (f > roofEdgeF) return BLACK3;
         if (f < beltF) return PAINT3;
         if (f < beltF + 0.15) return BLACK3;
-        for (const p of Z4.pillars) {
+        for (const p of Z5.pillars) {
           const d = Math.abs(z - p);
           if (d < 0.055) return PAINT3;
           if (d < 0.085) return BLACK3;
         }
         return GLASS2;
       }
-      if (z < Z4.deckF) {
-        const u = (z - Z4.roofB) / (Z4.deckF - Z4.roofB), pf = roofEdgeF - (roofEdgeF - beltF - 0.1) * u;
+      if (z < Z5.deckF) {
+        const u = (z - Z5.roofB) / (Z5.deckF - Z5.roofB), pf = roofEdgeF - (roofEdgeF - beltF - 0.1) * u;
         if (f > pf) return GLASS2;
-        if (z < Z4.roofB + Z4.quarterLen && f > beltF + 0.15) return GLASS2;
-        if (z < Z4.roofB + Z4.quarterLen && f > beltF) return BLACK3;
+        if (z < Z5.roofB + Z5.quarterLen && f > beltF + 0.15) return GLASS2;
+        if (z < Z5.roofB + Z5.quarterLen && f > beltF) return BLACK3;
         return PAINT3;
       }
       return PAINT3;
@@ -77202,7 +77241,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     return cache2.wheel;
   }
   function buildKind2(kind) {
-    const K = KINDS[kind], Z4 = K.zones, T2 = K.trim, Li = K.lights;
+    const K = KINDS[kind], Z5 = K.zones, T2 = K.trim, Li = K.lights;
     const arches = (K.archFront ? [K.wheelZ[0]] : K.wheelZ).map((z) => ({ z, y: K.hub, r: K.archR, fTo: 4 }));
     const L2 = loft(K.stations, { segs: SEGS4, rowStep: ROW_STEP, matAt: makeMatAt2(K), arches, caps: { front: PAINT3, rear: PAINT3 } });
     const grid2 = L2.grid;
@@ -77227,16 +77266,16 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       w.translate(0, K.hub, z);
       body.push(matte(w.clone()), matte(mirrorX2(w)));
     }
-    body.push(matte(box(T2.floorW, 0.04, Z4.rear - Z4.front - 0.3, 0, T2.floorY, (Z4.front + Z4.rear) / 2)));
-    body.push(satin(box(T2.bumperW, T2.bumperH, 0.1, 0, T2.bumperY[0], Z4.front + 0.01)), satin(box(T2.bumperW - 0.06, T2.bumperH, 0.1, 0, T2.bumperY[1], (Li.tail.z ?? Z4.rear) - 0.01)));
-    body.push(satin(box(T2.grille.w, T2.grille.h, 0.05, 0, T2.grille.y, Z4.front + 5e-3)));
+    body.push(matte(box(T2.floorW, 0.04, Z5.rear - Z5.front - 0.3, 0, T2.floorY, (Z5.front + Z5.rear) / 2)));
+    body.push(satin(box(T2.bumperW, T2.bumperH, 0.1, 0, T2.bumperY[0], Z5.front + 0.01)), satin(box(T2.bumperW - 0.06, T2.bumperH, 0.1, 0, T2.bumperY[1], (Li.tail.z ?? Z5.rear) - 0.01)));
+    body.push(satin(box(T2.grille.w, T2.grille.h, 0.05, 0, T2.grille.y, Z5.front + 5e-3)));
     for (const s of [-1, 1]) {
       const M3 = T2.mirror, mw = M3.big ? 0.16 : 0.1, mh = M3.big ? 0.32 : 0.09, md = M3.big ? 0.14 : 0.16;
       body.push(paint3(box(mw, mh, md, s * (M3.x + mw / 2), M3.y, M3.z)), satin(box(0.1, 0.03, 0.03, s * (M3.x - 0.02), M3.y - 0.02, M3.z)));
-      body.push(satin(ribbonPath(grid2, [[Z4.cowl - 0.02, 4.05], [Z4.roofF + 0.03, 6.02]], 0.13, s, 2e-3, 26)));
-      if (Z4.deckF > Z4.roofB) body.push(satin(ribbonPath(grid2, [[Z4.roofB - 0.03, 6.02], [Z4.deckF + 0.02, 4.05]], 0.11, s, 2e-3, 26)));
-      for (const dz2 of Z4.doors || []) body.push(satin(ribbonAtZ(grid2, dz2, 1.05, 3.98, 0.012, s, 15e-4, 16)));
-      for (const hz of Z4.handles || []) {
+      body.push(satin(ribbonPath(grid2, [[Z5.cowl - 0.02, 4.05], [Z5.roofF + 0.03, 6.02]], 0.13, s, 2e-3, 26)));
+      if (Z5.deckF > Z5.roofB) body.push(satin(ribbonPath(grid2, [[Z5.roofB - 0.03, 6.02], [Z5.deckF + 0.02, 4.05]], 0.11, s, 2e-3, 26)));
+      for (const dz2 of Z5.doors || []) body.push(satin(ribbonAtZ(grid2, dz2, 1.05, 3.98, 0.012, s, 15e-4, 16)));
+      for (const hz of Z5.handles || []) {
         const hy = K.hub + (K.dims.height > 1.7 ? 0.62 : 0.42);
         body.push(satin(box(0.03, 0.025, 0.14, s * (K.dims.width / 2 - 0.02), hy, hz)));
       }
@@ -77245,7 +77284,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     bodyGeo.computeBoundingSphere();
     glassGeo.computeBoundingSphere();
     const lights = [];
-    const fz = Z4.front, rz = Li.tail.z ?? Z4.rear;
+    const fz = Z5.front, rz = Li.tail.z ?? Z5.rear;
     for (const s of [-1, 1]) {
       lights.push(col2(remapUV2(box(Li.head.w, Li.head.h, 0.05, s * Li.head.x, Li.head.y, fz - 0.012), UV.head), 16711935));
       lights.push(col2(remapUV2(box(Li.tail.w, Li.tail.h, 0.05, s * Li.tail.x, Li.tail.y, rz + 0.012), UV.tail), 65280));
@@ -82600,7 +82639,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-ddef73ba3d39", tipSha: false ? "" : "ee5e5aa", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-1f2f5574b814", tipSha: false ? "" : "25b1e38", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {

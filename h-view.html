@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-ddef73ba3d39">
-<meta name="lsgh-tip" content="ee5e5aa">
+<meta name="lsgh-build" content="0.35.0-next.0-1f2f5574b814">
+<meta name="lsgh-tip" content="25b1e38">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -362,7 +362,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip ee5e5aa · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 25b1e38 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -33500,8 +33500,18 @@ void main() {
   function eastY(x) {
     return ELEV.east + 6 * smoothstep2(420, 900, x);
   }
-  var BOUNDS = { minX: -930, maxX: 1750, minZ: -520, maxZ: 800 };
-  var MAP = { minX: -1e3, maxX: 1800, minZ: -900, maxZ: 900 };
+  var BOUNDS = { minX: -1200, maxX: 1750, minZ: -720, maxZ: 800 };
+  var MAP = { minX: -1300, maxX: 1800, minZ: -900, maxZ: 900 };
+  var TRACK_CAMPUS = { x: -880, z: -380, clearR: 260 };
+  function inTrackCampusClear(x, z, m = 0) {
+    return Math.hypot(x - TRACK_CAMPUS.x, z - TRACK_CAMPUS.z) < TRACK_CAMPUS.clearR + m;
+  }
+  function trackCampusOverlapsRect(x0, z0, x1, z1, m = 0) {
+    const cx = TRACK_CAMPUS.x, cz = TRACK_CAMPUS.z, R2 = TRACK_CAMPUS.clearR + m;
+    const nx = Math.max(x0, Math.min(cx, x1));
+    const nz = Math.max(z0, Math.min(cz, z1));
+    return Math.hypot(cx - nx, cz - nz) < R2;
+  }
   var D2R = Math.PI / 180;
   function lerp2(a, b, t) {
     return a + (b - a) * t;
@@ -33620,7 +33630,7 @@ void main() {
   var E = ELEV.east;
   var ROADS = [
     // --- West Dallas grid (at grade)
-    { id: "singleton_w", name: "Singleton Blvd", type: "boulevard", surface: "concrete", width: 22, lanes: 4, median: true, speed: 35, pts: line([-930, 0, W], [-500, 0, W]) },
+    { id: "singleton_w", name: "Singleton Blvd", type: "boulevard", surface: "concrete", width: 22, lanes: 4, median: true, speed: 35, pts: line([-1200, 0, W], [-500, 0, W]) },
     { id: "mhhb", name: "Margaret Hunt Hill Bridge", type: "deck", surface: "concrete", width: MHHB.deckWidth, lanes: 6, median: true, speed: 45, pts: deckPoints(-500, 560, 0, 10) },
     { id: "woodall", name: "Woodall Rodgers Fwy", type: "boulevard", surface: "concrete", width: 26, lanes: 6, median: true, speed: 45, pts: eastLine(560, 0, 1700, 0) },
     { id: "beckley", name: "Beckley Ave", type: "street", surface: "concrete", width: 16, lanes: 4, speed: 30, pts: beckleyPoints() },
@@ -33629,9 +33639,9 @@ void main() {
     { id: "bataan", name: "Bataan St", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: line([-760, -330, W], [-760, 330, W]) },
     { id: "sylvan", name: "Sylvan Ave", type: "boulevard", surface: "concrete", width: 18, lanes: 4, speed: 35, pts: join(line([-860, 330, W], [-860, -250, W]), arc(-780, -250, 80, 180, 270, W, W, 20)) },
     { id: "sylvan_viaduct", name: "Sylvan Ave Viaduct", type: "deck", surface: "concrete", width: 18, lanes: 4, speed: 45, pts: join(line([-780, -330, W], [-520, -330, W]), ramp(-520, -330, -330, -330, W, ELEV.sylvanDeck, 14), line([-330, -330, ELEV.sylvanDeck], [250, -330, ELEV.sylvanDeck]), ramp(250, -330, 392, -330, ELEV.sylvanDeck, E, 14)) },
-    { id: "continental_w", name: "Continental Ave", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: line([-930, -120, W], [-345, -120, W]) },
-    { id: "toronto", name: "Toronto St", type: "street", surface: "asphalt", width: 11, lanes: 2, speed: 25, pts: line([-930, -260, W], [-345, -260, W]) },
-    { id: "muncie", name: "Muncie Ave", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: line([-930, 160, W], [-345, 160, W]) },
+    { id: "continental_w", name: "Continental Ave", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: line([-1200, -120, W], [-345, -120, W]) },
+    { id: "toronto", name: "Toronto St", type: "street", surface: "asphalt", width: 11, lanes: 2, speed: 25, pts: line([-1200, -260, W], [-345, -260, W]) },
+    { id: "muncie", name: "Muncie Ave", type: "street", surface: "asphalt", width: 12, lanes: 2, speed: 30, pts: line([-1200, 160, W], [-345, 160, W]) },
     { id: "base_access", name: "Production base", type: "access", surface: "asphalt", width: 9, lanes: 1, speed: 15, pts: line([-575, -254, W], [-575, -190, W]) },
     // Authored ground-level market access around the church; the bridge parapet stays intact.
     { id: "singleton_market_access", name: "Singleton Market access", type: "access", surface: "asphalt", width: 7, lanes: 1, speed: 10, pts: join(line([-520, 60, W], [-446, 60, W]), arc(-446, 48, 12, 90, 0, W, W, 12), line([-434, 48, W], [-434, 31, W])) },
@@ -33825,7 +33835,7 @@ void main() {
     kirkEast: { name: "Continental landing \xB7 Design District", x: 350, z: -120, y: E },
     stagingLot: { name: "Staging \xB7 Riverfront", x: 355, z: 300, y: E, heading: 0 },
     lot42: { name: "Lot 42", x: -820, z: 250, y: W },
-    testFacility: { name: "Lot 32 Test Facility", x: -680, z: 75, y: W, heading: 0 },
+    testFacility: { name: "Lot 32 Test Facility", x: -766.5, z: -318.5, y: W, heading: 0 },
     greenville: { name: "Greenville Ave \xB7 Belmont / Lowest", x: 1080, z: -50, y: eastY(1080) }
   };
   var SCOUT_SPOTS = [
@@ -33901,9 +33911,9 @@ void main() {
     { id: "hunt", name: "Hunt Consolidated", x: 1050, z: 30, w: 70, d: 40, h: 60, style: "glass", light: "#ffe9c4" }
   ];
   var TREE_LINES = [
-    { kind: "liveoak", from: [-930, -13], to: [-520, -13], spacing: 26 },
+    { kind: "liveoak", from: [-1200, -13], to: [-520, -13], spacing: 26 },
     // Singleton verges
-    { kind: "liveoak", from: [-930, 13], to: [-520, 13], spacing: 26 },
+    { kind: "liveoak", from: [-1200, 13], to: [-520, 13], spacing: 26 },
     { kind: "liveoak", from: [-380, -150], to: [-380, -95], spacing: 12 },
     // Lozada Gateway
     { kind: "cottonwood", from: [-20, -500], to: [60, 500], spacing: 30, jitter: 25 },
@@ -44685,6 +44695,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     quad(B, key2, [x0, y, z1], [x1, y, z1], [x1, y, z0], [x0, y, z0], tile, color);
   }
   function warehouse(B, A, lamps, sp) {
+    if (trackCampusOverlapsRect(sp.x0, sp.z0, sp.x1, sp.z1, 4)) return;
     const b = { x0: sp.x0, z0: sp.z0, x1: sp.x1, z1: sp.z1 };
     const ft = footing(b.x0, b.z0, b.x1, b.z1);
     const y0 = ft.hi + 0.02, base = ft.lo - 0.6;
@@ -45323,6 +45334,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     }
   }
   function yardLot(B, x0, z0, x1, z1, { kind = "asphalt", fenced = false, gate = null, front = "S", barbed = true, h = 2.4 } = {}) {
+    if (trackCampusOverlapsRect(x0, z0, x1, z1, 4)) return;
     if (kind === "parking") patch(B, "parking", x0, z0, x1, z1, 5, 0.035, 1, null, [0, 0, (x1 - x0) / 2.7, (z1 - z0) / 12]);
     else patch(B, kind === "gravel" ? "gravel" : "asphalt", x0, z0, x1, z1, 5, 0.035, kind === "gravel" ? 5 : 7, kind === "gravel" ? 13813942 : 15263456);
     if (fenced) {
@@ -45451,6 +45463,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     B.add(key2, g);
   }
   function bungalow(B, world2, night, { x, z, facing = "S", w = 8.6, d = 11, color = null, roof = null, porch = true, fenceFront = true, lot = 16 }) {
+    if (trackCampusOverlapsRect(x - lot / 2, z - lot / 2, x + lot / 2, z + lot / 2, 2)) return;
     const along = facing === "S" || facing === "N";
     const b = along ? { x0: x - w / 2, z0: z - d / 2, x1: x + w / 2, z1: z + d / 2 } : { x0: x - d / 2, z0: z - w / 2, x1: x + d / 2, z1: z + w / 2 };
     const ft = footing(b.x0, b.z0, b.x1, b.z1), gy = ft.hi, fl = gy + 0.65, hc = color ?? pick2(HOUSE_COLORS), rc = roof ?? pick2(ROOF_COLORS), wallH = 3, trim = 16052454;
@@ -45719,6 +45732,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     night.lights.push([(b.x0 + b.x1) / 2, y0 + h - 0.3, z0 + dep / 2, 15267071, 40]);
   }
   function selfStorage(B, A, lamps, world2, night, x0, z0, x1, z1) {
+    if (trackCampusOverlapsRect(x0, z0, x1, z1, 4)) return;
     const ft = footing(x0, z0, x1, z1), y0 = ft.hi + 0.02;
     patch(B, "asphalt", x0, z0, x1, z1, 5, 0.045, 7, 16777215);
     const rows = 3, rowD = 10, gap = (z1 - z0 - 6 - rows * rowD) / (rows - 1);
@@ -45931,12 +45945,12 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     const coneMat = new MeshStandardMaterial({ color: 16738842, roughness: 0.6 });
     instanced2(group, coneGeo(), coneMat, cones2, { name: "cones" });
     if (trailers.length) {
-      const items = trailers.map(([x, z, ry]) => {
+      const items = trailers.filter(([x, z]) => !trackCampusOverlapsRect(x - 2, z - 8, x + 2, z + 8, 0)).map(([x, z, ry]) => {
         const ty = terrainHeight(x, z);
         addBox(x, z, 1.35, 7.4, ry, ty - 1, ty + 5, "trailer");
         return [x, ty, z, ry];
       });
-      instanced2(group, trailerGeo(), B.mats.get("trailerMat").mat, items, { name: "trailers", color: [15921904, 14080470, 12897492, 15130572, 15921904] });
+      if (items.length) instanced2(group, trailerGeo(), B.mats.get("trailerMat").mat, items, { name: "trailers", color: [15921904, 14080470, 12897492, 15130572, 15921904] });
     }
     if (night.wires.length) {
       const wg = new BufferGeometry();
@@ -46663,6 +46677,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     }
     const heightOf = (kind, s) => Math.max(...variants[kind].map((v) => v.height)) * s;
     function tryTree(kind, x, z, o = {}) {
+      if (inTrackCampusClear(x, z, 2)) return null;
       const S2 = SPECIES[kind];
       if (!o.keep && keepFrac < 1 && Rt() > keepFrac) return null;
       if (x < BOUNDS.minX + 4 || x > BOUNDS.maxX - 4 || z < BOUNDS.minZ + 4 || z > BOUNDS.maxZ - 4) return null;
@@ -46679,6 +46694,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       return t;
     }
     function tryShrub(x, z, o = {}) {
+      if (inTrackCampusClear(x, z, 2)) return null;
       if (x < BOUNDS.minX + 3 || x > BOUNDS.maxX - 3 || z < BOUNDS.minZ + 3 || z > BOUNDS.maxZ - 3) return null;
       const y = terrainHeight(x, z);
       if (y < ELEV.water + 0.5 || slopeAt(x, z) > 0.4 || !roadClear2(x, z, y, 2, o.margin ?? 3) || excluded(x, z, 1) || tooClose(x, z, 1.8)) return null;
@@ -46993,6 +47009,15 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   }
 
   // src/world/props.js
+  var campusSkip = (x, z) => inTrackCampusClear(x, z, 2);
+  function addBox2(cx, cz, hx, hz, rot = 0, y0 = -100, y1 = 100, tag = "box", data = null) {
+    if (campusSkip(cx, cz) && typeof tag === "string" && (tag.startsWith("prop:") || tag === "fence")) return null;
+    return addBox(cx, cz, hx, hz, rot, y0, y1, tag, data);
+  }
+  function addCylinder2(x, z, r, y0, y1, tag, data = null) {
+    if (campusSkip(x, z) && typeof tag === "string" && tag.startsWith("prop:")) return null;
+    return addCylinder(x, z, r, y0, y1, tag, data);
+  }
   var V2 = (x, y, z) => new Vector3(x, y, z);
   var _m4 = new Matrix4();
   var _q3 = new Quaternion();
@@ -48157,7 +48182,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         const py2 = projectOnRoad(R2, px2, pz2).y + 0.16;
         const L = hR + 1.4, yaw = rotForX(-rx, -rz), tilt = 0.055;
         I2.sigPole.add(px2, py2, pz2, yaw);
-        addCylinder(px2, pz2, 0.26, py2, py2 + 9.6, "prop:signal");
+        addCylinder2(px2, pz2, 0.26, py2, py2 + 9.6, "prop:signal");
         occupy(px2, pz2);
         addLamp(px2 - rx * SIG_LAMP[0], py2 + SIG_LAMP[1], pz2 - rz * SIG_LAMP[0], yaw);
         const dt = j.x > 700, cb = dt ? 1.15 : 1.5;
@@ -48165,7 +48190,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
           cabinet = true;
           const cx = px2 + dx * 1.1 + rx * cb, cz = pz2 + dz * 1.1 + rz * cb;
           I2.cabinet.add(cx, py2, cz, headingFor(-rx, -rz));
-          addBox(cx, cz, 0.45, 0.28, headingFor(-rx, -rz), py2, py2 + 1.7, "prop:cabinet");
+          addBox2(cx, cz, 0.45, 0.28, headingFor(-rx, -rz), py2, py2 + 1.7, "prop:cabinet");
           occupy(cx, cz);
         }
         if (dt) {
@@ -48241,7 +48266,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
           const rot = rotForX(p.tx, p.tz);
           I2.acorn.add(sp.x, sp.y, sp.z, rot);
           occupy(sp.x, sp.z);
-          addCylinder(sp.x, sp.z, 0.2, sp.y, sp.y + 4.6, "prop:pole");
+          addCylinder2(sp.x, sp.z, 0.2, sp.y, sp.y + 4.6, "prop:pole");
           for (const [lx, ly] of GLOBE_AT) {
             const [gx, gz] = local(sp.x, sp.z, rot, lx, 0);
             I2.globe.add(gx, sp.y + ly, gz, 0);
@@ -48262,7 +48287,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
           const y = p.y + 0.16;
           I2.light2.add(x, y, z, rot);
           occupy(x, z);
-          addCylinder(x, z, 0.24, p.y, y + 9, "prop:pole");
+          addCylinder2(x, z, 0.24, p.y, y + 9, "prop:pole");
           for (const d of [1, -1]) addLamp(x + rx * LAMP_X * d, y + LAMP_Y, z + rz * LAMP_X * d, rot);
         } else {
           const sp = sidePoint(p, hw + 1, k % 2 ? 1 : -1);
@@ -48270,7 +48295,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
           const rot = rotForX(-sp.rx, -sp.rz);
           (rd.road.type === "street" ? I2.light1s : I2.light1).add(sp.x, sp.y, sp.z, rot);
           occupy(sp.x, sp.z);
-          addCylinder(sp.x, sp.z, 0.2, sp.y, sp.y + 9, "prop:pole");
+          addCylinder2(sp.x, sp.z, 0.2, sp.y, sp.y + 9, "prop:pole");
           addLamp(sp.x - sp.rx * LAMP_X, sp.y + LAMP_Y, sp.z - sp.rz * LAMP_X, rot);
           if (DT3.includes(rd)) banners(sp.x, sp.y, sp.z, p.tx, p.tz, 5.2, 1.8, 0.6);
         }
@@ -48303,7 +48328,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         const rot = rotForX(p.tx, p.tz), y = sp.y - 0.1;
         I2.ppole.add(sp.x, y, sp.z, rot);
         occupy(sp.x, sp.z);
-        addCylinder(sp.x, sp.z, 0.16, y, y + 10.8, "prop:pole");
+        addCylinder2(sp.x, sp.z, 0.16, y, y + 10.8, "prop:pole");
         const att = POWER_WIRES.map(([lx, ly, lz]) => {
           const [wx, wz] = local(sp.x, sp.z, rot, lx, lz);
           return { x: wx, y: y + ly, z: wz };
@@ -48344,7 +48369,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       I2.shelter.add(sp.x, sp.y, sp.z, rot);
       I2.glass.add(sp.x, sp.y, sp.z, rot);
       occupy(sp.x, sp.z);
-      addBox(sp.x, sp.z, 2.35, 0.95, rot, sp.y, sp.y + 2.7, "prop:shelter");
+      addBox2(sp.x, sp.z, 2.35, 0.95, rot, sp.y, sp.y + 2.7, "prop:shelter");
       const [bx2, bz2] = local(sp.x, sp.z, rot, -0.5, 0.42);
       I2.bench.add(bx2, sp.y, bz2, rot);
       const ad = v ? "ad:ktrnv" : "ad:shelter";
@@ -48415,7 +48440,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         if (nearJunction(sp.x, sp.z, 15) || blocked(sp.x, sp.z, sp.y, mainRd, 2.5) || excluded2(sp.x, sp.z) || !free(sp.x, sp.z, 2.2)) continue;
         const rot = rotForX(p.tx, p.tz) + Math.round(hash2(s | 0, side2 + 3) * 4) * Math.PI / 2;
         I2.planter.add(sp.x, sp.y - 0.01, sp.z, rot);
-        addBox(sp.x, sp.z, 0.49, 0.49, rot, sp.y, sp.y + 0.6, "prop:planter");
+        addBox2(sp.x, sp.z, 0.49, 0.49, rot, sp.y, sp.y + 0.6, "prop:planter");
         occupy(sp.x, sp.z);
       }
       for (const side2 of [1, -1]) for (let s = side2 > 0 ? 41 : 68; s < mainRd.length - 30; s += 57) for (const o of [0, 1.2]) {
@@ -48432,7 +48457,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
           if (blocked(x, z, j.y, mainRd, 1.5) || !free(x, z, 0.7)) continue;
           const y = projectOnRoad(mainRd, x, z).y + 0.16;
           I2.dtBollard.add(x, y, z, 0);
-          addCylinder(x, z, 0.1, y, y + 1.05, "prop:bollard");
+          addCylinder2(x, z, 0.1, y, y + 1.05, "prop:bollard");
         }
       }
     }
@@ -48442,7 +48467,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         const p = pointAt(rd, s), sp = sidePoint(p, hw + 0.62, side2);
         if (nearJunction(sp.x, sp.z, 15.5) || blocked(sp.x, sp.z, sp.y, rd, 3) || excluded2(sp.x, sp.z) || !free(sp.x, sp.z, 1.4)) continue;
         I2.meter.add(sp.x, sp.y, sp.z, headingFor(-sp.rx, -sp.rz));
-        addCylinder(sp.x, sp.z, 0.08, sp.y, sp.y + 1.6, "prop:meter");
+        addCylinder2(sp.x, sp.z, 0.08, sp.y, sp.y + 1.6, "prop:meter");
       }
     }
     const bigSign = (cell, w, h, x, z, heading, bottomY, groundY, back = "alu", pw = 0.16) => {
@@ -48452,7 +48477,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         post(px2, Math.min(groundY, terrainHeight(px2, pz2)) - 0.3, pz2, bottomY + h * 0.92 - Math.min(groundY, terrainHeight(px2, pz2)) + 0.3, pw);
       }
       signs.panel(cell, w, h, x, bottomY + h / 2, z, heading, back, pw + 0.03);
-      addBox(x, z, w / 2, 0.2, -heading, bottomY, bottomY + h, "prop:sign");
+      addBox2(x, z, w / 2, 0.2, -heading, bottomY, bottomY + h, "prop:sign");
     };
     bigSign("guideE", 5.6, 2.1, -470, 16.4, Math.PI / 2, deckY(-470) + 2.6, terrainHeight(-470, 16.4), "alu", 0.2);
     bigSign("guideW", 5.6, 2.1, 535, -16.4, -Math.PI / 2, deckY(535) + 2.6, terrainHeight(535, -16.4), "alu", 0.2);
@@ -48474,7 +48499,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       for (let i = 0; i < n2; i++) {
         const sx = x0 + dx * 3.06 * i, sz = z0 + dz * 3.06 * i, cx = sx + dx * 1.5, cz = sz + dz * 1.5, y = terrainHeight(cx, cz) - 0.05;
         I2.barrier.add(sx, y, sz, rot);
-        addBox(cx, cz, 1.5, 0.31, rot, y, y + 0.85, "prop:barrier");
+        addBox2(cx, cz, 1.5, 0.31, rot, y, y + 0.85, "prop:barrier");
       }
     };
     barrierRow(-258, 115, 1, 0, 3);
@@ -48492,8 +48517,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     const billboardAt = (x, z, yaw, frontAd, backAd) => {
       const y = terrainHeight(x, z);
       I2.billboard.add(x, y - 0.05, z, yaw);
-      addCylinder(x, z, 0.5, y, y + 10, "prop:billboard");
-      addBox(x, z, 7.4, 0.35, yaw, y + 9.4, y + 14.6, "prop:billboard");
+      addCylinder2(x, z, 0.5, y, y + 10, "prop:billboard");
+      addBox2(x, z, 7.4, 0.35, yaw, y + 9.4, y + 14.6, "prop:billboard");
       signs.panel(frontAd, 14.4, 4.8, x, y + 12, z, yaw, backAd, 0.27);
     };
     billboardAt(426, 74, Math.PI - 0.28, "ad:tacos", "ad:brazos");
@@ -48565,9 +48590,9 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       post(px2 - 1.9, top, pz2 + 6.35, 1.8);
       signs.panel("pump", 1, 0.62, px2 - 1.9 + 0.55, top + 1.45, pz2 + 6.35, Math.PI);
       signs.quad("pump", 0.9, 0.56, px2 - 0.7, top + 2.3, pz2 + 3.27, Math.PI, 0);
-      addBox(px2, pz2, 4, 3.25, 0, top, top + 5.6, "prop:pump");
-      addBox(px2, pz2, 5.5, 6, 0, 3.5, top, "prop:pump");
-      addBox(214.5, pz2, 1.2, 3.5, 0, 2, 5.45, "prop:pump");
+      addBox2(px2, pz2, 4, 3.25, 0, top, top + 5.6, "prop:pump");
+      addBox2(px2, pz2, 5.5, 6, 0, 3.5, top, "prop:pump");
+      addBox2(214.5, pz2, 1.2, 3.5, 0, 2, 5.45, "prop:pump");
       addInteractable({ id: "pump_station", x: px2 - 1.4, z: pz2 + 6.35, r: 3, label: "Read the notice", onInteract(g) {
         g.hud?.say("", "Trinity River Pump Station No. 2. When the river runs high, this is what keeps the Design District dry.", 5);
       } });
