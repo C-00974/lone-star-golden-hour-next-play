@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-d3d5a0eb49d2">
-<meta name="lsgh-tip" content="a4f757f">
+<meta name="lsgh-build" content="0.35.0-next.0-9972c6466259">
+<meta name="lsgh-tip" content="5471e52">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -349,7 +349,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip a4f757f · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 5471e52 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -55073,22 +55073,19 @@ void main() {
       [-716, -50],
       [-732, -66],
       [-720, -80],
-      // Esses exit drifts east so Turn 6 can be a true LEFT onto Rahal (Cycle IB).
-      [-708, -88],
-      [-698, -92],
-      // Turn 6 — distinct fast LEFT (eastbound → west into Rahal), ~R26 arc.
-      // Patient line rewarded; outside (right of travel) is gravel runoff.
-      [-694, -98],
-      [-692, -106],
-      [-694, -114],
-      [-700, -120],
-      [-710, -124],
-      [-722, -126],
-      [-736, -126],
-      [-750, -122],
-      [-764, -116],
+      // Turn 6 — circular fast sweeper onto Rahal (~R32). Seca literacy: overcook → gravel
+      // outside; patient line carries Evora speed into the climb. Cycle IB deepen.
+      // Lot 32 mirror: northbound → west (right-hand); gravel on true outside (east).
+      [-720.6, -86.2],
+      [-722.4, -92.2],
+      [-725.4, -97.8],
+      [-729.4, -102.6],
+      [-734.2, -106.6],
+      [-739.8, -109.6],
+      [-745.8, -111.4],
+      [-752, -112],
       // Rahal Straight climb (west → north / −Z)
-      [-790, -108],
+      [-780, -110],
       [-825, -110],
       [-855, -114],
       // Corkscrew crest + left-right plunge (8 → 8A). Aim the 8A tree into Rainey.
@@ -55295,7 +55292,7 @@ void main() {
     { id: "cones", text: "CONE PAD", x: FACILITY.skid.x, z: FACILITY.skid.z + 20, heading: Math.PI },
     // Laguna landmark reads along the lengthened circuit
     { id: "andretti", text: "ANDRETTI", x: -692, z: 161, heading: Math.PI },
-    { id: "turn6", text: "TURN 6", x: -710, z: -124, heading: Math.PI },
+    { id: "turn6", text: "TURN 6", x: -734, z: -106, heading: Math.PI / 2 },
     { id: "rahal", text: "RAHAL", x: -825, z: -108, heading: Math.PI / 2 },
     { id: "corkscrew", text: "CORKSCREW", x: -862, z: -120, heading: 0 },
     { id: "cork8a", text: "CORK 8A", x: -810, z: -96, heading: Math.PI / 4 },
@@ -55311,9 +55308,9 @@ void main() {
       // Left of the 8A→Rainey carry line (~14 m off ribbon) — tall aim landmark.
       x: -754,
       z: -30,
-      height: 14,
-      crownR: 4.2,
-      trunkR: 0.42,
+      height: 18,
+      crownR: 5,
+      trunkR: 0.48,
       // Aim-from sample on the 8A plunge (tests check bearing toward Rainey).
       aimFrom: { x: -810, z: -96 },
       rainey: { x: -742, z: -32 }
@@ -55325,7 +55322,7 @@ void main() {
       const p = projectCircuit(x, z);
       return p ? p.t : null;
     };
-    const t6a = tOf(-694, -98), t6b = tOf(-764, -116);
+    const t6a = tOf(-722.4, -92.2), t6b = tOf(-752, -112);
     const t10a = tOf(-716, 12), t10b = tOf(-704, 40);
     const t11a = tOf(-714, 46), t11b = tOf(-724, 32);
     const t8a = tOf(-810, -96), tRain = tOf(-742, -32);
@@ -55476,7 +55473,7 @@ void main() {
         const k = clamp3((near5.d - edge) / (runoff - edge), 0, 1);
         const y2 = lerp2(near5.y, padY(x, z), k);
         const wins = FACILITY.turnWindows || circuitTurnWindows();
-        if (near5.d > edge + 0.6 && near5.t >= wins.turn6.t0 && near5.t <= wins.turn6.t1 && outsideRunoff(near5, x, z, "left")) {
+        if (near5.d > edge + 0.6 && near5.t >= wins.turn6.t0 && near5.t <= wins.turn6.t1 && outsideRunoff(near5, x, z, "right")) {
           return { y: y2, surface: "gravel", wet: 0.45, groundBias: 0.1 };
         }
         if (near5.d > edge + 0.8 && near5.t >= wins.cork8a.t0 && near5.t <= wins.cork8a.t1 && outsideRunoff(near5, x, z, "left")) {
@@ -56109,7 +56106,9 @@ void main() {
         const inT6 = wins && p.t >= wins.turn6.t0 && p.t <= wins.turn6.t1;
         const in8a = wins && p.t >= wins.cork8a.t0 && p.t <= wins.cork8a.t1;
         if (!inT6 && !in8a) continue;
-        const rx = tn[1], rz = -tn[0];
+        const rightX = tn[1], rightZ = -tn[0];
+        const s = inT6 ? -1 : 1;
+        const rx = rightX * s, rz = rightZ * s;
         const gx0 = p.x + rx * (edge + 0.8), gz0 = p.z + rz * (edge + 0.8);
         const gx1 = p.x + rx * (edge + 7.5), gz1 = p.z + rz * (edge + 7.5);
         const cx = (gx0 + gx1) / 2, cz = (gz0 + gz1) / 2;
@@ -82125,7 +82124,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-d3d5a0eb49d2", tipSha: false ? "" : "a4f757f", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-9972c6466259", tipSha: false ? "" : "5471e52", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
