@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-68c224300ea4">
-<meta name="lsgh-tip" content="a6df05e">
+<meta name="lsgh-build" content="0.35.0-next.0-9111981a72a1">
+<meta name="lsgh-tip" content="33d6591">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -349,7 +349,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip a6df05e · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 33d6591 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -56549,18 +56549,71 @@ void main() {
   };
   var MODE_HINT = {
     idle: "Free drive Lot 32 asphalt",
-    lap: "Cross teal SF \xB7 S1 SF \xB7 S2 Andretti clip \xB7 T6 commit \xB7 S3 Cork \xB7 8A aim \xB7 Rainey receive \xB7 10/11 curb",
+    lap: "Cross teal SF \xB7 S1 SF \xB7 S2 Andretti clip \xB7 T6 commit \xB7 S3 Cork \xB7 8A aim \xB7 Rainey receive \xB7 10/11 curb \xB7 bests per car",
     drag: "Stage at the teal line \xB7 launch north to the red finish",
     brake: "Hit the gold gate at speed \xB7 brake to a stop",
     cones: "Enter gold ring \xB7 one full lap past Q1\u2013Q4 \xB7 leave C1\u2013C8 standing"
   };
+  var LAP_BESTS_STORAGE_KEY = "lsgh-lot32-lap-bests";
+  var CAR_LABELS = {
+    evora: "EVORA",
+    csports: "CSPORTS",
+    camaro1le: "CAMARO",
+    gts: "GTS",
+    sprinter: "SPRINTER",
+    defender: "DEFENDER",
+    wagon: "WAGON"
+  };
+  function carLapKey(vehicle) {
+    if (!vehicle) return "unknown";
+    const raw = vehicle.key || vehicle.kind || vehicle.model?.kind || "unknown";
+    return String(raw).replace(/^fleet:/, "") || "unknown";
+  }
+  function shortCarLabel(key2) {
+    const k = String(key2 || "unknown");
+    if (CAR_LABELS[k]) return CAR_LABELS[k];
+    const bare = k.replace(/^fleet:/, "");
+    if (CAR_LABELS[bare]) return CAR_LABELS[bare];
+    return bare.slice(0, 10).toUpperCase() || "CAR";
+  }
+  function recordCarLapBest(store4, key2, t) {
+    const map = store4 && typeof store4 === "object" ? { ...store4 } : {};
+    const k = key2 || "unknown";
+    const prev = map[k];
+    const isNewBest = prev == null || t < prev;
+    if (isNewBest) map[k] = t;
+    return { best: map[k], isNewBest, store: map };
+  }
+  function loadLapBests(storage) {
+    try {
+      const raw = storage?.getItem?.(LAP_BESTS_STORAGE_KEY);
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== "object") return {};
+      const out = {};
+      for (const [k, v] of Object.entries(parsed)) {
+        if (typeof v === "number" && Number.isFinite(v) && v > 0) out[k] = v;
+      }
+      return out;
+    } catch {
+      return {};
+    }
+  }
+  function saveLapBests(storage, store4) {
+    try {
+      storage?.setItem?.(LAP_BESTS_STORAGE_KEY, JSON.stringify(store4 || {}));
+    } catch {
+    }
+  }
   function createTestFacility(g2, dressing) {
+    const storage = typeof globalThis !== "undefined" && globalThis.localStorage || null;
     const state = {
       mode: "idle",
       lapArmed: false,
       lapRunning: false,
       lapT: 0,
       lapBest: null,
+      lapBestByCar: loadLapBests(storage),
       crossedSF: false,
       lastT: 0,
       sectorIdx: 0,
@@ -56604,6 +56657,14 @@ void main() {
     });
     function car() {
       return g2.inCar ? g2.vehicle : null;
+    }
+    function activeCarKey() {
+      return carLapKey(car() || g2.vehicle);
+    }
+    function syncCurrentCarBest() {
+      const best = state.lapBestByCar[activeCarKey()];
+      state.lapBest = best == null ? null : best;
+      return state.lapBest;
     }
     function near4(a2, b, r) {
       return Math.hypot(a2.x - b.x, a2.z - b.z) < r;
@@ -56674,13 +56735,20 @@ void main() {
         state.sectorTimes.push(state.sectorT);
         recordSectorBest(state.sectorTimes.length - 1, state.sectorT);
       }
-      state.lapBest = state.lapBest == null ? t : Math.min(state.lapBest, t);
+      const key2 = activeCarKey();
+      const label = shortCarLabel(key2);
+      const rec = recordCarLapBest(state.lapBestByCar, key2, t);
+      state.lapBestByCar = rec.store;
+      state.lapBest = rec.best;
+      if (rec.isNewBest) saveLapBests(storage, state.lapBestByCar);
       const splits = state.sectorTimes.map((s, i) => {
         const lm = sectorLandmark(i);
         return `${lm} ${fmtTime(s)}`;
       }).join(" \xB7 ");
-      g2.hud.gateFlash(state.lapBest === t ? `LAP ${fmtTime(t)} \xB7 BEST` : `LAP ${fmtTime(t)}`, "var(--ok)");
-      g2.hud.challenge(t, 1, 1, splits || (state.lapBest != null ? `BEST ${fmtTime(state.lapBest)}` : "LAP DONE"));
+      const tag = rec.isNewBest ? ` \xB7 ${label} BEST` : ` \xB7 ${label}`;
+      g2.hud.gateFlash(`LAP ${fmtTime(t)}${tag}`, "var(--ok)");
+      const bestLine = state.lapBest != null ? `${label} BEST ${fmtTime(state.lapBest)}` : "LAP DONE";
+      g2.hud.challenge(t, 1, 1, splits ? `${splits} \xB7 ${bestLine}` : bestLine);
       g2.audio.play?.("gateGood");
     }
     function sectorCount() {
@@ -56787,7 +56855,10 @@ void main() {
           g2.hud.banner("Lap live", "S1 SF \xB7 S2 Andretti clip \xB7 T6 commit \xB7 S3 Cork \xB7 8A aim \xB7 Rainey \xB7 10/11 \xB7 asphalt", 2);
           g2.audio.play?.("slate");
         }
-        g2.hud.challenge(state.lapBest ?? 0, 1, 1, state.lapArmed ? "ARMED \xB7 S1 AT TEAL SF" : "LINE UP AT TEAL SF");
+        const carBest = syncCurrentCarBest();
+        const label = shortCarLabel(activeCarKey());
+        const armLine = state.lapArmed ? carBest != null ? `ARMED \xB7 ${label} BEST ${fmtTime(carBest)}` : `ARMED \xB7 ${label} \xB7 S1 AT TEAL SF` : carBest != null ? `LINE UP \xB7 ${label} BEST ${fmtTime(carBest)}` : `LINE UP AT TEAL SF \xB7 ${label}`;
+        g2.hud.challenge(carBest ?? 0, 1, 1, armLine);
         return;
       }
       state.lapT += dt;
@@ -82512,7 +82583,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-68c224300ea4", tipSha: false ? "" : "a6df05e", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-9111981a72a1", tipSha: false ? "" : "33d6591", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
