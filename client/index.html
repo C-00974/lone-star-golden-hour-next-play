@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-0f163472c594">
-<meta name="lsgh-tip" content="4c392c1">
+<meta name="lsgh-build" content="0.35.0-next.0-b3beab2b8b42">
+<meta name="lsgh-tip" content="f975fa2">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -349,7 +349,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 4c392c1 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip f975fa2 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -55159,7 +55159,7 @@ void main() {
   var FACILITY = {
     id: "test-facility",
     name: "Lot 32 Test Facility",
-    version: 9,
+    version: 10,
     // Expanded west/north for a Seca-readable lap; still Lot 32 near stable (not Riverfront).
     bounds: { x0: -905, x1: -618, z0: -132, z1: 165 },
     entry: { x: -638, z: 75, heading: Math.PI / 2 },
@@ -55460,19 +55460,22 @@ void main() {
       };
     };
     const t6Apex = reservedSmoothApex(0.5, 0.57, "TURN 6", 0.045);
+    const raineyApex = reservedSmoothApex(0.84, 0.9, "RAINEY", 0.02);
     apexRaw.sort((a2, b) => b.kappa - a2.kappa);
     const apexes = [];
     if (andrettiApex) apexes.push(andrettiApex);
     if (t6Apex) apexes.push(t6Apex);
+    if (raineyApex) apexes.push(raineyApex);
     if (t10Apex) apexes.push(t10Apex);
     if (t11Apex) apexes.push(t11Apex);
     for (const a2 of apexRaw) {
       if (apexes.some((b) => Math.hypot(a2.x - b.x, a2.z - b.z) < apexMinSep)) continue;
       if (a2.s / length2 >= 0.14 && a2.s / length2 <= 0.28) continue;
       if (a2.s / length2 >= 0.5 && a2.s / length2 <= 0.57) continue;
+      if (a2.s / length2 >= 0.84 && a2.s / length2 <= 0.9) continue;
       if (a2.s / length2 >= 0.88) continue;
       apexes.push(a2);
-      if (apexes.length >= 8) break;
+      if (apexes.length >= 9) break;
     }
     apexes.sort((a2, b) => a2.s - b.s);
     return { chevrons, apexes, length: length2 };
@@ -56187,8 +56190,8 @@ void main() {
         0.035
       );
       chevron(group, a2, a2.heading, gold, 1.05);
-      if (a2.landmark === "TURN 6" || a2.landmark === "TURN 10" || a2.landmark === "TURN 11") {
-        const inside = a2.landmark === "TURN 11" ? -1 : 1;
+      if (a2.landmark === "TURN 6" || a2.landmark === "TURN 10" || a2.landmark === "TURN 11" || a2.landmark === "RAINEY") {
+        const inside = a2.landmark === "TURN 11" || a2.landmark === "RAINEY" ? -1 : 1;
         const fx = -Math.sin(a2.heading), fz = -Math.cos(a2.heading);
         const rx = -fz, rz = fx;
         for (let k = -2; k <= 2; k++) {
@@ -56496,7 +56499,7 @@ void main() {
   };
   var MODE_HINT = {
     idle: "Free drive Lot 32 asphalt",
-    lap: "Cross teal SF \xB7 S1 SF \xB7 S2 Andretti \xB7 T6 commit (tires outside) \xB7 S3 Cork \xB7 10/11 curb",
+    lap: "Cross teal SF \xB7 S1 SF \xB7 S2 Andretti \xB7 T6 commit \xB7 S3 Cork \xB7 Rainey receive \xB7 10/11 curb",
     drag: "Stage at the teal line \xB7 launch north to the red finish",
     brake: "Hit the gold gate at speed \xB7 brake to a stop",
     cones: "Enter gold ring \xB7 one full lap past Q1\u2013Q4 \xB7 leave C1\u2013C8 standing"
@@ -56731,7 +56734,7 @@ void main() {
           state.sectorIdx = 0;
           state.sectorT = 0;
           state.sectorTimes = [];
-          g2.hud.banner("Lap live", "S1 SF \xB7 S2 Andretti \xB7 T6 commit \xB7 S3 Cork \xB7 10/11 \xB7 asphalt", 2);
+          g2.hud.banner("Lap live", "S1 SF \xB7 S2 Andretti \xB7 T6 commit \xB7 S3 Cork \xB7 Rainey \xB7 10/11 \xB7 asphalt", 2);
           g2.audio.play?.("slate");
         }
         g2.hud.challenge(state.lapBest ?? 0, 1, 1, state.lapArmed ? "ARMED \xB7 S1 AT TEAL SF" : "LINE UP AT TEAL SF");
@@ -82459,7 +82462,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-0f163472c594", tipSha: false ? "" : "4c392c1", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-b3beab2b8b42", tipSha: false ? "" : "f975fa2", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
