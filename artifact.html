@@ -338,7 +338,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip e569897 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip a4f757f · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -54986,7 +54986,7 @@ void main() {
   var FACILITY = {
     id: "test-facility",
     name: "Lot 32 Test Facility",
-    version: 6,
+    version: 7,
     // Expanded west/north for a Seca-readable lap; still Lot 32 near stable (not Riverfront).
     bounds: { x0: -905, x1: -618, z0: -132, z1: 165 },
     entry: { x: -638, z: 75, heading: Math.PI / 2 },
@@ -55014,9 +55014,11 @@ void main() {
       markers: [10, 20, 30, 40, 50, 60, 80, 100]
     }
   };
-  function corkscrewLift(t) {
-    const up = smoothstep2(0.55, 0.76, t);
-    const drop = smoothstep2(0.76, 0.97, t);
+  function corkscrewLift(t, crest = 0.76) {
+    const climbStart = crest - 0.18;
+    const settle = Math.min(0.995, crest + 0.28);
+    const up = smoothstep2(climbStart, crest, t);
+    const drop = smoothstep2(crest, settle, t);
     return 13.2 * up * (1 - drop);
   }
   function rawCircuitPts() {
@@ -55028,7 +55030,7 @@ void main() {
       [-724, 90],
       [-722, 120],
       [-716, 134],
-      // Andretti Hairpin — circular left ~R22 / ~190° (was polyline R≈8 local)
+      // Andretti Hairpin — circular left ~R22 / ~190° (held from Cycle IA)
       [-714, 140],
       [-713, 145.5],
       [-710.6, 150.6],
@@ -55060,22 +55062,44 @@ void main() {
       [-716, -50],
       [-732, -66],
       [-720, -80],
+      // Esses exit drifts east so Turn 6 can be a true LEFT onto Rahal (Cycle IB).
+      [-708, -88],
+      [-698, -92],
+      // Turn 6 — distinct fast LEFT (eastbound → west into Rahal), ~R26 arc.
+      // Patient line rewarded; outside (right of travel) is gravel runoff.
+      [-694, -98],
+      [-692, -106],
+      [-694, -114],
+      [-700, -120],
+      [-710, -124],
+      [-722, -126],
+      [-736, -126],
+      [-750, -122],
+      [-764, -116],
       // Rahal Straight climb (west → north / −Z)
-      [-755, -92],
-      [-790, -102],
+      [-790, -108],
       [-825, -110],
       [-855, -114],
-      // Corkscrew crest + left-right plunge
+      // Corkscrew crest + left-right plunge (8 → 8A). Aim the 8A tree into Rainey.
       [-880, -118],
       [-862, -120],
       [-838, -112],
       [-810, -96],
       [-782, -76],
       [-760, -55],
-      // Rainey downhill left → T10/T11 return to SF
+      // Rainey downhill left → real T10 / T11 return complex onto the front straight
       [-742, -32],
-      [-728, -10],
-      [-725, 8],
+      [-732, -14],
+      [-726, 0],
+      // Turn 10 — RIGHT that sets up Turn 11 (Cycle IB; was a short polyline stitch)
+      [-716, 12],
+      [-706, 20],
+      [-700, 30],
+      [-704, 40],
+      // Turn 11 — LEFT onto front straight heading +Z into SF
+      [-714, 46],
+      [-722, 40],
+      [-724, 32],
       [-720, 25]
     ];
   }
@@ -55102,9 +55126,18 @@ void main() {
       cumArr.push(cum);
     }
     const length2 = cum || 1;
+    let crestI = 0, crestD = Infinity;
+    for (let i = 0; i < dense.length; i++) {
+      const d = Math.hypot(dense[i][0] - -862, dense[i][1] - -120);
+      if (d < crestD) {
+        crestD = d;
+        crestI = i;
+      }
+    }
+    const crestT = cumArr[crestI] / length2;
     const pts = dense.map(([x, z], i) => {
       const t = cumArr[i] / length2;
-      const lift = corkscrewLift(t);
+      const lift = corkscrewLift(t, crestT);
       return { x, z, y: padY(x, z) + lift, t, s: cumArr[i], lift };
     });
     const tan = pts.map((_, i) => {
@@ -55112,7 +55145,7 @@ void main() {
       const dx = b.x - a2.x, dz2 = b.z - a2.z, len = Math.hypot(dx, dz2) || 1;
       return [dx / len, dz2 / len];
     });
-    return { pts, tan, cum: cumArr, length: length2, width: 13 };
+    return { pts, tan, cum: cumArr, length: length2, width: 13, crestT };
   }
   var CIRCUIT = buildCircuit();
   FACILITY.circuit = CIRCUIT;
@@ -55211,8 +55244,8 @@ void main() {
   }
   FACILITY.guides = circuitGuideMarks();
   function circuitSectorMarks(targets = null) {
-    const { pts, tan, length: length2 } = CIRCUIT;
-    const tTargets = targets || [0, 0.272, 0.76];
+    const { pts, tan, length: length2, crestT } = CIRCUIT;
+    const tTargets = targets || [0, 0.272, crestT ?? 0.76];
     const landmarks = ["SF", "ANDRETTI", "CORKSCREW"];
     const sectors = [];
     for (let i = 0; i < tTargets.length; i++) {
@@ -55251,10 +55284,49 @@ void main() {
     { id: "cones", text: "CONE PAD", x: FACILITY.skid.x, z: FACILITY.skid.z + 20, heading: Math.PI },
     // Laguna landmark reads along the lengthened circuit
     { id: "andretti", text: "ANDRETTI", x: -692, z: 161, heading: Math.PI },
+    { id: "turn6", text: "TURN 6", x: -710, z: -124, heading: Math.PI },
     { id: "rahal", text: "RAHAL", x: -825, z: -108, heading: Math.PI / 2 },
     { id: "corkscrew", text: "CORKSCREW", x: -862, z: -120, heading: 0 },
-    { id: "rainey", text: "RAINEY", x: -742, z: -32, heading: -Math.PI / 2 }
+    { id: "cork8a", text: "CORK 8A", x: -810, z: -96, heading: Math.PI / 4 },
+    { id: "rainey", text: "RAINEY", x: -742, z: -32, heading: -Math.PI / 2 },
+    { id: "turn10", text: "TURN 10", x: -706, z: 20, heading: -Math.PI / 2 },
+    { id: "turn11", text: "TURN 11", x: -714, z: 46, heading: Math.PI }
   ];
+  FACILITY.landmarks = [
+    {
+      id: "cork-8a-tree",
+      kind: "tree",
+      label: "8A TREE",
+      // Left of the 8A→Rainey carry line (~14 m off ribbon) — tall aim landmark.
+      x: -754,
+      z: -30,
+      height: 14,
+      crownR: 4.2,
+      trunkR: 0.42,
+      // Aim-from sample on the 8A plunge (tests check bearing toward Rainey).
+      aimFrom: { x: -810, z: -96 },
+      rainey: { x: -742, z: -32 }
+    }
+  ];
+  function circuitTurnWindows() {
+    const { length: length2 } = CIRCUIT;
+    const tOf = (x, z) => {
+      const p = projectCircuit(x, z);
+      return p ? p.t : null;
+    };
+    const t6a = tOf(-694, -98), t6b = tOf(-764, -116);
+    const t10a = tOf(-716, 12), t10b = tOf(-704, 40);
+    const t11a = tOf(-714, 46), t11b = tOf(-724, 32);
+    const t8a = tOf(-810, -96), tRain = tOf(-742, -32);
+    return {
+      turn6: { t0: Math.min(t6a, t6b) - 5e-3, t1: Math.max(t6a, t6b) + 0.01 },
+      cork8a: { t0: (t8a ?? 0.75) - 0.02, t1: (tRain ?? 0.88) + 0.01 },
+      turn10: { t0: Math.min(t10a, t10b) - 5e-3, t1: Math.max(t10a, t10b) + 0.01 },
+      turn11: { t0: Math.min(t11a, t11b) - 5e-3, t1: Math.max(t11a, t11b) + 0.01 },
+      length: length2
+    };
+  }
+  FACILITY.turnWindows = null;
   FACILITY.approach = {
     gate: { x: -630, z: 75 },
     stand: { x: FACILITY.stand.x, z: FACILITY.stand.z },
@@ -55369,6 +55441,11 @@ void main() {
     const s = FACILITY.skid;
     return Math.hypot(x - s.x, z - s.z) <= s.outer;
   }
+  function outsideRunoff(near4, x, z, hand = "left") {
+    const rx = near4.tz, rz = -near4.tx;
+    const side2 = (x - near4.x) * rx + (z - near4.z) * rz;
+    return hand === "left" ? side2 > 0.4 : side2 < -0.4;
+  }
   function facilityAt(x, z) {
     const apron = FACILITY.apron, drag = FACILITY.drag, brake = FACILITY.brake;
     if (inRect(apron, x, z) || inSkid(x, z)) {
@@ -55386,7 +55463,15 @@ void main() {
       if (near5 && near5.d < runoff) {
         const edge = CIRCUIT.width / 2;
         const k = clamp3((near5.d - edge) / (runoff - edge), 0, 1);
-        return { y: lerp2(near5.y, padY(x, z), k), surface: "asphalt", wet: 0.32, groundBias: 0.12 };
+        const y2 = lerp2(near5.y, padY(x, z), k);
+        const wins = FACILITY.turnWindows || circuitTurnWindows();
+        if (near5.d > edge + 0.6 && near5.t >= wins.turn6.t0 && near5.t <= wins.turn6.t1 && outsideRunoff(near5, x, z, "left")) {
+          return { y: y2, surface: "gravel", wet: 0.45, groundBias: 0.1 };
+        }
+        if (near5.d > edge + 0.8 && near5.t >= wins.cork8a.t0 && near5.t <= wins.cork8a.t1 && outsideRunoff(near5, x, z, "left")) {
+          return { y: y2, surface: "gravel", wet: 0.45, groundBias: 0.1 };
+        }
+        return { y: y2, surface: "asphalt", wet: 0.32, groundBias: 0.12 };
       }
       return { y: padY(x, z), surface: "asphalt", wet: 0.35, groundBias: 0.1 };
     }
@@ -55400,6 +55485,7 @@ void main() {
     }
     return null;
   }
+  FACILITY.turnWindows = circuitTurnWindows();
 
   // src/world/testFacility.js
   function makeAsphaltMat() {
@@ -55417,6 +55503,43 @@ void main() {
       m.normalScale = new Vector2(0.75, 0.75);
     }
     return m;
+  }
+  function makeGravelMat() {
+    const q = qualityPreset();
+    const t = gravelTex(512, { aniso: q.aniso });
+    const m = new MeshStandardMaterial({
+      map: t.map,
+      roughnessMap: t.roughnessMap,
+      roughness: 1,
+      metalness: 0,
+      color: 12892324
+    });
+    if (t.normalMap) {
+      m.normalMap = t.normalMap;
+      m.normalScale = new Vector2(1.1, 1.1);
+    }
+    return m;
+  }
+  function placeAimTree(group, landmark) {
+    const y2 = padY(landmark.x, landmark.z);
+    const trunkH = landmark.height * 0.55;
+    const crownR = landmark.crownR || 4;
+    const trunkR = landmark.trunkR || 0.4;
+    const wood = new MeshStandardMaterial({ color: 4863012, roughness: 0.92 });
+    const leaf = new MeshStandardMaterial({ color: 4156218, roughness: 0.85 });
+    const tree = new Group();
+    tree.name = `lot32-landmark-${landmark.id}`;
+    const trunk = new Mesh(new CylinderGeometry(trunkR * 0.7, trunkR, trunkH, 8), wood);
+    trunk.position.set(landmark.x, y2 + trunkH / 2, landmark.z);
+    trunk.castShadow = true;
+    tree.add(trunk);
+    const canopy = new Mesh(new SphereGeometry(crownR, 10, 8), leaf);
+    canopy.position.set(landmark.x, y2 + trunkH + crownR * 0.55, landmark.z);
+    canopy.castShadow = true;
+    canopy.receiveShadow = true;
+    tree.add(canopy);
+    group.add(tree);
+    return tree;
   }
   function patchRect(group, mat, x0, z0, x1, z1, res = 4, yFn = null) {
     const nx = Math.max(1, Math.ceil((x1 - x0) / res));
@@ -55966,6 +56089,34 @@ void main() {
     pole.position.set(sx, padY(sx, sz) + 0.6, sz);
     group.add(pole);
     for (const label of FACILITY.zoneLabels) placeGroundLabel(group, label);
+    {
+      const gravel = makeGravelMat();
+      const wins = FACILITY.turnWindows;
+      const edge = CIRCUIT.width / 2;
+      for (let i = 0; i < CIRCUIT.pts.length; i += 2) {
+        const p = CIRCUIT.pts[i], tn = CIRCUIT.tan[i];
+        const inT6 = wins && p.t >= wins.turn6.t0 && p.t <= wins.turn6.t1;
+        const in8a = wins && p.t >= wins.cork8a.t0 && p.t <= wins.cork8a.t1;
+        if (!inT6 && !in8a) continue;
+        const rx = tn[1], rz = -tn[0];
+        const gx0 = p.x + rx * (edge + 0.8), gz0 = p.z + rz * (edge + 0.8);
+        const gx1 = p.x + rx * (edge + 7.5), gz1 = p.z + rz * (edge + 7.5);
+        const cx = (gx0 + gx1) / 2, cz = (gz0 + gz1) / 2;
+        const patch2 = new Mesh(
+          new PlaneGeometry(4.2, 7.2),
+          gravel
+        );
+        patch2.rotation.x = -Math.PI / 2;
+        patch2.rotation.z = -Math.atan2(tn[0], tn[1]);
+        patch2.position.set(cx, padY(cx, cz) + 0.02, cz);
+        patch2.receiveShadow = true;
+        patch2.name = inT6 ? "lot32-gravel-t6" : "lot32-gravel-8a";
+        group.add(patch2);
+      }
+    }
+    for (const lm of FACILITY.landmarks || []) {
+      if (lm.kind === "tree") placeAimTree(group, lm);
+    }
     {
       const ap = FACILITY.approach;
       stripe(
@@ -81963,7 +82114,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-b719117b495e", tipSha: false ? "" : "e569897", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-d3d5a0eb49d2", tipSha: false ? "" : "a4f757f", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
