@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-4de20e467a6b">
-<meta name="lsgh-tip" content="2ee1be3">
+<meta name="lsgh-build" content="0.35.0-next.0-d58251dd8945">
+<meta name="lsgh-tip" content="1546705">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -349,7 +349,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 2ee1be3 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 1546705 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -33812,7 +33812,7 @@ void main() {
     kirkEast: { name: "Continental landing \xB7 Design District", x: 350, z: -120, y: E },
     stagingLot: { name: "Staging \xB7 Riverfront", x: 355, z: 300, y: E, heading: 0 },
     lot42: { name: "Lot 42", x: -820, z: 250, y: W },
-    testFacility: { name: "Lot 32 Test Facility", x: -700, z: 75, y: W, heading: 0 },
+    testFacility: { name: "Lot 32 Test Facility", x: -680, z: 75, y: W, heading: 0 },
     greenville: { name: "Greenville Ave \xB7 Belmont / Lowest", x: 1080, z: -50, y: eastY(1080) }
   };
   var SCOUT_SPOTS = [
@@ -46525,7 +46525,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     [PLACES.artPark.x, PLACES.artPark.z, 18],
     [PLACES.stagingLot.x, PLACES.stagingLot.z, 48],
     [PLACES.lot42.x, PLACES.lot42.z, 32],
-    [PLACES.testFacility.x, PLACES.testFacility.z, 95],
+    [PLACES.testFacility.x, PLACES.testFacility.z, 165],
     [PLACES.gatewayPlaza.x, PLACES.gatewayPlaza.z, 11],
     [PLACES.kirkEast.x, PLACES.kirkEast.z, 11],
     [KIRK.westPlaza.x, KIRK.westPlaza.z, 11],
@@ -47089,7 +47089,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     { x: PLACES.base.x, z: PLACES.base.z, r: 42 },
     { x: PLACES.artPark.x, z: PLACES.artPark.z, r: 16 },
     { x: PLACES.stagingLot.x, z: PLACES.stagingLot.z, r: 30 },
-    { x: PLACES.testFacility.x, z: PLACES.testFacility.z, r: 90 }
+    { x: PLACES.testFacility.x, z: PLACES.testFacility.z, r: 160 }
   ];
   function excluded2(x, z) {
     for (const e of EXCL) {
@@ -52793,6 +52793,38 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     wheelR: 0.355,
     cdA: 0.74,
     roll: 240
+  };
+  VEHICLE_SPECS.csports = {
+    ...VEHICLE_SPECS.gts,
+    mass: 850,
+    power: 28e4,
+    fMax: 9200,
+    brakeF: 16e3,
+    a: 1.2,
+    b: 1.15,
+    iz: 1100,
+    cF: 78e3,
+    cR: 88e3,
+    muF: 1.12,
+    muR: 1.14,
+    slideMu: 0.8,
+    slideMuF: 0.94,
+    driveSplitR: 1,
+    assist: 0.35,
+    drift: 0.72,
+    powerSlide: 0.75,
+    plantPower: 0.18,
+    steerRate: 8.5,
+    steerReturn: 11,
+    steerSpeedK: 7.5,
+    steerMax: 0.74,
+    wheelR: 0.305,
+    cdA: 0.55,
+    idle: 900,
+    redline: 8500,
+    gears: [3.4, 2.1, 1.55, 1.2, 0.98],
+    final: 3.9,
+    rollGain: 0.35
   };
 
   // src/entities/trafficModels.js

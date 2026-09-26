@@ -338,7 +338,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip c6d63c1 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 1546705 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -36044,6 +36044,168 @@ void main() {
     return { lights, setLights };
   }
 
+  // src/entities/csportsModel.js
+  var YELLOW = 16106496;
+  function liveryTexture() {
+    if (typeof document === "undefined") return null;
+    const c = document.createElement("canvas");
+    c.width = 1024;
+    c.height = 512;
+    const x = c.getContext("2d");
+    x.fillStyle = "#f5c400";
+    x.fillRect(0, 0, 1024, 512);
+    x.fillStyle = "#d82018";
+    x.beginPath();
+    x.moveTo(120, 40);
+    x.lineTo(420, 40);
+    x.lineTo(560, 220);
+    x.lineTo(300, 220);
+    x.closePath();
+    x.fill();
+    x.fillStyle = "#b84810";
+    x.beginPath();
+    x.moveTo(480, 40);
+    x.lineTo(780, 40);
+    x.lineTo(640, 220);
+    x.lineTo(380, 220);
+    x.closePath();
+    x.fill();
+    x.fillStyle = "#6adf00";
+    x.font = "bold 72px sans-serif";
+    x.textBaseline = "middle";
+    x.fillText("energy", 560, 110);
+    x.font = "bold 56px sans-serif";
+    x.fillText("power", 80, 300);
+    x.font = "bold 36px sans-serif";
+    x.fillText("Energy Drink", 340, 460);
+    x.beginPath();
+    x.arc(200, 120, 48, 0, Math.PI * 2);
+    x.fillStyle = "#5ccf00";
+    x.fill();
+    x.fillStyle = "#102010";
+    x.font = "bold 18px sans-serif";
+    x.textAlign = "center";
+    x.fillText("ZERO", 200, 112);
+    x.fillText("SUGAR", 200, 132);
+    x.textAlign = "left";
+    x.fillStyle = "#ffffff";
+    x.fillRect(70, 170, 150, 48);
+    x.fillStyle = "#102010";
+    x.font = "bold 16px sans-serif";
+    x.fillText("HIGH ENERGY", 82, 190);
+    x.fillText("ZERO SUGAR", 82, 208);
+    x.fillStyle = "#6adf00";
+    x.font = "bold 22px sans-serif";
+    x.fillText("Only 5 Calories", 300, 280);
+    const t = new three_module_exports.CanvasTexture(c);
+    t.colorSpace = three_module_exports.SRGBColorSpace;
+    t.anisotropy = 4;
+    return t;
+  }
+  function createCsportsModel() {
+    const group = new three_module_exports.Group();
+    group.name = "csportsCar";
+    const body = new three_module_exports.Group();
+    body.name = "csportsBody";
+    group.add(body);
+    const dims = {
+      length: 3.85,
+      width: 1.78,
+      height: 1.08,
+      wheelBase: 2.38,
+      track: 1.48,
+      wheelRadius: 0.305,
+      doorL: { x: -0.95, z: -0.15 },
+      doorR: { x: 0.95, z: -0.15 },
+      cockpit: { x: -0.18, y: 0.92, z: 0.05 }
+    };
+    const m = materials(YELLOW);
+    const livery = liveryTexture();
+    if (livery) {
+      m.paint.map = livery;
+      m.paint.color.setHex(16777215);
+      m.paint.needsUpdate = true;
+    }
+    m.energy = new three_module_exports.MeshStandardMaterial({ color: 7003904, roughness: 0.45, metalness: 0.15 });
+    m.powerRed = new three_module_exports.MeshStandardMaterial({ color: 14163992, roughness: 0.4, metalness: 0.1 });
+    m.hoop = new three_module_exports.MeshStandardMaterial({ color: 1118740, roughness: 0.55, metalness: 0.7 });
+    const b = batch(body, m);
+    const WB = dims.wheelBase;
+    const arches = [
+      { z: -WB / 2, y: dims.wheelRadius, r: 0.4 },
+      { z: WB / 2, y: dims.wheelRadius, r: 0.42 }
+    ];
+    b.add("black", box(1.55, 0.06, 3.4, 0, 0.18, 0.05));
+    b.add("cabin", box(1.4, 0.04, 2.6, 0, 0.28, 0.05), { interior: true });
+    b.add("black", at(roundedSlab(1.7, 0.05, 0.55, 0.03, 2), 0, 0.22, -1.78));
+    b.add("paint", at(roundedSlab(1.55, 0.1, 1.1, 0.05, 3), 0, 0.42, -1.35, -0.12));
+    b.add("paint", box(1.5, 0.08, 0.9, 0, 0.5, -0.7));
+    for (const s of [-1, 1]) {
+      b.add("paint", at(roundedSlab(0.42, 0.28, 0.85, 0.05, 2), s * 0.72, 0.55, -1.15));
+      b.add("paint", sideSkin(s * 0.88, -1.7, -0.55, 0.22, 0.62, arches));
+      b.add("paint", sideSkin(s * 0.9, -0.4, 1.55, 0.22, 0.58, arches));
+      b.add("black", box(0.08, 0.28, 0.55, s * 0.92, 0.48, 0.55));
+      b.add("black", box(0.04, 0.22, 0.5, s * 0.86, 0.48, 0.55), { interior: true });
+      for (const a2 of arches) b.add("black", arch(s * 0.91, a2.y, a2.z, a2.r, 0.055, 0.07));
+      b.add("energy", box(0.02, 0.1, 0.7, s * 0.935, 0.55, 0.1), { noDamage: true });
+      b.add("powerRed", box(0.02, 0.06, 0.25, s * 0.938, 0.42, -0.8), { noDamage: true });
+      b.add("head", at(roundedSlab(0.22, 0.1, 0.04, 0.03, 2), s * 0.48, 0.4, -1.88), { shadow: false });
+      b.add("amber", box(0.05, 0.06, 0.03, s * 0.72, 0.38, -1.82), { noDamage: true, shadow: false });
+      b.add("tail", box(0.18, 0.08, 0.04, s * 0.45, 0.42, 1.88), { shadow: false });
+      b.add("reverse", box(0.08, 0.05, 0.03, s * 0.25, 0.36, 1.89), { shadow: false });
+    }
+    b.add("black", box(0.95, 0.12, 1.05, 0, 0.52, 0.05));
+    b.add("cabin", box(0.85, 0.35, 0.95, 0, 0.38, 0.05), { interior: true });
+    b.add("cloth", at(roundedSlab(0.42, 0.1, 0.55, 0.04, 2), -0.12, 0.42, 0.12), { interior: true });
+    b.add("cloth", at(roundedSlab(0.42, 0.45, 0.12, 0.04, 2), -0.12, 0.7, 0.38, -0.15), { interior: true });
+    for (const sx of [-0.22, -0.02]) {
+      b.add("powerRed", box(0.05, 0.02, 0.45, sx, 0.78, 0.22), { interior: true, noDamage: true });
+      b.add("powerRed", box(0.05, 0.35, 0.02, sx, 0.95, 0.42), { interior: true, noDamage: true });
+    }
+    const hoopZ = 0.55, hoopY = 1, hoopW = 0.55, tube4 = 0.028;
+    b.add("hoop", bar([-hoopW, 0.55, hoopZ], [-hoopW, hoopY, hoopZ], tube4));
+    b.add("hoop", bar([hoopW, 0.55, hoopZ], [hoopW, hoopY, hoopZ], tube4));
+    b.add("hoop", bar([-hoopW, hoopY, hoopZ], [hoopW, hoopY, hoopZ], tube4));
+    b.add("hoop", bar([0, 0.55, hoopZ], [0, hoopY, hoopZ], tube4 * 0.9));
+    b.add("hoop", bar([-hoopW, hoopY, hoopZ], [-hoopW * 0.3, hoopY + 0.02, hoopZ - 0.15], tube4 * 0.7));
+    b.add("hoop", bar([hoopW, hoopY, hoopZ], [hoopW * 0.3, hoopY + 0.02, hoopZ - 0.15], tube4 * 0.7));
+    b.add("paint", at(roundedSlab(1.5, 0.1, 0.95, 0.04, 2), 0, 0.58, 1.15));
+    b.add("black", box(1.2, 0.04, 0.7, 0, 0.64, 1.15));
+    for (let i = 0; i < 6; i++) b.add("alloy", box(1.1, 8e-3, 0.02, 0, 0.66, 0.9 + i * 0.08));
+    const wingZ = 1.7, wingY = 1.02;
+    b.add("paint", at(roundedSlab(1.65, 0.04, 0.32, 0.02, 2), 0, wingY, wingZ));
+    b.add("energy", box(1.5, 0.015, 0.06, 0, wingY + 0.03, wingZ));
+    for (const s of [-1, 1]) {
+      b.add("black", box(0.03, 0.42, 0.05, s * 0.45, 0.78, wingZ - 0.05));
+      b.add("paint", box(0.04, 0.18, 0.02, s * 0.8, wingY, wingZ));
+    }
+    b.add("black", box(1.4, 0.12, 0.25, 0, 0.22, 1.78));
+    for (const x of [-0.45, -0.15, 0.15, 0.45]) b.add("black", box(0.04, 0.1, 0.2, x, 0.22, 1.8));
+    b.add("glass", quad([[-0.45, 0.62, -0.45], [0.45, 0.62, -0.45], [0.4, 0.78, -0.25], [-0.4, 0.78, -0.25]]), { shadow: false });
+    b.add("black", bar([-0.46, 0.62, -0.45], [0.46, 0.62, -0.45], 0.025));
+    const instruments = dials(b, -0.18, 0.72, -0.2, { radius: 0.045, modern: true, label: "CSPORTS", redline: 8500 });
+    b.flush();
+    const steeringWheel2 = cabinWheel(body, m, { x: -0.18, y: 0.78, z: -0.15, tilt: -0.55, modern: true, R: 0.16 });
+    const wheels = roadWheels(group, dims, m, { steel: false, tread: true });
+    const { lights, setLights } = lightState(body, m, [[-0.48, 0.4, -1.88], [0.48, 0.4, -1.88]]);
+    attachRest(group, m.paint);
+    const doors = { left: null, right: null };
+    return {
+      group,
+      body,
+      wheels,
+      dims,
+      paint: m.paint,
+      updateInstruments: instruments.update,
+      instrumentTextures: [instruments.texture],
+      kind: "csports",
+      setLights,
+      lights,
+      doors,
+      steeringWheel: steeringWheel2
+    };
+  }
+
   // src/entities/sprinterModel.js
   function createSprinterModel() {
     const group = new three_module_exports.Group();
@@ -43115,7 +43277,7 @@ void main() {
 
   // src/game/guidance.js
   var GUIDE_PLACES = [
-    { id: "base", name: "Crew stable \xB7 Production base", kind: "Six cars \xB7 Toronto Street gate", detail: "The wagon, GTS, white Evora 400, Cummins Sprinter, Defender, and white Keith Black 1991 Camaro 1LE are here. Walk beside a front door and press E / A. Ease into the centre aisle; the painted arrows lead to the open north gate and Toronto Street. V / Y changes your view; C recenters." },
+    { id: "base", name: "Crew stable \xB7 Production base", kind: "Seven cars \xB7 Toronto Street gate", detail: "The wagon, GTS, white Evora 400, CSports 4c Cosworth, Cummins Sprinter, Defender, and white Keith Black 1991 Camaro 1LE are here. Walk beside a front door and press E / A. Ease into the centre aisle; the painted arrows lead to the open north gate and Toronto Street. V / Y changes your view; C recenters." },
     { id: "singleton-stop", name: "353 Singleton \xB7 Shell", kind: "Dallas stop \xB7 forecourt and market", detail: "Turn off Gulden south of the church and follow the access lane to the market\u2019s west parking bay. Walk through the glass doors under COME ON IN. Luz sells $8 snacks and has a tip for the Sylvan overlook. Pumps dress the scene; refuelling is not yet a game mechanic." },
     { id: "crow-overlook", name: "Trammell Crow \xB7 Sylvan overlook", kind: "Dallas trail \xB7 take in the skyline", detail: "Follow the existing west levee to the named trail overlook. Park clear of the bench, read the sign, then turn toward the city. F / Y raises the scout camera." },
     { id: "studio-gallery", name: "Your studio exhibition", kind: "The Crew Cut \xB7 your work on the wall", detail: "Park at Second Unit Studio. Walk inside and turn left toward the three frames beside the entrance. Press E / A to choose Scrapbook photographs or named Director cut cards, then Hang exhibition." },
@@ -43323,7 +43485,7 @@ void main() {
     }
     if (g2.lot42?.canStart()) return make("Lot 42", "Ready in the blue bay", "Start Lot 42 driving practice.", shutter, "Six turquoise gates, one clockwise lap. There is no time limit.");
     if (g2.downtown?.canStart()) return make("Afterglow on Main", "Ready in the starting bay", "Start the downtown filming take.", shutter, "Four right turns, a steady tracking pass and a careful stop.");
-    if (!selected && near(actor, PLACES.base, 32)) return make("Crew stable", "Choose your next drive", g2.inCar ? "Follow the yard arrows to the north gate and Toronto Street." : entry ? `Get into ${entry.car?.name || "your chosen car"}, or walk around the stable.` : "Walk beside a front door to choose one of the six cars.", g2.inCar ? drive : entry ? use : walk, "G / View opens activities and destinations. The Motor Club is at the south end of this yard; the street exit is at the north end.");
+    if (!selected && near(actor, PLACES.base, 32)) return make("Crew stable", "Choose your next drive", g2.inCar ? "Follow the yard arrows to the north gate and Toronto Street." : entry ? `Get into ${entry.car?.name || "your chosen car"}, or walk around the stable.` : "Walk beside a front door to choose one of the seven cars.", g2.inCar ? drive : entry ? use : walk, "G / View opens activities and destinations. The Motor Club is at the south end of this yard; the street exit is at the north end.");
     return make("Your next adventure", g2.inCar ? "Free roam \xB7 driving" : "Free roam \xB7 on foot", "Choose a place or activity in the Crew Guide.", guide, "Try the studio, a supper delivery, the garage, a filming drive or the cone course.");
   }
   function guidanceDistance(m, units = "mph") {
@@ -70126,7 +70288,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   var ALU_DARK = 6317418;
   var GALV2 = 10330527;
   var BLACK = 1513755;
-  var YELLOW = 15315968;
+  var YELLOW2 = 15315968;
   var WOOD = 5979686;
   var WOOD_LIGHT = 9067059;
   var RED = 11872800;
@@ -70179,7 +70341,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   }
   function signalHeadGeo() {
     const parts = [box4(0.36, 1.12, 0.32, BLACK), box4(0.62, 1.4, 0.02, 921360, 0, 0, 0.02), box4(0.08, 0.22, 0.08, BLACK, 0, 0.67, 0), box4(0.24, 0.05, 0.24, BLACK, 0, 0.8, 0)];
-    parts.push(box4(0.62, 0.05, 0.022, YELLOW, 0, 0.675, 0.02), box4(0.62, 0.05, 0.022, YELLOW, 0, -0.675, 0.02), box4(0.05, 1.4, 0.022, YELLOW, -0.285, 0, 0.02), box4(0.05, 1.4, 0.022, YELLOW, 0.285, 0, 0.02));
+    parts.push(box4(0.62, 0.05, 0.022, YELLOW2, 0, 0.675, 0.02), box4(0.62, 0.05, 0.022, YELLOW2, 0, -0.675, 0.02), box4(0.05, 1.4, 0.022, YELLOW2, -0.285, 0, 0.02), box4(0.05, 1.4, 0.022, YELLOW2, 0.285, 0, 0.02));
     for (const y2 of [0.36, 0, -0.36]) {
       const v = new CylinderGeometry(0.165, 0.165, 0.26, 10, 1, true, Math.PI / 2, Math.PI);
       v.rotateX(Math.PI / 2);
@@ -70234,7 +70396,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     return merge3(parts);
   }
   function bollardGeo() {
-    return merge3([cyl3(0.09, 0.09, 0.95, 8, BLACK, 0, 0.475, 0, true), colored(new SphereGeometry(0.09, 8, 3, 0, Math.PI * 2, 0, Math.PI / 2).translate(0, 0.95, 0), BLACK), cyl3(0.092, 0.092, 0.1, 8, YELLOW, 0, 0.78, 0, true)]);
+    return merge3([cyl3(0.09, 0.09, 0.95, 8, BLACK, 0, 0.475, 0, true), colored(new SphereGeometry(0.09, 8, 3, 0, Math.PI * 2, 0, Math.PI / 2).translate(0, 0.95, 0), BLACK), cyl3(0.092, 0.092, 0.1, 8, YELLOW2, 0, 0.78, 0, true)]);
   }
   function dtBollardGeo() {
     return merge3([cyl3(0.07, 0.075, 0.9, 8, BLACK, 0, 0.45, 0, true), cyl3(0.085, 0.11, 0.07, 8, BLACK, 0, 0.035, 0), cyl3(0.095, 0.07, 0.07, 8, BLACK, 0, 0.93, 0), colored(new SphereGeometry(0.085, 8, 5).translate(0, 1.02, 0), BLACK)]);
@@ -70248,7 +70410,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     dome.translate(0, 1.55, 0);
     parts.push(colored(dome, HEAD));
     for (const z of [-0.058, 0.058]) {
-      parts.push(box4(0.09, 0.07, 0.012, DISP, 0, 1.48, z), box4(0.11, 0.03, 0.012, YELLOW, 0, 1.385, z));
+      parts.push(box4(0.09, 0.07, 0.012, DISP, 0, 1.48, z), box4(0.11, 0.03, 0.012, YELLOW2, 0, 1.385, z));
     }
     parts.push(box4(0.03, 0.012, 0.03, DISP, 0.04, 1.34, -0.05));
     return merge3(parts);
@@ -75330,6 +75492,38 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     wheelR: 0.355,
     cdA: 0.74,
     roll: 240
+  };
+  VEHICLE_SPECS.csports = {
+    ...VEHICLE_SPECS.gts,
+    mass: 850,
+    power: 28e4,
+    fMax: 9200,
+    brakeF: 16e3,
+    a: 1.2,
+    b: 1.15,
+    iz: 1100,
+    cF: 78e3,
+    cR: 88e3,
+    muF: 1.12,
+    muR: 1.14,
+    slideMu: 0.8,
+    slideMuF: 0.94,
+    driveSplitR: 1,
+    assist: 0.35,
+    drift: 0.72,
+    powerSlide: 0.75,
+    plantPower: 0.18,
+    steerRate: 8.5,
+    steerReturn: 11,
+    steerSpeedK: 7.5,
+    steerMax: 0.74,
+    wheelR: 0.305,
+    cdA: 0.55,
+    idle: 900,
+    redline: 8500,
+    gears: [3.4, 2.1, 1.55, 1.2, 0.98],
+    final: 3.9,
+    rollGain: 0.35
   };
   function createVehicle(model, spec = {}, { suspension = null, sampleGround = groundAt } = {}) {
     const baseGround = sampleGround;
@@ -80727,7 +80921,9 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     gts: { idle: 950, redline: 7700, order: 1 / 15, starter: { f0: 132, glide: 86, pulse: 11.5, lp: 1700, g: 0.17 } },
     // 308 flat-plane V8
     // Keith Black 540 solid-roller crossplane — lopey idle, thunder chest, loft-second character
-    camaro1le: { idle: 780, redline: 6800, order: 1 / 30, bigBlock: true, starter: { f0: 78, glide: 48, pulse: 5.5, lp: 780, g: 0.38 } }
+    camaro1le: { idle: 780, redline: 6800, order: 1 / 30, bigBlock: true, starter: { f0: 78, glide: 48, pulse: 5.5, lp: 780, g: 0.38 } },
+    // CSports 4c Cosworth — Engines CLOSED; reuse gts high-rev voice (nearest Cosworth-ish scream)
+    csports: { idle: 950, redline: 7700, order: 1 / 15, starter: { f0: 132, glide: 86, pulse: 11.5, lp: 1700, g: 0.17 } }
   };
   function buildEngine() {
     const E2 = N.engine = {};
@@ -82220,7 +82416,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-7a11b72100c0", tipSha: false ? "" : "c6d63c1", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-d58251dd8945", tipSha: false ? "" : "1546705", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
@@ -82390,6 +82586,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     g.gts.stableSpawn = { x: -546, z: -212, heading: 0 };
     for (const [key2, name, factory, x] of [
       ["evora", "2017 Lotus Evora 400", createEvoraModel, -578],
+      ["csports", "CSports 4c Cosworth \xB7 Chris", createCsportsModel, -586],
       ["sprinter", "Sprinter 144 \xB7 Cummins \xB7 Allison", createSprinterModel, -570],
       ["defender", "2015 Defender 110 \xB7 Cummins", createDefenderModel, -562],
       ["camaro1le", "1991 Camaro 1LE \xB7 Keith Black 540", createCamaro1le, -554]
