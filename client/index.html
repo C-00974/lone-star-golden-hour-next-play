@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-1fe39dfa508a">
-<meta name="lsgh-tip" content="8c5ea0a">
+<meta name="lsgh-build" content="0.35.0-next.0-ddef73ba3d39">
+<meta name="lsgh-tip" content="ee5e5aa">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -362,7 +362,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 8c5ea0a · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip ee5e5aa · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -65635,11 +65635,14 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   }
   function dtEndAprons(G2, pads, rect2, plane) {
     const gb = G2.apron;
+    const GV = { x0: 1050, x1: 1115, z0: -390, z1: 300 };
+    const inGreenville = (x, z) => x > GV.x0 && x < GV.x1 && z > GV.z0 && z < GV.z1;
     for (const s of straights()) {
       if (!s.id.startsWith("dt_")) continue;
       const eAligned = Math.abs(s.ux * EDIR[0] + s.uz * EDIR[1]) > 0.99;
       for (const end2 of [0, 1]) {
         const ex = s.x + s.ux * s.len * end2, ez = s.z + s.uz * s.len * end2, g2 = toGrid(ex, ez);
+        if (inGreenville(ex, ez)) continue;
         if (g2.e < rect2.e0 + 1 || g2.e > rect2.e1 - 1 || g2.n < rect2.n0 + 1 || g2.n > rect2.n1 - 1) continue;
         const fwd = (eAligned ? s.ux * EDIR[0] + s.uz * EDIR[1] : s.ux * NDIR[0] + s.uz * NDIR[1]) > 0 ? 1 : -1;
         const out = end2 ? fwd : -fwd, hw = s.half + 1.6, L2 = 13;
@@ -82597,7 +82600,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-1fe39dfa508a", tipSha: false ? "" : "8c5ea0a", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-ddef73ba3d39", tipSha: false ? "" : "ee5e5aa", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
@@ -83309,6 +83312,10 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       if (touchResume && prior && (prior.tip === (g.tipSha || "") || !g.tipSha)) {
         const freeroam = prior.freeroam !== false;
         startGame(freeroam);
+        if (prior.carKey) {
+          const saved = g.cars.find((c) => c.key === prior.carKey);
+          if (saved && saved !== g.vehicle) g.setActiveCar(saved);
+        }
         if (Number.isFinite(prior.x) && Number.isFinite(prior.z)) {
           g.vehicle.place(prior.x, prior.z, Number.isFinite(prior.h) ? prior.h : 0, Number.isFinite(prior.y) ? prior.y : null);
           if (prior.inCar && !g.inCar) {
@@ -83356,6 +83363,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         y: v?.y,
         h: v?.heading,
         inCar: !!g.inCar,
+        carKey: v?.key || null,
         ...extra
       };
       localStorage.setItem(PLAY_SESSION_KEY, JSON.stringify(payload));
