@@ -351,7 +351,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip be46386 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 156b2c7 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -55733,21 +55733,54 @@ void main() {
     return { ring, quarters: cards, entry, coneCount: ring.length };
   }
   FACILITY.skidMarks = skidPadMarks();
-  function projectCircuit(x, z) {
+  function projectCircuit(x, z, yHint = null) {
     const { pts, tan, length: length2 } = CIRCUIT;
-    let best = null;
+    const onW = CIRCUIT.width / 2 + 0.4;
+    let best = null, layered = null;
     for (let i = 0; i < pts.length - 1; i++) {
       const a2 = pts[i], b = pts[i + 1];
       const dx = b.x - a2.x, dz2 = b.z - a2.z, seg = dx * dx + dz2 * dz2 || 1;
       const u = clamp3(((x - a2.x) * dx + (z - a2.z) * dz2) / seg, 0, 1);
       const px2 = a2.x + dx * u, pz2 = a2.z + dz2 * u;
       const d = Math.hypot(x - px2, z - pz2);
-      if (!best || d < best.d) {
+      const mk = () => {
         const s = a2.s + u * (b.s - a2.s);
-        best = { d, s, t: s / length2, x: px2, z: pz2, y: lerp2(a2.y, b.y, u), tx: tan[i][0], tz: tan[i][1], i, u };
+        return { d, s, t: s / length2, x: px2, z: pz2, y: lerp2(a2.y, b.y, u), tx: tan[i][0], tz: tan[i][1], i, u };
+      };
+      if (!best || d < best.d) best = mk();
+      if (yHint != null && d <= onW) {
+        const y2 = lerp2(a2.y, b.y, u), dy = Math.abs(y2 - yHint);
+        if (!layered || dy < layered.dy - 1e-6 || Math.abs(dy - layered.dy) < 1e-6 && d < layered.p.d) layered = { dy, p: mk() };
       }
     }
-    return best;
+    return layered ? layered.p : best;
+  }
+  var HILL_GRADE = 0.36;
+  var HILL_EDGE = CIRCUIT.width / 2 + 0.4;
+  var HILL_PTS = CIRCUIT.pts.filter((p) => p.lift > 0.25);
+  var HILL_BOX = null;
+  if (HILL_PTS.length) {
+    const reach = HILL_EDGE + Math.max(...HILL_PTS.map((p) => p.lift)) / HILL_GRADE + 2;
+    HILL_BOX = {
+      x0: Math.min(...HILL_PTS.map((p) => p.x)) - reach,
+      x1: Math.max(...HILL_PTS.map((p) => p.x)) + reach,
+      z0: Math.min(...HILL_PTS.map((p) => p.z)) - reach,
+      z1: Math.max(...HILL_PTS.map((p) => p.z)) + reach
+    };
+  }
+  function hillBox() {
+    return HILL_BOX;
+  }
+  function hillY(x, z, yHint = null) {
+    if (!HILL_BOX || x < HILL_BOX.x0 || x > HILL_BOX.x1 || z < HILL_BOX.z0 || z > HILL_BOX.z1) return -Infinity;
+    let best = -Infinity, bestAll = -Infinity;
+    for (const p of HILL_PTS) {
+      const d = Math.hypot(x - p.x, z - p.z);
+      const y2 = p.y - 0.05 - HILL_GRADE * Math.max(0, d - HILL_EDGE);
+      if (y2 > bestAll) bestAll = y2;
+      if ((yHint == null || y2 <= yHint + 1.2) && y2 > best) best = y2;
+    }
+    return best > -Infinity ? best : bestAll;
   }
   function inFacility(p) {
     if (!p) return false;
@@ -55759,8 +55792,8 @@ void main() {
     const s = FACILITY.stand;
     return Math.hypot(p.x - s.x, p.z - s.z) <= s.r + slack;
   }
-  function onCircuit(x, z, halfW = CIRCUIT.width / 2 + 0.4) {
-    const p = projectCircuit(x, z);
+  function onCircuit(x, z, halfW = CIRCUIT.width / 2 + 0.4, yHint = null) {
+    const p = projectCircuit(x, z, yHint);
     return p && p.d <= halfW ? p : null;
   }
   function inRect(r, x, z) {
@@ -55775,7 +55808,7 @@ void main() {
     const side2 = (x - near4.x) * rx + (z - near4.z) * rz;
     return hand === "left" ? side2 > 0.4 : side2 < -0.4;
   }
-  function facilityAt(x, z) {
+  function facilityAt(x, z, yHint = null) {
     const apron = FACILITY.apron, drag = FACILITY.drag, brake = FACILITY.brake;
     if (inRect(apron, x, z) || inSkid(x, z)) {
       return { y: padY(x, z), surface: "asphalt", wet: 0.35, groundBias: 0.12 };
@@ -55785,14 +55818,15 @@ void main() {
     }
     const b = FACILITY.bounds, inset2 = 4;
     if (x >= b.x0 + inset2 && x <= b.x1 - inset2 && z >= b.z0 + inset2 && z <= b.z1 - inset2) {
-      const c2 = onCircuit(x, z);
-      if (c2) return { y: c2.y, surface: "asphalt", wet: 0.3, groundBias: 0.14 };
-      const near5 = projectCircuit(x, z);
+      const c2 = onCircuit(x, z, void 0, yHint);
+      if (c2 && !(yHint != null && c2.y > yHint + 1.2)) return { y: c2.y, surface: "asphalt", wet: 0.3, groundBias: 0.14 };
+      const near5 = projectCircuit(x, z, yHint);
       const runoff = CIRCUIT.width / 2 + 8;
       if (near5 && near5.d < runoff) {
         const edge = CIRCUIT.width / 2;
         const k = clamp3((near5.d - edge) / (runoff - edge), 0, 1);
-        const y2 = lerp2(near5.y, padY(x, z), k);
+        const hy2 = hillY(x, z, yHint);
+        const y2 = Math.max(lerp2(near5.y, padY(x, z), k), hy2);
         const wins = FACILITY.turnWindows || circuitTurnWindows();
         if (near5.d > edge + 0.6 && near5.t >= wins.turn6.t0 && near5.t <= wins.turn6.t1 && outsideRunoff(near5, x, z, "right")) {
           return { y: y2, surface: "gravel", wet: 0.45, groundBias: 0.1 };
@@ -55802,11 +55836,13 @@ void main() {
         }
         return { y: y2, surface: "asphalt", wet: 0.32, groundBias: 0.12 };
       }
-      return { y: padY(x, z), surface: "asphalt", wet: 0.35, groundBias: 0.1 };
+      const hy = hillY(x, z, yHint), py2 = padY(x, z);
+      if (hy > py2 + 0.05) return { y: hy, surface: "grass", wet: 0.4, groundBias: 0.1 };
+      return { y: py2, surface: "asphalt", wet: 0.35, groundBias: 0.1 };
     }
-    const c = onCircuit(x, z);
+    const c = onCircuit(x, z, void 0, yHint);
     if (c) return { y: c.y, surface: "asphalt", wet: 0.3, groundBias: 0.14 };
-    const near4 = onCircuit(x, z, CIRCUIT.width / 2 + 2.2);
+    const near4 = onCircuit(x, z, CIRCUIT.width / 2 + 2.2, yHint);
     if (near4) {
       const k = clamp3((near4.d - CIRCUIT.width / 2) / 2.2, 0, 1);
       const ty = padY(x, z);
@@ -55996,7 +56032,7 @@ void main() {
     geo.computeVertexNormals();
     group.add(new Mesh(geo, mat));
   }
-  function barrierRail(group, mat, x0, z0, x1, z1, y0) {
+  function barrierRail(group, mat, x0, z0, x1, z1, y0, yTop = y0) {
     const dx = x1 - x0, dz2 = z1 - z0, len = Math.hypot(dx, dz2) || 1;
     const rail = new Mesh(
       new BoxGeometry(0.22, 0.55, len),
@@ -56006,7 +56042,7 @@ void main() {
     rail.rotation.y = Math.atan2(dx, dz2);
     rail.castShadow = true;
     group.add(rail);
-    addWall(x0, z0, x1, z1, y0 - 0.2, y0 + 0.7, 0.22, "lot32-rail");
+    addWall(x0, z0, x1, z1, y0 - 0.2, Math.max(y0, yTop) + 1.2, 0.22, "lot32-rail");
   }
   function makeSign(title, lines) {
     const c = document.createElement("canvas");
@@ -56272,6 +56308,35 @@ void main() {
       placeMeterLabel(group, m, 2.1, 0.9);
     }
     ribbonMesh(group, asphalt, CIRCUIT.pts, CIRCUIT.tan, CIRCUIT.width, 0.01);
+    {
+      const hb = hillBox();
+      if (hb) {
+        const step2 = 3, nx = Math.ceil((hb.x1 - hb.x0) / step2) + 1, nz = Math.ceil((hb.z1 - hb.z0) / step2) + 1;
+        const pos = new Float32Array(nx * nz * 3), idx = [];
+        for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) {
+          const x = hb.x0 + i * step2, z = hb.z0 + j * step2, py2 = padY(x, z);
+          let y2 = Math.max(hillY(x, z), py2 - 0.08);
+          let lowest = Infinity;
+          for (const p of CIRCUIT.pts) {
+            if (Math.hypot(p.x - x, p.z - z) < CIRCUIT.width / 2 + 0.6 && p.y < lowest) lowest = p.y;
+          }
+          if (lowest < y2 - 0.2) y2 = lowest - 0.3;
+          pos.set([x, y2, z], (j * nx + i) * 3);
+          if (i < nx - 1 && j < nz - 1) {
+            const a2 = j * nx + i;
+            idx.push(a2, a2 + nx, a2 + 1, a2 + 1, a2 + nx, a2 + nx + 1);
+          }
+        }
+        const g2 = new BufferGeometry();
+        g2.setAttribute("position", new BufferAttribute(pos, 3));
+        g2.setIndex(idx);
+        g2.computeVertexNormals();
+        const hill = new Mesh(g2, new MeshLambertMaterial({ color: 7306564 }));
+        hill.receiveShadow = true;
+        hill.name = "lot32-hill";
+        group.add(hill);
+      }
+    }
     const sf = FACILITY.startFinish;
     const sfT = CIRCUIT.tan[0], sfx = -sfT[1], sfz = sfT[0];
     stripe(
@@ -56395,7 +56460,13 @@ void main() {
         const az = p.z + rz * side2 * (CIRCUIT.width / 2 + 0.4);
         const bx2 = q.x + rx * side2 * (CIRCUIT.width / 2 + 0.4);
         const bz2 = q.z + rz * side2 * (CIRCUIT.width / 2 + 0.4);
-        if (i % 2 === 0) barrierRail(group, railMat, ax, az, bx2, bz2, Math.min(p.y, q.y));
+        const yR = Math.min(p.y, q.y);
+        const onRoad = (x, z) => {
+          const pr = projectCircuit(x, z, yR);
+          return pr && pr.d < CIRCUIT.width / 2 + 0.2 && Math.abs(pr.y - yR) < 1.5;
+        };
+        if (onRoad(ax, az) || onRoad(bx2, bz2) || onRoad((ax + bx2) / 2, (az + bz2) / 2)) continue;
+        barrierRail(group, railMat, ax, az, bx2, bz2, Math.min(p.y, q.y), Math.max(p.y, q.y));
       }
     }
     {
@@ -56573,9 +56644,10 @@ void main() {
     }
     world2.surfaces.push({
       id: FACILITY.id,
-      query(x, z) {
-        return facilityAt(x, z);
+      query(x, z, yHint) {
+        return facilityAt(x, z, yHint);
       }
+      // height-aware: the ribbon passes near itself at different heights
     });
     addTrigger({
       id: "test-facility",
@@ -77761,6 +77833,14 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     beckley: [[190, 470]]
     // z -140..140: the raised intersection with the deck (tent, cones, the hero-shot frame); Beckley cars turn around at grade
   };
+  var CAMPUS_CLOSURES = {
+    toronto: [[55, 585]],
+    continental_w: [[55, 585]],
+    sylvan: [[445, 710]],
+    bataan: [[0, 220]],
+    herbert: [[0, 220]],
+    sylvan_viaduct: [[0, 170]]
+  };
   var STATIC_TAGS = /* @__PURE__ */ new Set(["cone", "barrier", "set"]);
   var TAU4 = Math.PI * 2;
   var wrap = (a2) => {
@@ -77778,6 +77858,13 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     }
     return best;
   }
+  var CAMPUS_B = {
+    x0: TRACK_CAMPUS.x - TRACK_CAMPUS.clearR,
+    x1: TRACK_CAMPUS.x + TRACK_CAMPUS.clearR,
+    z0: TRACK_CAMPUS.z - TRACK_CAMPUS.clearR,
+    z1: TRACK_CAMPUS.z + TRACK_CAMPUS.clearR
+  };
+  var inCampus = (x, z) => x >= CAMPUS_B.x0 && x <= CAMPUS_B.x1 && z >= CAMPUS_B.z0 && z <= CAMPUS_B.z1;
   function laneRoadList() {
     const ids = [...LANE_ROADS, ...roadData.map((d) => d.road.id).filter((id7) => id7.startsWith("dt_") && !LANE_ROADS.includes(id7))];
     return ids.map((id7) => roadDataById[id7]).filter(Boolean).map((rd) => {
@@ -77852,7 +77939,11 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     const roads = ROADS_CACHE || (ROADS_CACHE = laneRoadList());
     const nodes = NODES_CACHE || (NODES_CACHE = buildNodes(roads));
     for (const n of nodes) n.out = [];
-    const closureOf = (id7) => closed ? CLOSURES[id7] || [] : [];
+    const closureOf = (id7) => {
+      const campus = CAMPUS_CLOSURES[id7] || [];
+      const film = closed ? CLOSURES[id7] || [] : [];
+      return campus.length || film.length ? campus.concat(film) : [];
+    };
     const inClosure = (id7, s) => closureOf(id7).some(([a2, b]) => s > a2 && s < b);
     const lanes = [];
     for (const R of roads) {
@@ -78212,6 +78303,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         laneSample(lane, s, lane.off, tmp2);
         if (tooClose(tmp2.x, tmp2.z, self2, 25)) continue;
         if (closed && courseDist2(tmp2.x, tmp2.z) < COURSE_CLEAR * COURSE_CLEAR) continue;
+        if (inCampus(tmp2.x, tmp2.z)) continue;
         const d = distPlayer(tmp2.x, tmp2.z);
         if (first) {
           if (d < 45) continue;
@@ -82660,7 +82752,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-842cb5f043ab", tipSha: false ? "" : "be46386", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-bb227407898c", tipSha: false ? "" : "156b2c7", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
