@@ -351,7 +351,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 901d2c9 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 4ee15fe · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -55733,11 +55733,31 @@ void main() {
     return { ring, quarters: cards, entry, coneCount: ring.length };
   }
   FACILITY.skidMarks = skidPadMarks();
+  var CIRCUIT_CELL = 32;
+  var CIRCUIT_GRID = /* @__PURE__ */ new Map();
+  var CIRCUIT_PAD = CIRCUIT.width / 2 + 10;
+  {
+    const { pts } = CIRCUIT;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const a2 = pts[i], b = pts[i + 1];
+      const minX = Math.min(a2.x, b.x) - CIRCUIT_PAD, maxX = Math.max(a2.x, b.x) + CIRCUIT_PAD;
+      const minZ = Math.min(a2.z, b.z) - CIRCUIT_PAD, maxZ = Math.max(a2.z, b.z) + CIRCUIT_PAD;
+      const x0 = Math.floor(minX / CIRCUIT_CELL), x1 = Math.floor(maxX / CIRCUIT_CELL);
+      const z0 = Math.floor(minZ / CIRCUIT_CELL), z1 = Math.floor(maxZ / CIRCUIT_CELL);
+      for (let cx = x0; cx <= x1; cx++) for (let cz = z0; cz <= z1; cz++) {
+        const k = cx + "," + cz;
+        if (!CIRCUIT_GRID.has(k)) CIRCUIT_GRID.set(k, []);
+        CIRCUIT_GRID.get(k).push(i);
+      }
+    }
+  }
   function projectCircuit(x, z, yHint = null) {
     const { pts, tan, length: length2 } = CIRCUIT;
     const onW = CIRCUIT.width / 2 + 0.4;
     let best = null, layered = null;
-    for (let i = 0; i < pts.length - 1; i++) {
+    const cellSegs = CIRCUIT_GRID.get(Math.floor(x / CIRCUIT_CELL) + "," + Math.floor(z / CIRCUIT_CELL));
+    const n = pts.length - 1;
+    const scan = (i) => {
       const a2 = pts[i], b = pts[i + 1];
       const dx = b.x - a2.x, dz2 = b.z - a2.z, seg = dx * dx + dz2 * dz2 || 1;
       const u = clamp3(((x - a2.x) * dx + (z - a2.z) * dz2) / seg, 0, 1);
@@ -55752,13 +55772,20 @@ void main() {
         const y2 = lerp2(a2.y, b.y, u), dy = Math.abs(y2 - yHint);
         if (!layered || dy < layered.dy - 1e-6 || Math.abs(dy - layered.dy) < 1e-6 && d < layered.p.d) layered = { dy, p: mk() };
       }
-    }
+    };
+    if (cellSegs && cellSegs.length) for (const i of cellSegs) scan(i);
+    else for (let i = 0; i < n; i++) scan(i);
     return layered ? layered.p : best;
   }
   var HILL_GRADE = 0.36;
   var HILL_EDGE = CIRCUIT.width / 2 + 0.4;
   var HILL_PTS = CIRCUIT.pts.filter((p) => p.lift > 0.25);
   var HILL_BOX = null;
+  var HILL_CELL = 24;
+  var HILL_GRID = /* @__PURE__ */ new Map();
+  function hillKey(cx, cz) {
+    return cx + "," + cz;
+  }
   if (HILL_PTS.length) {
     const reach = HILL_EDGE + Math.max(...HILL_PTS.map((p) => p.lift)) / HILL_GRADE + 2;
     HILL_BOX = {
@@ -55767,14 +55794,38 @@ void main() {
       z0: Math.min(...HILL_PTS.map((p) => p.z)) - reach,
       z1: Math.max(...HILL_PTS.map((p) => p.z)) + reach
     };
+    const maxLift = Math.max(...HILL_PTS.map((p) => p.lift));
+    const rAll = HILL_EDGE + maxLift / HILL_GRADE + 4;
+    for (const p of HILL_PTS) {
+      const r = Math.max(rAll, HILL_EDGE + p.lift / HILL_GRADE + 4);
+      const x0 = Math.floor((p.x - r) / HILL_CELL), x1 = Math.floor((p.x + r) / HILL_CELL);
+      const z0 = Math.floor((p.z - r) / HILL_CELL), z1 = Math.floor((p.z + r) / HILL_CELL);
+      for (let cx = x0; cx <= x1; cx++) for (let cz = z0; cz <= z1; cz++) {
+        const k = hillKey(cx, cz);
+        if (!HILL_GRID.has(k)) HILL_GRID.set(k, []);
+        HILL_GRID.get(k).push(p);
+      }
+    }
   }
   function hillBox() {
     return HILL_BOX;
   }
   function hillY(x, z, yHint = null) {
     if (!HILL_BOX || x < HILL_BOX.x0 || x > HILL_BOX.x1 || z < HILL_BOX.z0 || z > HILL_BOX.z1) return -Infinity;
+    const cx0 = Math.floor(x / HILL_CELL), cz0 = Math.floor(z / HILL_CELL);
+    const seen = /* @__PURE__ */ new Set();
+    const pts = [];
+    for (let dx = -1; dx <= 1; dx++) for (let dz2 = -1; dz2 <= 1; dz2++) {
+      const cell = HILL_GRID.get(hillKey(cx0 + dx, cz0 + dz2));
+      if (!cell) continue;
+      for (const p of cell) if (!seen.has(p)) {
+        seen.add(p);
+        pts.push(p);
+      }
+    }
+    const use = pts.length ? pts : HILL_PTS;
     let best = -Infinity, bestAll = -Infinity;
-    for (const p of HILL_PTS) {
+    for (const p of use) {
       const d = Math.hypot(x - p.x, z - p.z);
       const y2 = p.y - 0.05 - HILL_GRADE * Math.max(0, d - HILL_EDGE);
       if (y2 > bestAll) bestAll = y2;
@@ -62424,12 +62475,6 @@ void main(){
   };
 
   // src/render/lighting.js
-  function casterSphere(mesh2, target2 = new Sphere()) {
-    if (!mesh2.isMesh || mesh2.isInstancedMesh || mesh2.isBatchedMesh || mesh2.isSkinnedMesh) return null;
-    if (!mesh2.geometry.boundingSphere) mesh2.geometry.computeBoundingSphere();
-    mesh2.updateWorldMatrix(true, false);
-    return target2.copy(mesh2.geometry.boundingSphere).applyMatrix4(mesh2.matrixWorld);
-  }
   function syncSunShadow(sun, refresh = false) {
     const enabled2 = sun.intensity > 0, wasEnabled = sun.shadow.autoUpdate;
     sun.shadow.autoUpdate = enabled2;
@@ -62475,8 +62520,7 @@ void main(){
       api.envRevision++;
       if (oldTarget && oldTarget !== rt) oldTarget.dispose();
     }
-    const casters = [];
-    let castersScanned = false;
+    let skylineCulled = false;
     const api = {
       sun,
       hemi,
@@ -62484,27 +62528,13 @@ void main(){
       target: target2,
       phase: 0,
       envRevision: 0,
-      /** Shadow casters far from the player are switched off each frame (skyline never casts). */
-      cullCasters(px2, pz2) {
-        const sphere2 = new Sphere();
-        if (!castersScanned) {
-          castersScanned = true;
-          scene.traverse((o) => {
-            if (o.isMesh && o.castShadow) {
-              if (o.name && /^skyline/.test(o.name)) {
-                o.castShadow = false;
-                return;
-              }
-              const bounds3 = casterSphere(o, sphere2);
-              if (bounds3 && bounds3.radius < 400) casters.push(o);
-            }
-          });
-        }
-        const R = qualityPreset().csmSize * 1.6;
-        for (const o of casters) {
-          const s = casterSphere(o, sphere2);
-          o.castShadow = Math.hypot(s.center.x - px2, s.center.z - pz2) - s.radius < R;
-        }
+      /** One-shot skyline cast disable. Never distance-toggle castShadow (shader recompile storm). */
+      cullCasters(_px, _pz) {
+        if (skylineCulled) return;
+        skylineCulled = true;
+        scene.traverse((o) => {
+          if (o.isMesh && o.castShadow && o.name && /^skyline/.test(o.name)) o.castShadow = false;
+        });
       },
       envI: 0.7,
       setQuality() {
@@ -82814,7 +82844,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-1b42336ea339", tipSha: false ? "" : "901d2c9", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-33d7ffc4403d", tipSha: false ? "" : "4ee15fe", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
@@ -84605,17 +84635,12 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         if (pk.taken) continue;
         const d = Math.hypot(pk.model.group.position.x - cx, pk.model.group.position.z - cz);
         const parkR = g.touch?.isPhoneLike?.() || /(?:\?|&)(?:touch|phone)=1/.test(location.search) ? 90 : 140;
-        const show = d < parkR, shadow = d < 45;
+        const show = d < parkR;
         if (show !== pk.shown) {
           pk.model.group.visible = show;
           pk.shown = show;
         }
-        if (shadow !== pk.shadow) {
-          pk.shadow = shadow;
-          pk.model.group.traverse((o) => {
-            if (o.isMesh) o.castShadow = shadow && o.userData._castShadow;
-          });
-        }
+        pk.shadow = show;
       }
     }
     g.hud.update(worldDt);

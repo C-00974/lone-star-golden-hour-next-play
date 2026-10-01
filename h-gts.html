@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-1b42336ea339">
-<meta name="lsgh-tip" content="901d2c9">
+<meta name="lsgh-build" content="0.35.0-next.0-33d7ffc4403d">
+<meta name="lsgh-tip" content="4ee15fe">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -362,7 +362,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 901d2c9 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 4ee15fe · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -36157,12 +36157,6 @@ void main(){
   };
 
   // src/render/lighting.js
-  function casterSphere(mesh2, target = new Sphere()) {
-    if (!mesh2.isMesh || mesh2.isInstancedMesh || mesh2.isBatchedMesh || mesh2.isSkinnedMesh) return null;
-    if (!mesh2.geometry.boundingSphere) mesh2.geometry.computeBoundingSphere();
-    mesh2.updateWorldMatrix(true, false);
-    return target.copy(mesh2.geometry.boundingSphere).applyMatrix4(mesh2.matrixWorld);
-  }
   function syncSunShadow(sun, refresh = false) {
     const enabled = sun.intensity > 0, wasEnabled = sun.shadow.autoUpdate;
     sun.shadow.autoUpdate = enabled;
@@ -36208,8 +36202,7 @@ void main(){
       api.envRevision++;
       if (oldTarget && oldTarget !== rt) oldTarget.dispose();
     }
-    const casters = [];
-    let castersScanned = false;
+    let skylineCulled = false;
     const api = {
       sun,
       hemi,
@@ -36217,27 +36210,13 @@ void main(){
       target,
       phase: 0,
       envRevision: 0,
-      /** Shadow casters far from the player are switched off each frame (skyline never casts). */
-      cullCasters(px2, pz2) {
-        const sphere2 = new Sphere();
-        if (!castersScanned) {
-          castersScanned = true;
-          scene2.traverse((o) => {
-            if (o.isMesh && o.castShadow) {
-              if (o.name && /^skyline/.test(o.name)) {
-                o.castShadow = false;
-                return;
-              }
-              const bounds = casterSphere(o, sphere2);
-              if (bounds && bounds.radius < 400) casters.push(o);
-            }
-          });
-        }
-        const R2 = qualityPreset().csmSize * 1.6;
-        for (const o of casters) {
-          const s = casterSphere(o, sphere2);
-          o.castShadow = Math.hypot(s.center.x - px2, s.center.z - pz2) - s.radius < R2;
-        }
+      /** One-shot skyline cast disable. Never distance-toggle castShadow (shader recompile storm). */
+      cullCasters(_px, _pz) {
+        if (skylineCulled) return;
+        skylineCulled = true;
+        scene2.traverse((o) => {
+          if (o.isMesh && o.castShadow && o.name && /^skyline/.test(o.name)) o.castShadow = false;
+        });
       },
       envI: 0.7,
       setQuality() {
