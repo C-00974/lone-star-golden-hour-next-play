@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-33d7ffc4403d">
-<meta name="lsgh-tip" content="4ee15fe">
+<meta name="lsgh-build" content="0.35.0-next.0-6f1947481aea">
+<meta name="lsgh-tip" content="2d97576">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -362,7 +362,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 4ee15fe · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 2d97576 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -36210,7 +36210,7 @@ void main(){
       target,
       phase: 0,
       envRevision: 0,
-      /** One-shot skyline cast disable. Never distance-toggle castShadow (shader recompile storm). */
+      /** Safety: clear any leftover skyline-* castShadow. Authored skyline is cast=false at build. Never distance-toggle. */
       cullCasters(_px, _pz) {
         if (skylineCulled) return;
         skylineCulled = true;
@@ -36238,7 +36238,19 @@ void main(){
         cam.top = R2;
         cam.bottom = -R2;
         cam.updateProjectionMatrix();
-        const cx = px2 + fx * R2 * 0.35, cz = pz2 + fz * R2 * 0.35;
+        const now2 = performance.now();
+        const dt = Math.min(0.05, Math.max(0, (now2 - (api._followT || now2)) * 1e-3));
+        api._followT = now2;
+        if (api._ffx == null) {
+          api._ffx = fx;
+          api._ffz = fz;
+        }
+        const a = 1 - Math.exp(-5.5 * dt);
+        api._ffx += (fx - api._ffx) * a;
+        api._ffz += (fz - api._ffz) * a;
+        const fl = Math.hypot(api._ffx, api._ffz) || 1;
+        const lfx = api._ffx / fl, lfz = api._ffz / fl;
+        const cx = px2 + lfx * R2 * 0.18, cz = pz2 + lfz * R2 * 0.18;
         const texel = 2 * R2 / qq.shadow;
         const sx = Math.round(cx / texel) * texel, sz = Math.round(cz / texel) * texel;
         target.position.set(sx, py2, sz);
@@ -40537,13 +40549,11 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     }
     const group = new Group();
     group.name = "skyline";
-    const shadowCasters = /* @__PURE__ */ new Set(["brickRed", "brickPainted", "siding", "tilt", "stucco", "office", "conc", "trim", "roof", "perot", "darkglass", "hyatt", "hunt"]);
-    const noShadow = /* @__PURE__ */ new Set(["fence", "fenceFar", "lot", "apron", "pool"]);
     for (const k of Object.keys(G)) {
       if (G[k].empty) continue;
       const mesh2 = new Mesh(G[k].build(), M3[k]);
       mesh2.name = "skyline-" + k;
-      mesh2.castShadow = !noShadow.has(k) && (shadowCasters.has(k) || M3[k].emissiveMap == null);
+      mesh2.castShadow = false;
       mesh2.receiveShadow = true;
       if (k === "omniLed") mesh2.onBeforeRender = () => {
         const sh = M3.omniLed.userData.shader;
@@ -46894,7 +46904,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         }
         pending.sort((a, b) => (a.x0 + CELL2 / 2 - cam.x) ** 2 + (a.z0 + CELL2 / 2 - cam.z) ** 2 - ((b.x0 + CELL2 / 2 - cam.x) ** 2 + (b.z0 + CELL2 / 2 - cam.z) ** 2));
       }
-      if (pending.length && fillCell(pending[0], 900)) pending.shift();
+      if (pending.length && fillCell(pending[0], pending.length > 2 ? 280 : 520)) pending.shift();
     }
     const camPos = new V3(), cullR = rankFade[1] + GCHUNK * 0.71, cullR2 = cullR * cullR;
     preparations.set(world2.scene, (camera) => {
