@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="lsgh-build" content="0.35.0-next.0-bb227407898c">
-<meta name="lsgh-tip" content="156b2c7">
+<meta name="lsgh-build" content="0.35.0-next.0-1b42336ea339">
+<meta name="lsgh-tip" content="901d2c9">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -362,7 +362,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 156b2c7 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 901d2c9 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -53634,6 +53634,20 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   var MIN_STUB = 40;
   var MIN_SPAWN = 40;
   var SHADOW_NEAR = 60;
+  function touchTrafficBudget() {
+    try {
+      const q2 = new URLSearchParams(location.search);
+      if (q2.get("touch") === "1" || q2.get("phone") === "1") return true;
+    } catch {
+    }
+    try {
+      const coarse = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
+      const touch = (navigator.maxTouchPoints || 0) > 0 || "ontouchstart" in window;
+      return !!(touch && (coarse || Math.min(screen.width, screen.height) <= 920));
+    } catch {
+      return false;
+    }
+  }
   var KEEP_R = 185;
   var NEAR_TARGET = 15;
   var MIGRATE_EVERY = 0.4;
@@ -54042,6 +54056,11 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
     const scene2 = world2.scene;
     let closed = !!(world2.filmset && world2.filmset.closed);
     let lanes = [], nodes = [], totalLen = 0, totalLenDt = 0;
+    const touchBudget = touchTrafficBudget();
+    const farR = touchBudget ? 180 : FAR;
+    const farStep = touchBudget ? 8 : FAR_STEP;
+    const nearTarget = touchBudget ? 8 : NEAR_TARGET;
+    const keepR = touchBudget ? 140 : KEEP_R;
     const pool = scene2 ? createTrafficFleet(scene2, { capacity: N_CARS + 4 }) : null;
     const cars = [], peds = [];
     const vehicles = [], pedsPublic = [];
@@ -54650,11 +54669,11 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
           onRoadAt.x = playerPos.x;
           onRoadAt.z = playerPos.z;
         }
-        let nNear = 0, jam = 0, far = null, farD = KEEP_R;
+        let nNear = 0, jam = 0, far = null, farD = keepR;
         for (const c of cars) {
           const d = distPlayer(c.x, c.z);
           if (c.stuckT > 6) jam++;
-          if (d < KEEP_R) nNear++;
+          if (d < keepR) nNear++;
           else if (d > farD && !c.turn && nearList(c, all2).length && canVanish(c)) {
             far = c;
             farD = d;
@@ -54663,7 +54682,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
         dbg.jam = jam;
         flowBias = jam >= JAM_MAX ? -0.9 : 1;
         if (jam >= JAM_MAX) migrateT = MIGRATE_BACKOFF;
-        else if (nNear < NEAR_TARGET) {
+        else if (nNear < nearTarget) {
           if (!far) dbg.migNoFar++;
           if (far && respawn(far, false, nearList(far, all2))) dbg.migrations++;
           else migrateT = MIGRATE_BACKOFF;
@@ -54672,8 +54691,8 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       for (let i = 0; i < cars.length; i++) {
         const c = cars[i];
         if (c.hitT > 0) c.hitT -= dt;
-        const far = distPlayer(c.x, c.z) > FAR;
-        if (far && (frame + i) % FAR_STEP !== 0) {
+        const far = distPlayer(c.x, c.z) > farR;
+        if (far && (frame + i) % farStep !== 0) {
           c.accum = (c.accum || 0) + dt;
           continue;
         }
@@ -54684,9 +54703,9 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
       collidePlayer(dt);
       for (let i = 0; i < peds.length; i++) {
         const p = peds[i];
-        const d = distPlayer(p.x, p.z), far = d > FAR;
+        const d = distPlayer(p.x, p.z), far = d > farR;
         p.ch.group.visible = d < 520;
-        if (far && (frame + i) % (FAR_STEP * 2) !== 0) {
+        if (far && (frame + i) % (farStep * 2) !== 0) {
           p.accum = (p.accum || 0) + dt;
           continue;
         }
