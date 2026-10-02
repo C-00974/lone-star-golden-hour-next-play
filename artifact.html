@@ -351,7 +351,7 @@ html.touch-ui #app canvas.game, html.touch-ui #touch-controls {
   <div id="viewfinder"><div class="frame"></div><div class="rec"><i></i>SCOUT CAM</div><div class="meta">35mm · f/2.8 · 1/250</div><div class="eval"><div class="grade">—</div><div class="tip"></div><div class="checks"></div><div class="act"></div></div></div>
   <div id="photomode"><div class="lb t"></div><div class="lb b"></div><div class="bar"></div></div>
   <div id="title" class="overlay">
-    <div class="kicker">0.35 · tip 2c15034 · The Forecourt Call</div>
+    <div class="kicker">0.35 · tip 12d1474 · The Forecourt Call</div>
     <h1>Lone Star<span>Golden Hour</span></h1>
     <p class="sub">Luz has a little room for the crew at Singleton Market. Park, clear the forecourt, carry the camera case inside, and bring your car into a photograph of your own.</p>
     <div class="menu"><button class="btn primary" id="btn-continue">Take a drive · Crew stable</button><button class="btn" id="btn-forecourt" disabled>The Forecourt Call · Meet Luz</button><button class="btn" id="btn-working-set" disabled>The Set Comes Alive · Read the call sheet</button><button class="btn" id="btn-invitation" hidden disabled>Bring your picture home</button><button class="btn" id="btn-crew-supply" disabled>Crew Supply Run · Take the Sprinter</button><button class="btn" id="btn-driver-call" disabled>The Driver’s Call · Drive with Dee</button><button class="btn" id="btn-economy" disabled>Pocket Money · Jobs &amp; shops</button><button class="btn" id="btn-scout-roll" disabled>The Location Call · Choose our scene</button><button class="btn" id="btn-crew-car" disabled>The Crew Car · Bring the wagon around</button><button class="btn" id="btn-pickup" disabled>Make a diner postcard</button><button class="btn" id="btn-prop" disabled>The Missing Scene · Open Doors</button><button class="btn" id="btn-chapter" disabled>Last Light · New chapter</button><button class="btn" id="btn-play">Bridge chapter</button><button class="btn" id="btn-settings">Settings</button><button class="btn" id="btn-controls">Controls</button></div>
@@ -36966,8 +36966,8 @@ void main() {
     kirkEast: { name: "Continental landing \xB7 Design District", x: 350, z: -120, y: E },
     stagingLot: { name: "Staging \xB7 Riverfront", x: 355, z: 300, y: E, heading: 0 },
     lot42: { name: "Lot 42", x: -820, z: 250, y: W },
-    testFacility: { name: "Lot 32 Test Facility", x: -818.5, z: -321.5, y: W, heading: 0 },
-    // padCenter (FACILITY v13 apron)
+    testFacility: { name: "Lot 32 Test Facility", x: -824.5, z: -338.5, y: W, heading: 0 },
+    // padCenter (FACILITY v14 — off Sylvan)
     greenville: { name: "Greenville Ave \xB7 Belmont / Lowest", x: 1080, z: -50, y: eastY(1080) }
   };
   var SCOUT_SPOTS = [
@@ -55179,7 +55179,7 @@ void main() {
   var FACILITY = {
     id: "test-facility",
     name: "Lot 32 Test Facility",
-    version: 13,
+    version: 14,
     // Clear runoff pad: rails at clearR so 8-heading probe ≥250 m before first hit
     bounds: {
       x0: TRACK_CAMPUS.x - TRACK_CAMPUS.clearR,
@@ -55194,8 +55194,11 @@ void main() {
     // feel-tests / teleports used the survey centroid. Widen west through center + overlap skid.
     apron: { x0: X(-740), x1: X(-632), z0: Z2(40), z1: Z2(115) },
     skid: { x: X(-665), z: Z2(78), r: 16, inner: 11.5, outer: 20 },
-    /** Authoring Lot 32 pad centroid — use for feel-test teleports (West Plateau world). */
-    padCenter: { x: X(-700), z: Z2(75) },
+    // GPS / feel-test spawn — NOT the geometric apron centroid. Sylvan Ave (concrete, width 18)
+    // arcs through authoring (−700,75) / world (−818.5,−321.5); groundAt prefers on-road concrete
+    // over facility asphalt there. Spawn sits south on apron asphalt, clear of Sylvan (margin ≥10 m).
+    /** Lot 32 GPS + feel-test teleport — apron asphalt clear of Sylvan (West Plateau world). */
+    padCenter: { x: X(-706), z: Z2(58) },
     // Cycle IJ (26 Sept): drag/brake sit north of Toronto (z=−260) and west of the
     // T11/SF runoff cone — Computer probe: Toronto mid hit drag rails; T11 runoff 23 m.
     drag: {
@@ -82869,7 +82872,7 @@ gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor * (1.0 - keepF) );
   // src/main.js
   var buildVegetation2 = buildVegetation;
   var canvas3 = document.getElementById("gl");
-  var g = { buildId: false ? "source" : "0.35.0-next.0-0c9fded0cb8b", tipSha: false ? "" : "2c15034", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
+  var g = { buildId: false ? "source" : "0.35.0-next.0-3f1c11b1b7e6", tipSha: false ? "" : "12d1474", inCar: false, state: "title", cameraSnap: false, paused: false, look: { dx: 0, dy: 0, wheel: 0 } };
   window.LS = g;
   window.__ls_keys = {};
   window.addEventListener("keydown", (e) => {
